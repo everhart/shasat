@@ -274,6 +274,34 @@ int fwriteRightRotateLogic(
 	uint32_t 	rro, 
 	uint32_t 	oup
 ) {
+	int res = 0;
+	int clause[2] = { 0, 0 };
+
+	for (int i = 0; i < rro; i++) {
+		clause[0] = inp + i;
+		clause[1] = oup + (size - rro + i);
+
+		res = fprintf(
+			stream, "%d %d 0\n %d %d 0\n",
+			-clause[0], clause[1], clause[0], -clause[1]
+		);
+		if (res < 0) {
+			return res;
+		}
+	}
+
+	for (int i = rro; i < size; i++) {
+		clause[0] = inp + i;
+		clause[1] = oup + (i - rro);
+
+		res = fprintf( 
+			stream, "%d %d 0\n %d %d 0\n",
+			-clause[0], clause[1], clause[0], -clause[1]
+		);
+		if (res < 0) {
+			return res;
+		}
+	}
 	return 0;
 }
 
