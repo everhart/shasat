@@ -251,7 +251,7 @@ int fwriteLeftShiftLogic(
 		res = fprintf(stream, "%d 0\n", -(oup + i));
 	}	
 
-	for (int i = 0; i < size - lsh - 1; i++) {
+	for (int i = 0; i < size - lsh; i++) {
 		clause[0] = inp + i;
 		clause[1] = oup + (i + lsh);
 
@@ -312,6 +312,35 @@ int fwriteLeftRotateLogic(
 	uint32_t 	lro, 
 	uint32_t 	oup
 ) {
+	int res = 0;
+	int clause[2] = { 0, 0 };
+
+	for (int i = size - lro; i < size; i++) {
+		clause[0] = inp + i;
+		clause[1] = oup + (i - (size - lro));
+
+		res = fprintf(
+			stream, "%d %d 0\n %d %d 0\n",
+			-clause[0], clause[1], clause[0], -clause[1]
+		);
+		if (res < 0) {
+			return res;
+		}
+	}
+
+	for (int i = 0; i < size - lro; i++) {
+		clause[0] = inp + i;
+		clause[1] = oup + (i + lro);
+
+		res = fprintf(
+			stream, "%d %d 0\n %d %d 0\n",
+			-clause[0], clause[1], clause[0], -clause[1]
+		);
+		if (res < 0) {
+			return res;
+		}
+	}
+
 	return 0;
 }
 
