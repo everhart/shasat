@@ -2,70 +2,84 @@
 #define CIRCUIT_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
+int fwriteAssignLogic(
+	FILE *		stream,
+	size_t 		size,
+	uint32_t 	inp,
+	uint32_t 	oup
+);
 int fwriteOrLogic(
-	const char * 	file,
+	FILE * 		stream,
        	size_t		size,
 	uint32_t 	inp1, 
 	uint32_t 	inp2, 
-	uint32_t	res
+	uint32_t	oup
+);
+int fwriteNotOrLogic(
+	FILE *		stream,
+	size_t		size,
+	uint32_t	inp1,
+	uint32_t	inp2,
+	uint32_t	oup
 );
 int fwriteAndLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t 		size,
 	uint32_t 	inp1, 
 	uint32_t 	inp2, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteNotAndLogic(
-	const char * 	file,
+	FILE * 		stream,
 	size_t 		size,
 	uint32_t 	inp1, 
 	uint32_t 	inp2, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteXorLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t 		size,
 	uint32_t 	inp1, 
 	uint32_t 	inp2, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteRightShiftLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t		size,
 	uint32_t 	inp, 
 	uint32_t 	rsh, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteLeftShiftLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t		size,
 	uint32_t 	inp, 
 	uint32_t 	lsh, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteRightRotateLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t		size,
 	uint32_t 	inp, 
 	uint32_t 	rro, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteLeftRotateLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t		size,
 	uint32_t 	inp, 
 	uint32_t 	lro, 
-	uint32_t 	res
+	uint32_t 	oup
 );
 int fwriteSumLogic(
-	const char *	file,
+	FILE *		stream,
 	size_t 		size,
 	uint32_t 	inp1, 
 	uint32_t 	inp2, 
-	uint32_t 	res, 
+	uint32_t 	oup, 
 	uint32_t 	crr
 );
 
