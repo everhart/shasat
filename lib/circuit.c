@@ -53,7 +53,7 @@ int fwriteNotOrLogic(
 			clause[1] = (j % 2 == 0) ?
 				clause[1] : -clause[1];
 			clause[2] = (clause[0] > 0 || clause[1] < 0) ?
-				oup + i : (-oup + i);
+				oup + i : -(oup + i);
 
 			res = fprintf(
 				stream, "%d %d %d 0\n", 
@@ -87,7 +87,7 @@ int fwriteAndLogic(
 			clause[1] = (j % 2 == 0) ?
 				clause[1] : -clause[1];
 			clause[2] = (clause[0] < 0 && clause[1] < 0) ?
-				oup + i : (-oup + i);
+				oup + i : -(oup + i);
 
 			res = fprintf(
 				stream, "%d %d %d 0\n", 
@@ -121,7 +121,7 @@ int fwriteNotAndLogic(
 			clause[1] = (j % 2 == 0) ?
 				clause[1] : -clause[1];
 			clause[2] = (clause[0] > 0 && clause[1] < 0) ?
-				oup + i : (-oup + i);
+				oup + i : -(oup + i);
 
 			res = fprintf(
 				stream, "%d %d %d 0\n", 
