@@ -292,22 +292,14 @@ int fwriteRightRotateLogic(
 		rro = size % rro;
 	}
 
-	for (int i = 0; i < rro; i++) {
+	for (int i = 0; i < size; i++) {
 		clause[0] = inp + i;
-		clause[1] = oup + (size - rro + i);
-
-		res = fprintf(
-			stream, "%d %d 0\n %d %d 0\n",
-			-clause[0], clause[1], clause[0], -clause[1]
-		);
-		if (res < 0) {
-			return res;
+		if (i < rro) {
+			clause[1] = oup + (size - rro + i);
+		} 
+		else {
+			clause[1] = oup + (i - rro);
 		}
-	}
-
-	for (int i = rro; i < size; i++) {
-		clause[0] = inp + i;
-		clause[1] = oup + (i - rro);
 
 		res = fprintf( 
 			stream, "%d %d 0\n %d %d 0\n",
