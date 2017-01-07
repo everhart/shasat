@@ -16,7 +16,7 @@ int fwriteAssignLogic(
 		for (int i = 0; i < 2; i++) {
 			res = fprintf(
 				stream, "%d %d 0\n",
-				clause[0] *= -1, clause[1] *= -1
+				(clause[0] *= -1), (clause[1] *= -1)
 			);
 			if (res < 0) {
 				return res;
