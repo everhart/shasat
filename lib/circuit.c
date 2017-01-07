@@ -257,6 +257,9 @@ int fwriteLeftShiftLogic(
 
 	for (int i = 0; i < lsh; i++) {
 		res = fprintf(stream, "%d 0\n", -(oup + i));
+		if (res < 0) {
+			return res;
+		}
 	}	
 
 	for (int i = 0; i < size - lsh; i++) {
