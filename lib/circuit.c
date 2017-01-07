@@ -376,7 +376,7 @@ int fwriteSumLogic(
 		}
 	}
 
-	for (int i = 1; i < size - 1; i++) {
+	for (int i = 1; i < size; i++) {
 		for (int j = 0; j < 8; j++) {
 			clause[0] = inp1 + i;
 			clause[1] = inp2 + i;
@@ -392,34 +392,25 @@ int fwriteSumLogic(
 				      (clause[2] < 0)) > 1
 				    ) ? crr + i : -(crr + i);
 
-			 
-			res = fprintf(
-				stream, "%d %d %d %d %d 0\n",
-				clause[0], clause[1], clause[2],
-				clause[3], clause[4]
-			);
+			if (i == size - 1) {
+				res = fprintf(
+					stream, "%d %d %d %d 0\n",
+					clause[0], clause[1], clause[2],
+					clause[3]
+				);
+			} 
+			else {
+				res = fprintf(
+					stream, "%d %d %d %d %d 0\n",
+					clause[0], clause[1], clause[2],
+					clause[3], clause[4]
+				);
+			}
+
 			if (res < 0) {
 				return res;
 			}
 		}
-	}
-
-	clause[0] = inp1 + size - 1;
-	clause[1] = inp2 + size - 1;
-	clause[2] = oup + size - 2;
-
-	clause[3] = ((clause[0] < 0) !=
-		     (clause[1] < 0) !=
-		     (clause[2] < 0)
-		    ) ? oup + size - 1 : -(oup + size - 1);
-
-	res = fprintf(
-		stream, "%d %d %d %d 0\n",
-		clause[0], clause[1], clause[2],
-		clause[3]
-	);
-	if (res < 0) {
-		return res;
 	}
 
 	return 0;
