@@ -1,5 +1,38 @@
 #include "circuit.h"
 
+int fwriteAssignLogic(
+	FILE *		stream,
+	size_t		size,
+	uint32_t	inp,
+	uint32_t	oup
+) {
+	int res = 0;
+	int clause[2] = { 0, 0 };
+
+	for (int i = 0; i < size; i++) {
+		clause[0] = inp + i;
+		clause[1] = oup + i;
+
+		res = fprintf(
+			stream, "%d %d 0\n",
+			-clause[0], clause[1] 
+		);
+		if (res < 0) {
+			return res;
+		}
+
+		res = fprintf(
+			stream, "%d %d 0\n",
+			clause[0], -clause[1] 
+		);
+		if (res < 0) {
+			return res;
+		}
+	}
+
+	return 0;
+}
+
 int fwriteOrLogic(
 	FILE * 		stream,
        	size_t		size,
