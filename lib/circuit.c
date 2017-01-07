@@ -392,20 +392,20 @@ int fwriteSumLogic(
 				      (clause[2] < 0)) > 1
 				    ) ? crr + i : -(crr + i);
 
-			if (i == size - 1) {
-				res = fprintf(
-					stream, "%d %d %d %d 0\n",
-					clause[0], clause[1], clause[2],
-					clause[3]
-				);
-			} 
-			else {
+			if (i < size - 1) {
 				res = fprintf(
 					stream, "%d %d %d %d %d 0\n",
 					clause[0], clause[1], clause[2],
 					clause[3], clause[4]
 				);
 			}
+			else {
+				res = fprintf(
+					stream, "%d %d %d %d 0\n",
+					clause[0], clause[1], clause[2],
+					clause[3]
+				);
+			} 
 
 			if (res < 0) {
 				return res;
