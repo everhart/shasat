@@ -294,11 +294,11 @@ int fwriteRightRotateLogic(
 
 	for (int i = 0; i < size; i++) {
 		clause[0] = inp + i;
-		if (i < rro) {
-			clause[1] = oup + (size - rro + i);
-		} 
-		else {
+		if (i >= rro) {
 			clause[1] = oup + (i - rro);
+		}
+		else {
+			clause[1] = oup + (size - rro + i);
 		}
 
 		res = fprintf( 
@@ -326,22 +326,14 @@ int fwriteLeftRotateLogic(
 		lro = size % lro;
 	}
 
-	for (int i = size - lro; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		clause[0] = inp + i;
-		clause[1] = oup + (i - (size - lro));
-
-		res = fprintf(
-			stream, "%d %d 0\n %d %d 0\n",
-			-clause[0], clause[1], clause[0], -clause[1]
-		);
-		if (res < 0) {
-			return res;
+		if (i < size - lro) {
+			clause[1] = oup + i + lro;
 		}
-	}
-
-	for (int i = 0; i < size - lro; i++) {
-		clause[0] = inp + i;
-		clause[1] = oup + (i + lro);
+		else {
+			clause[1] = oup + (i - (size - lro));
+		}
 
 		res = fprintf(
 			stream, "%d %d 0\n %d %d 0\n",
