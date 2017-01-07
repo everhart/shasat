@@ -277,6 +277,10 @@ int fwriteRightRotateLogic(
 	int res = 0;
 	int clause[2] = { 0, 0 };
 
+	if (rro >= size) {
+		rro = size % rro;
+	}
+
 	for (int i = 0; i < rro; i++) {
 		clause[0] = inp + i;
 		clause[1] = oup + (size - rro + i);
@@ -314,6 +318,10 @@ int fwriteLeftRotateLogic(
 ) {
 	int res = 0;
 	int clause[2] = { 0, 0 };
+
+	if (lro >= size) {
+		lro = size % lro;
+	}
 
 	for (int i = size - lro; i < size; i++) {
 		clause[0] = inp + i;
