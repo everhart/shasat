@@ -357,7 +357,7 @@ int fwriteSumLogic(
 ) {
 	int res = 0;
 	int clause[5] = { inp1, inp2, 0, 0, 0 };
-	//outer add on the right side
+
 	for (int i = 0; i < 4; i++) {
 		clause[0] = -clause[0];
 		clause[1] = (i % 2 == 0) ? -clause[1] : clause[1];
@@ -375,8 +375,8 @@ int fwriteSumLogic(
 			return res;
 		}
 	}
-	//inner add
-	for (int i = 1; i < 32; i++) {
+
+	for (int i = 1; i < size; i++) {
 		for (int j = 0; j < 8; j++) {
 			clause[0] = inp1 + i;
 			clause[1] = inp2 + i;
@@ -402,6 +402,7 @@ int fwriteSumLogic(
 			}
 		}
 	}
+
 
 	return 0;
 }
