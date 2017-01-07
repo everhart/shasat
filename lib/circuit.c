@@ -214,6 +214,10 @@ int fwriteRightShiftLogic(
 	int res = 0;
 	int clause[2] = { 0, 0 };
 
+	if (rsh > size) {
+		rsh = size;
+	}
+
 	for (int i = size - rsh; i < size; i++) {
 		res = fprintf(stream, "%d 0\n", -(oup + i));
 		if (res < 0) {
@@ -246,6 +250,10 @@ int fwriteLeftShiftLogic(
 ) {
 	int res = 0;
 	int clause[2] = { 0, 0 };
+
+	if (lsh > size) {
+		lsh = size;
+	}
 
 	for (int i = 0; i < lsh; i++) {
 		res = fprintf(stream, "%d 0\n", -(oup + i));
