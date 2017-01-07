@@ -380,7 +380,7 @@ int fwriteSumLogic(
 		for (int j = 0; j < 8; j++) {
 			clause[0] = inp1 + i;
 			clause[1] = inp2 + i;
-			clause[2] = oup + i - 1;
+			clause[2] = crr + i - 1;
 
 			clause[3] = ((clause[0] < 0) !=
 				     (clause[1] < 0) !=
