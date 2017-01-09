@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "../lib/circuit.h"
 
-#define SHA1_ATOMS_PER_CHUNK 33092
+#define SHA1_ATOMS_PER_CHUNK 35136
 
 uint32_t indexRoundConstBitSHA1(
 	uint32_t	word,
