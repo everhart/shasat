@@ -34,13 +34,10 @@ uint32_t indexRoundConstBitSHA1(
 );
 uint32_t indexDigestBitSHA1(
 	size_t 		msize,
-	uint32_t	word,
 	uint32_t	bit
 );
 uint32_t indexMessageBitSHA1(
 	size_t		msize,
-	size_t		wsize,
-	uint32_t	word,
 	uint32_t	bit
 );
 
