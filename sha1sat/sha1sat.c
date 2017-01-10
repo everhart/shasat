@@ -77,10 +77,8 @@ int preprocessSHA1(
 		msize++;
 		res = fwriteAtom(
 			stream, 
-			indexMessageBitSHA1(
-				osize, 
-				((osize >> i) & 1) == 1 ? msize : -msize
-			)
+			indexMessageBitSHA1(osize, msize) *
+			((osize >> i) & 1) == 1 ? 1 : -1
 		);
 		if (res < 0) {		
 			return res;
