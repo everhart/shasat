@@ -41,6 +41,11 @@ uint32_t indexMessageBitSHA1(
 	uint32_t	bit
 );
 
+int preprocessSHA1(
+	FILE *		stream,
+	size_t		msize
+);
+
 int sha1sat(
 	const char * 	dimacs, 
 	size_t 		msize, 
