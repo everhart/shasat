@@ -1,5 +1,17 @@
 #include "circuit.h"
 
+int fwriteAtom(
+	FILE *		stream,
+	int		atom
+) {
+	int res = fprintf(stream, "%d 0\n", atom);
+	if (res < 0) {
+		return res;
+	}
+
+	return 0;
+}
+
 int fwriteAssignLogic(
 	FILE *		stream,
 	size_t		size,
