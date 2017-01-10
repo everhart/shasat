@@ -47,7 +47,7 @@ int preprocessSHA1(
 );
 
 int sha1sat(
-	const char * 	dimacs, 
+	FILE *		stream, 
 	size_t 		msize, 
 	const char * 	digest
 );
