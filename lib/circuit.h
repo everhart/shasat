@@ -7,7 +7,7 @@
 
 int fwriteAtom(
 	FILE *		stream,
-	int		atom
+	int64_t		atom
 );
 int fwriteAssignLogic(
 	FILE *		stream,

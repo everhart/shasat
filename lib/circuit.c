@@ -2,9 +2,9 @@
 
 int fwriteAtom(
 	FILE *		stream,
-	int		atom
+	int64_t		atom
 ) {
-	int res = fprintf(stream, "%d 0\n", atom);
+	int res = fprintf(stream, "%ld 0\n", atom);
 	if (res < 0) {
 		return res;
 	}
