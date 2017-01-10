@@ -8,7 +8,7 @@
 #define SHA1_ATOMS_PER_CHUNK 35136
 
 uint32_t indexHashBitSHA1(
-	uint32_t chunk,
+	uint32_t 	chunk,
 	uint32_t	word,
 	uint32_t 	bit
 );
