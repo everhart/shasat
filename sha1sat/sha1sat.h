@@ -41,4 +41,6 @@ uint32_t indexMessageBitSHA1(
 	uint32_t	bit
 );
 
+int sha1sat(FILE *stream, size_t msize, char *digest);
+
 #endif
