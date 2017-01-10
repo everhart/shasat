@@ -43,3 +43,11 @@ uint32_t indexBufferBitSHA1(
 	       (word * 32) +
 	       bit;	//16896 buffer bits
 }
+
+int sha1sat(
+	const char * 	dimacs, 
+	size_t 		msize, 
+	const char * 	digest
+) {
+	return 0;	
+}
