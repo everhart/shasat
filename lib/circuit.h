@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+int fwriteAtom(
+	FILE *		stream,
+	int		atom
+);
 int fwriteAssignLogic(
 	FILE *		stream,
 	size_t 		size,
@@ -40,6 +44,13 @@ int fwriteNotAndLogic(
 	uint32_t 	oup
 );
 int fwriteXorLogic(
+	FILE *		stream,
+	size_t 		size,
+	uint32_t 	inp1, 
+	uint32_t 	inp2, 
+	uint32_t 	oup
+);
+int fwriteNotXorLogic(
 	FILE *		stream,
 	size_t 		size,
 	uint32_t 	inp1, 
