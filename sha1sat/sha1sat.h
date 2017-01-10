@@ -8,13 +8,13 @@
 #define SHA1_ATOMS_PER_CHUNK 35136
 
 uint32_t indexHashBitSHA1(
-	uint32_t 	chunk,
+	uint32_t chunk,
 	uint32_t	word,
 	uint32_t 	bit
 );
 uint32_t indexMessageScheduleBitSHA1(
-	uint32_t	chunk,
-	uint32_t	word,
+	uint32_t 	chunk, 
+	uint32_t 	word,
 	uint32_t	bit
 );
 uint32_t indexWorkingVarBitSHA1(
@@ -41,6 +41,10 @@ uint32_t indexMessageBitSHA1(
 	uint32_t	bit
 );
 
-int sha1sat(FILE *stream, size_t msize, char *digest);
+int sha1sat(
+	const char * 	dimacs, 
+	size_t 		msize, 
+	const char * 	digest
+);
 
 #endif
