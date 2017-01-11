@@ -117,7 +117,8 @@ int sha1sat(
 	uint32_t b0 = 0,
 		 b1 = 0,
 		 b2 = 0,
-		 b3 = 0;
+		 b3 = 0,
+		 b4 = 0;
 
 	//preprocessing
 	res = preprocessSHA1(stream, msize);
@@ -170,13 +171,29 @@ int sha1sat(
 			e = indexWorkingVarBitSHA1(i, 80 * j + 9, 0);
 
 			if (i >= 0 && i < 20) {
+				res += fwriteAndLogic(stream, 32, b, c, b0);
+				res += fwriteNotAndLogic(stream, 32, b, d, b1);
+				res += fwriteOrLogic(stream, 32, b0, b1, b2);
+
 				k = 0x5A827999;
 			}
 			else if (i >= 40 && i < 60) {
+				res += fwriteAndLogic(stream, 32, b, c, b0);
+				res += fwriteAndLogic(stream, 32, b, d, b1);
+				res += fwriteAndLogic(stream, 32, c, d, b2);
+				res += fwriteOrLogic(stream, 32, b0, b1, b3);
+				res += fwriteOrLogic(stream, 32, b2, b3, b4);
+
 				k = 0x8F1BBCDC;
 			}
 			else {
+				res += fwriteXorLogic(stream, 32, b, c, b0);
+				res += fwriteXorLogic(stream, 32, b0, d, b1);
 				k = (j < 40) ? 0x6ED9EBA1 : 0xCA62C1D6;
+			}
+
+			if (res < 0) {
+				return -1;
 			}
 		}
 	}
