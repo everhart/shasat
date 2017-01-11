@@ -88,6 +88,10 @@ int preprocessSHA1(
 	return msize;
 }
 
+int wordInitSHA1();
+int wordExtensionSHA1();
+int wordCompressionSHA1();
+
 int sha1sat(
 	FILE * 		stream, 
 	size_t 		msize, 
@@ -111,13 +115,16 @@ int sha1sat(
 		 h4 = 0xC3D2E1F0;
 	
 	//initialize the round constants
-	uint32_t k[4] = { 
+	const uint32_t k[4] = { 
 		0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6
 	};
 
 	//initialize message schedule array
 	int w[80]; 	
 	
+	int buf = 0;
+
+	//preprocessing
 	res = preprocessSHA1(stream, msize);
 	if (res < 0) {
 		return res;
@@ -144,7 +151,84 @@ int sha1sat(
 
 		//compression function
 		for (int j = 0; j < 80; j++) {
-			
+			a = indexWorkingVarBitSHA1(i, 80 * j + 5, 0);
+			b = indexWorkingVarBitSHA1(i, 80 * j + 6, 0);
+			c = indexWorkingVarBitSHA1(i, 80 * j + 7, 0);
+			d = indexWorkingVarBitSHA1(i, 80 * j + 8, 0);
+			e = indexWorkingVarBitSHA1(i, 80 * j + 9, 0);
+			f = indexWorkingVarBitSHA1(i, 80 * j + 10, 0);
+
+			if (i < 20) {
+				res = fwriteAndLogic(
+					stream, 32, 
+					b, c, buf
+				);
+				if (res < 0) return -1;
+
+				res = fwriteNotAndLogic(
+					stream, 32, 
+					b, d, buf
+				);		
+				if (res < 0) return -1;
+
+				res = fwriteOrLogic(
+					stream, 32, 
+					buf, buf + 32, f
+				);
+				if (res < 0) return -1;
+			}
+			else if (i < 40) {
+				res = fwriteXorLogic(
+					stream, 32, b, c, buf
+				);
+				if (res < 0) return -1;
+
+				res = fwriteXorLogic(
+					stream, 32, buf, d, f
+				);
+				if (res < 0) return -1;
+			}
+			else if (i < 60) {
+				res = fwriteAndLogic(
+					stream, 32, 
+					b, c, buf
+				);
+				if (res < 0) return -1;
+
+				res = fwriteAndLogic(
+					stream, 32,
+					b, d, buf
+				);
+				if (res < 0) return -1;
+
+				res = fwriteAndLogic(
+					stream, 32,
+					c, d, buf
+				);
+				if (res < 0) return -1;
+
+				res = fwriteOrLogic(
+					stream, 32, 
+					buf, buf + 32, buf + 96
+				);
+				if (res < 0) return -1;
+
+				res = fwriteOrLogic(
+					stream, 32,
+					buf, buf + 96, f
+				);
+			}
+			else if (i < 80) {
+				res = fwriteXorLogic(
+					stream, 32, b, c, buf
+				);
+				if (res < 0) return -1;
+
+				res = fwriteXorLogic(
+					stream, 32, buf, d, f
+				);
+				if (res < 0) return -1;
+			}
 		}
 	}
 	
