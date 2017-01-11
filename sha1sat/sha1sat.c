@@ -89,7 +89,7 @@ int preprocessSHA1(
 }
 
 int sha1sat(
-	FILE * 		dimacs, 
+	FILE * 		stream, 
 	size_t 		msize, 
 	const char * 	digest
 ) {	
