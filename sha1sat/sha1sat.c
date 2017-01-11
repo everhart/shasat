@@ -92,6 +92,36 @@ int sha1sat(
 	FILE * 		stream, 
 	size_t 		msize, 
 	const char * 	digest
-) {	
+) {
+	int res = 0;
+	uint32_t k[4] = { 	//round constants
+		0x5A827999,
+		0x6ED9EBA1,
+		0x8F1BBCDC,
+		0xCA62C1D6
+	};
+
+	uint32_t h[5] = { 	//initial hash values
+		0x67452301,
+		0xEFCDAB89,
+		0x98BADCFE,
+		0x10325476,
+		0xC3D2E1F0
+	};
+
+	int w[80]; 		//message schedule array
+	
+	res = preprocessSHA1(stream, msize);
+	if (res < 0) {
+		return res;
+	}
+
+	const uint32_t chcount = res / 512;
+	for (int i = 0; i < chcount; i++) {
+		for (int j = 0; j < 16; j++) {	
+			
+		}
+	}
+
 	return 0;	
 }
