@@ -94,7 +94,7 @@ int sha1sat(
 	const char * 	digest
 ) {
 	int res = 0;
-	uint32_t k[4] = { 	//round constants
+	uint32_t r[4] = { 	//round constants
 		0x5A827999,
 		0x6ED9EBA1,
 		0x8F1BBCDC,
@@ -109,7 +109,7 @@ int sha1sat(
 		0xC3D2E1F0
 	};
 
-	int m[16];		//message
+	int buf = 0;
 	int w[80]; 		//message schedule array
 	
 	res = preprocessSHA1(stream, msize);
@@ -121,12 +121,49 @@ int sha1sat(
 	for (int i = 0; i < chcount; i++) {
 		//break chunk into sixteen 32-bit words
 		for (int j = 0; j < 16; j++) {	
+			buf = indexMessageBitSHA1(msize, i * 16 + j);
 			w[j] = indexMessageScheduleBitSHA1(i, j, 0);
 
-			res = fwriteAssignLogic(stream, 32, m[j], w[j]);
+			res = fwriteAssignLogic(stream, 32, buf, w[j]);
 			if (res < 0) {
 				return res;
 			}	
+		}
+
+		//word extension
+		for (int j = 0; j < 80; j++) {
+			buf = indexBufferBitSHA1(j, buf, 0);
+			w[j] = indexMessageScheduleBitSHA1(i, j, 0);
+
+			res = fwriteXorLogic(
+				stream, 32, 
+				w[i - 3], w[i - 8], buf
+			);
+			if (res < 0) {
+				return res;
+			}
+
+			res = fwriteXorLogic(
+				stream, 32, 
+				w[i - 14], w[i - 16], buf + 32
+			);
+			if (res < 0) {
+				return res;
+			}
+
+			res = fwriteXorLogic(
+				stream, 32, buf, buf + 32, buf + 64
+			);
+			if (res < 0) {
+				return res;
+			}
+
+			res = fwriteLeftRotateLogic(
+				stream, 32, buf, 1, w[j] 
+			);
+			if (res < 0) {
+				return res;
+			}
 		}
 	}
 
