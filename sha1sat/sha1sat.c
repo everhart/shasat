@@ -104,8 +104,7 @@ int sha1sat(
 		 b = 0,
 		 c = 0,
 		 d = 0,
-		 e = 0,
-		 f = 0;
+		 e = 0;
 
 	//initialize the default hash values
 	uint32_t h0 = 0x67452301,
@@ -113,16 +112,16 @@ int sha1sat(
 		 h2 = 0x98BADCFE,
 		 h3 = 0x10325476,
 		 h4 = 0xC3D2E1F0;
-	
-	//initialize the round constants
-	const uint32_t k[4] = { 
-		0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6
-	};
 
 	//initialize message schedule array
 	int w[80]; 	
 	
-	int buf = 0;
+	//initialize buffer variables
+	uint32_t k = 0;
+	uint32_t b0 = 0,
+		 b1 = 0,
+		 b2 = 0,
+		 b3 = 0;
 
 	//preprocessing
 	res = preprocessSHA1(stream, msize);
@@ -156,78 +155,15 @@ int sha1sat(
 			c = indexWorkingVarBitSHA1(i, 80 * j + 7, 0);
 			d = indexWorkingVarBitSHA1(i, 80 * j + 8, 0);
 			e = indexWorkingVarBitSHA1(i, 80 * j + 9, 0);
-			f = indexWorkingVarBitSHA1(i, 80 * j + 10, 0);
 
-			if (i < 20) {
-				res = fwriteAndLogic(
-					stream, 32, 
-					b, c, buf
-				);
-				if (res < 0) return -1;
-
-				res = fwriteNotAndLogic(
-					stream, 32, 
-					b, d, buf
-				);		
-				if (res < 0) return -1;
-
-				res = fwriteOrLogic(
-					stream, 32, 
-					buf, buf + 32, f
-				);
-				if (res < 0) return -1;
+			if (i >= 0 && i < 20) {
+				k = 0x5A827999;
 			}
-			else if (i < 40) {
-				res = fwriteXorLogic(
-					stream, 32, b, c, buf
-				);
-				if (res < 0) return -1;
-
-				res = fwriteXorLogic(
-					stream, 32, buf, d, f
-				);
-				if (res < 0) return -1;
+			else if (i >= 40 && i < 60) {
+				k = 0x8F1BBCDC;
 			}
-			else if (i < 60) {
-				res = fwriteAndLogic(
-					stream, 32, 
-					b, c, buf
-				);
-				if (res < 0) return -1;
-
-				res = fwriteAndLogic(
-					stream, 32,
-					b, d, buf
-				);
-				if (res < 0) return -1;
-
-				res = fwriteAndLogic(
-					stream, 32,
-					c, d, buf
-				);
-				if (res < 0) return -1;
-
-				res = fwriteOrLogic(
-					stream, 32, 
-					buf, buf + 32, buf + 96
-				);
-				if (res < 0) return -1;
-
-				res = fwriteOrLogic(
-					stream, 32,
-					buf, buf + 96, f
-				);
-			}
-			else if (i < 80) {
-				res = fwriteXorLogic(
-					stream, 32, b, c, buf
-				);
-				if (res < 0) return -1;
-
-				res = fwriteXorLogic(
-					stream, 32, buf, d, f
-				);
-				if (res < 0) return -1;
+			else {
+				k = (j < 40) ? 0x6ED9EBA1 : 0xCA62C1D6;
 			}
 		}
 	}
