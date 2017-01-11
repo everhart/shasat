@@ -109,6 +109,7 @@ int sha1sat(
 		0xC3D2E1F0
 	};
 
+	int m[16];		//message
 	int w[80]; 		//message schedule array
 	
 	res = preprocessSHA1(stream, msize);
@@ -118,8 +119,14 @@ int sha1sat(
 
 	const uint32_t chcount = res / 512;
 	for (int i = 0; i < chcount; i++) {
+		//break chunk into sixteen 32-bit words
 		for (int j = 0; j < 16; j++) {	
-			
+			w[j] = indexMessageScheduleBitSHA1(i, j, 0);
+
+			res = fwriteAssignLogic(stream, 32, m[j], w[j]);
+			if (res < 0) {
+				return res;
+			}	
 		}
 	}
 
