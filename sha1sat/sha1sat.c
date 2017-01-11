@@ -88,10 +88,6 @@ int preprocessSHA1(
 	return msize;
 }
 
-int wordInitSHA1();
-int wordExtensionSHA1();
-int wordCompressionSHA1();
-
 int sha1sat(
 	FILE * 		stream, 
 	size_t 		msize, 
@@ -131,13 +127,15 @@ int sha1sat(
 
 	const uint32_t chcount = res / 512;
 	for (int i = 0; i < chcount; i++) {
+		b0 = indexBufferBitSHA1(i, 0, 0);
+
 		//break chunk into sixteen 32-bit words
 		for (int j = 0; j < 16; j++) {	;
 			w[j] = indexMessageScheduleBitSHA1(i, j, 0);
 
 			res = fwriteAssignLogic(
 				stream, 32, w[j],
-				indexMessageScheduleBitSHA1(i, j, 0)
+				indexMessageBitSHA1(msize, 0)
 			);
 			if (res < 0) {
 				return res;
@@ -146,8 +144,8 @@ int sha1sat(
 
 		//word extension
 		for (int j = 16; j < 80; j++) {
-			b0 = indexBufferBitSHA1(i, 0, 0);
 			b1 = b0 + 32;
+			b2 = b1 + 32;
 
 			w[j] = indexMessageScheduleBitSHA1(i, j, 0);
 			
@@ -159,6 +157,8 @@ int sha1sat(
 			if (res < 0) {
 				return -1;
 			}
+
+			b0 = b2 + 32;
 		}
 
 		//compression function
