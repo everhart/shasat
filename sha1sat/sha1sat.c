@@ -146,6 +146,19 @@ int sha1sat(
 
 		//word extension
 		for (int j = 16; j < 80; j++) {
+			b0 = indexBufferBitSHA1(i, 0, 0);
+			b1 = b0 + 32;
+
+			w[j] = indexMessageScheduleBitSHA1(i, j, 0);
+			
+			res += fwriteXorLogic(stream, 32, w[i-3], w[i-8], b0);
+			res += fwriteXorLogic(stream, 32, b0, w[i-14], b1);
+			res += fwriteXorLogic(stream, 32, b1, w[i-16], b2);
+			res += fwriteLeftRotateLogic(stream, 32, b2, 1, w[j]);
+
+			if (res < 0) {
+				return -1;
+			}
 		}
 
 		//compression function
