@@ -46,7 +46,7 @@ int preprocessSHA1(
 	size_t		msize
 );
 
-int wordExpansionSHA1(
+int wordExtensionSHA1(
 	FILE *		stream,
 	uint32_t	chunk
 );
