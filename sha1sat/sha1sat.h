@@ -46,6 +46,16 @@ int preprocessSHA1(
 	size_t		msize
 );
 
+int wordExpansionSHA1(
+	FILE *		stream,
+	uint32_t	chunk
+);
+
+int compressionFuncSHA1(
+	FILE *		stream,
+	uint32_t	chunk
+);
+
 int sha1sat(
 	FILE *		stream, 
 	size_t 		msize, 
