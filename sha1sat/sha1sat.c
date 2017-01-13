@@ -51,26 +51,26 @@ uint32_t indexMessageBitSHA1(
 int fwriteWordExtensionLogic(
 	FILE *		stream,
 	size_t		wsize,
-	uint32_t *	w,
+	uint32_t *	msa,
 	uint32_t	idx
 ) {
 	int res = 0;
-	int clause[5] = { 
-		w[idx], w[idx-3], w[idx-8], w[idx-14], w[idx-16]
-	};
+	int clause[5] = { 0, 0, 0, 0, 0};
 
 	//for each bit	
-	for (int i = 0; i < 32; i++) {
-		for (int j = 0; j < 5; j++) {
-			++clause[j];
-		}
+	for (int i = 0; i < wsize; i++) {
+		clause[0] = msa[idx] + i;
+		clause[1] = msa[idx - 3] + i;
+		clause[2] = msa[idx - 8] + i;
+		clause[3] = msa[idx - 14] + i;
+		clause[4] = msa[idx - 16] + i;
 
 		//process every permutation of 4 unique atomic variables
 		for (int j = 0; j < 16; j++) {
 			clause[1] = -clause[1];
 		       	clause[2] = (j % 2) ? clause[2] : -clause[2];
-			clause[3] = (j % 2) ? clause[3] : -clause[3];
-			clause[4] = (j % 2) ? clause[4] : -clause[4];
+			clause[3] = (j % 3) ? clause[3] : -clause[3];
+			clause[4] = (j % 4) ? clause[4] : -clause[4];
 
 			clause[0] = (
 				clause[1] !=
