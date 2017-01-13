@@ -50,35 +50,47 @@ uint32_t indexMessageBitSHA1(
 
 int fwriteWordExtensionLogic(
 	FILE *		stream,
-	size_t		wsize
+	size_t		wsize,
+	uint32_t *	w,
+	uint32_t	idx
 ) {
 	int res = 0;
-	bool sgn[5] = { 0, 0, 0, 0, 0 };
+	int clause[5] = { 
+		w[idx], w[idx-3], w[idx-8], w[idx-14], w[idx-16]
+	};
 
 	//for each bit	
 	for (int i = 0; i < 32; i++) {
+		for (int j = 0; j < 5; j++) {
+			++clause[j];
+		}
+
 		//process every permutation of 4 unique atomic variables
 		for (int j = 0; j < 16; j++) {
-			sgn[0] = !sgn[0];	
-			sgn[1] = (j % 2 == 0) ? !sgn[1] : sgn[1];
-			sgn[2] = (j % 3 == 0) ? !sgn[2] : sgn[2];
-			sgn[3] = (j % 3 == 0) ? !sgn[3] : sgn[3];
+			clause[1] = -clause[1];
+		       	clause[2] = (j % 2) ? clause[2] : -clause[2];
+			clause[3] = (j % 2) ? clause[3] : -clause[3];
+			clause[4] = (j % 2) ? clause[4] : -clause[4];
 
-			sgn[4] = sgn[0] != sgn[1] != sgn[2] != sgn[3];
+			clause[0] = (
+				clause[1] !=
+				clause[2] !=
+				clause[3] !=
+				clause[4]
+			) ? clause[0] : -clause[0];
 
 			res = fprintf(
 				stream, "%d %d %d %d %d 0\n",
-				((sgn[0]) ? -w[i-3] : w[i-3]), 
-				((sgn[1]) ? -w[i-8] : w[i-8]),
-				((sgn[2]) ? -w[i-14] : w[i-14]),
-				((sgn[3]) ? -w[i-16] : w[i-16]),
-				((sgn[4]) ? -w[i] : w[i])
+				-clause[1], 
+				-clause[2], 
+				-clause[3], 
+				-clause[4],
+				clause[0]
 			);
 			if (res < 0) {
 				return -1;
 			}
 		}
-		
 	}	
 	
 	return 0;
