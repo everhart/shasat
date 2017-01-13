@@ -60,18 +60,22 @@ int fwriteWordExtensionLogic(
 	//for each bit	
 	for (int i = 0; i < wsize; i++) {
 		clause[0] = msa[idx] + i;
-		clause[1] = msa[idx - 3] + i;
-		clause[2] = msa[idx - 8] + i;
-		clause[3] = msa[idx - 14] + i;
-		clause[4] = msa[idx - 16] + i;
+		clause[1] = msa[idx-3] + i;
+		clause[2] = msa[idx-8] + i;
+		clause[3] = msa[idx-14] + i;
+		clause[4] = msa[idx-16] + i;
 
-		//process every permutation of 4 unique atomic variables
+		//permutation loop
 		for (int j = 0; j < 16; j++) {
+			//determine the permutation based on the
+			//respective modulus evaluations
 			clause[1] = -clause[1];
 		       	clause[2] = (j % 2) ? clause[2] : -clause[2];
 			clause[3] = (j % 3) ? clause[3] : -clause[3];
 			clause[4] = (j % 4) ? clause[4] : -clause[4];
 
+			//w[i] =
+			//w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]
 			clause[0] = (
 				clause[1] > 0 !=
 				clause[2] > 0 !=
@@ -79,6 +83,8 @@ int fwriteWordExtensionLogic(
 				clause[4]
 			) ? clause[0] : -clause[0];
 
+			//the conditional produced (X1 ... Xn -> Y)
+			//equals a clause of the form (!X1 ... !Xn v Y)
 			res = fprintf(
 				stream, "%d %d %d %d %d 0\n",
 				-clause[1], 
