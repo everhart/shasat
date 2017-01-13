@@ -59,39 +59,39 @@ int fwriteWordExtensionLogic(
 
 	//for each bit	
 	for (int i = 0; i < wsize; i++) {
-		clause[0] = msa[idx] + i;
-		clause[1] = msa[idx-3] + i;
-		clause[2] = msa[idx-8] + i;
-		clause[3] = msa[idx-14] + i;
-		clause[4] = msa[idx-16] + i;
+		clause[0] = msa[idx-3] + i;
+		clause[1] = msa[idx-8] + i;
+		clause[2] = msa[idx-14] + i;
+		clause[3] = msa[idx-16] + i;
+
+		//simple way of accounting for w[i] = w[i] lro 1
+		clause[4] = (i == 31) ? msa[idx] : msa[idx] + i;
 
 		//permutation loop
 		for (int j = 0; j < 16; j++) {
-			//determine the permutation based on the
-			//respective modulus evaluations
-			clause[1] = -clause[1];
-		       	clause[2] = (j % 2) ? clause[2] : -clause[2];
-			clause[3] = (j % 3) ? clause[3] : -clause[3];
-			clause[4] = (j % 4) ? clause[4] : -clause[4];
+			//determine the current permutation based on each
+			//respective modulus evaluation
+			clause[0] = -clause[0];
+		       	clause[1] = (j % 2) ? clause[1] : -clause[1];
+			clause[2] = (j % 3) ? clause[2] : -clause[2];
+			clause[3] = (j % 4) ? clause[3] : -clause[3];
 
 			//w[i] =
 			//w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]
 			clause[0] = (
-				clause[1] > 0 !=
-				clause[2] > 0 !=
-				clause[3] > 0 !=
-				clause[4]
-			) ? clause[0] : -clause[0];
+				clause[0] < 0 !=
+				clause[1] < 0 !=
+				clause[2] < 0 !=
+				clause[3]
+			) ? clause[4] : -clause[4];
 
-			//the conditional produced (X1 ... Xn -> Y)
-			//equals a clause of the form (!X1 ... !Xn v Y)
 			res = fprintf(
 				stream, "%d %d %d %d %d 0\n",
-				-clause[1], 
-				-clause[2], 
-				-clause[3], 
-				-clause[4],
-				clause[0]
+				clause[0], 
+				clause[1], 
+				clause[2], 
+				clause[3],
+				clause[4]
 			);
 			if (res < 0) {
 				return -1;
