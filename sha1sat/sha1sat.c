@@ -73,9 +73,9 @@ int fwriteWordExtensionLogic(
 			clause[4] = (j % 4) ? clause[4] : -clause[4];
 
 			clause[0] = (
-				clause[1] !=
-				clause[2] !=
-				clause[3] !=
+				clause[1] > 0 !=
+				clause[2] > 0 !=
+				clause[3] > 0 !=
 				clause[4]
 			) ? clause[0] : -clause[0];
 
