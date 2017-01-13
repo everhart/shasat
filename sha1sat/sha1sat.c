@@ -50,7 +50,6 @@ uint32_t indexMessageBitSHA1(
 
 int fwriteWordExtensionLogic(
 	FILE *		stream,
-	size_t		wsize,
 	uint32_t *	msa,
 	uint32_t	idx
 ) {
@@ -58,7 +57,7 @@ int fwriteWordExtensionLogic(
 	int clause[5] = { 0, 0, 0, 0, 0};
 
 	//for each bit	
-	for (int i = 0; i < wsize; i++) {
+	for (int i = 0; i < 32; i++) {
 		clause[0] = msa[idx-3] + i;
 		clause[1] = msa[idx-8] + i;
 		clause[2] = msa[idx-14] + i;
@@ -151,5 +150,6 @@ int sha1sat(
 	size_t 		msize, 
 	const char * 	digest
 ) {
+
 	return 0;	
 }
