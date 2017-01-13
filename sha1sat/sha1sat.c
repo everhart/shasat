@@ -116,10 +116,10 @@ int fwriteFClausesSHA1(
 		clause[2] = wvr[3] + i;	//d
 		clause[3] = wvr[5] + i;	//f
 
-		//determine the current permutation based on each
-		//respective modulus evaluation
+		//permutation loop for three unique variables 
 		for (int j = 0; j < 8; j++) {
-			//permutation loop for four unique variables 	
+			//determine the current permutation based on each
+			//respective modulus evaluation
 			clause[0] = -clause[0];
 			clause[1] = (j % 2 == 0) ? 
 				clause[1] : -clause[1];
