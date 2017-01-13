@@ -86,10 +86,8 @@ int fwriteWvrClausesSHA1(
 
 			res = fprintf(
 				stream, "%d %d %d %d %d 0\n",
-				clause[0], 
-				clause[1], 
-				clause[2], 
-				clause[3],
+				clause[0], clause[1], 
+				clause[2], clause[3],
 				clause[4]
 			);
 			if (res < 0) {
@@ -161,6 +159,15 @@ int fwriteFClausesSHA1(
 		}
 	}
 
+	return 0;
+}
+
+int fwriteTempClausesSHA1(
+	FILE *		stream,
+	uint32_t *	msa,
+	uint32_t *	wvr,
+	uint32_t	idx
+) {
 	return 0;
 }
 
