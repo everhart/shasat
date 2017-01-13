@@ -116,20 +116,24 @@ int fwriteFClausesSHA1(
 		clause[2] = wvr[3] + i;	//d
 		clause[3] = wvr[5] + i;	//f
 
-		//permutation loop for three unique variables
-		for (int j = 0; j < 8; j++) {	
+		//determine the current permutation based on each
+		//respective modulus evaluation
+		for (int j = 0; j < 8; j++) {
+			//permutation loop for four unique variables 	
 			clause[0] = -clause[0];
 			clause[1] = (j % 2 == 0) ? 
 				clause[1] : -clause[1];
 			clause[2] = (j % 3 == 0) ? 
 				clause[2] : -clause[2];
 			
+			//f = (b and c) or ((not b) and d)
 			if (idx > 0 && idx < 20) {
 				clause[3] = (
 					((clause[0] > 0) && (clause[1] > 0)) ||
 					((clause[0] < 0) && (clause[2] > 0))
 				) ? clause[3] : -clause[3];
 			}
+			//f = (b and c) or (b and d) or (c and d) 
 			else if (idx > 40 && idx < 60) {
 				clause[3] = (
 					((clause[0] > 0) && (clause[1] > 0)) ||
@@ -137,6 +141,7 @@ int fwriteFClausesSHA1(
 					((clause[1] > 0) && (clause[3] > 0))
 				) ? clause[0] : -clause[3];
 			}
+			//f = (b xor c xor d)
 			else {
 				clause[3] = (
 					(clause[0] > 0) ^
