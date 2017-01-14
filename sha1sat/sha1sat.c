@@ -50,7 +50,7 @@ uint32_t indexMessageBitSHA1(
 
 int fwriteWvrClausesSHA1(
 	FILE *			stream,
-	const uint32_t *	msa,
+	const uint32_t 		msa[],
 	uint32_t		idx
 ) {
 	int res = 0;
@@ -101,7 +101,7 @@ int fwriteWvrClausesSHA1(
 
 int fwriteFClausesSHA1(
 	FILE * 			stream,
-	const uint32_t *	wvr,
+	const uint32_t		wvr[],
 	uint32_t		idx
 ) {
 	int res = 0;
@@ -163,8 +163,8 @@ int fwriteFClausesSHA1(
 
 int fwriteTempClausesSHA1(
 	FILE *		stream,
-	uint32_t *	inp,
-	uint32_t *	oup,
+	uint32_t	add[],
+	uint32_t *	gen,
 	uint32_t	idx
 ) {
 	int res = 0;
