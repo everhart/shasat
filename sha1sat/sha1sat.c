@@ -50,7 +50,7 @@ uint32_t indexMessageBitSHA1(
 
 int fwriteWvrClausesSHA1(
 	FILE *			stream,
-	const uint32_t *	inp,
+	const uint32_t *	msa,
 	uint32_t		idx
 ) {
 	int res = 0;
@@ -58,13 +58,13 @@ int fwriteWvrClausesSHA1(
 
 	//for each bit	
 	for (int i = 0; i < 32; i++) {
-		clause[0] = inp[idx-3] + i;
-		clause[1] = inp[idx-8] + i;
-		clause[2] = inp[idx-14] + i;
-		clause[3] = inp[idx-16] + i;
+		clause[0] = msa[idx-3] + i;
+		clause[1] = msa[idx-8] + i;
+		clause[2] = msa[idx-14] + i;
+		clause[3] = msa[idx-16] + i;
 
 		//simple way of accounting for w[i] = w[i] lro 1
-		clause[4] = (i == 31) ? inp[idx] : inp[idx] + i;
+		clause[4] = (i == 31) ? msa[idx] : msa[idx] + i;
 
 		//permutation loop for four unique variables
 		for (int j = 0; j < 16; j++) {
@@ -101,7 +101,7 @@ int fwriteWvrClausesSHA1(
 
 int fwriteFClausesSHA1(
 	FILE * 			stream,
-	const uint32_t *	inp,
+	const uint32_t *	wvr,
 	uint32_t		idx
 ) {
 	int res = 0;
@@ -109,10 +109,10 @@ int fwriteFClausesSHA1(
 
 	//for each bit
 	for (int i = 0; i < 32; i++) {
-		clause[0] = inp[1] + i;	//b
-		clause[1] = inp[2] + i;	//c
-		clause[2] = inp[3] + i;	//d
-		clause[3] = inp[5] + i;	//f
+		clause[0] = wvr[1] + i;	//b
+		clause[1] = wvr[2] + i;	//c
+		clause[2] = wvr[3] + i;	//d
+		clause[3] = wvr[5] + i;	//f
 
 		//permutation loop for three unique variables 
 		for (int j = 0; j < 8; j++) {
