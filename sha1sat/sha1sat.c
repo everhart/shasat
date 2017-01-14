@@ -112,7 +112,6 @@ int fwriteFClausesSHA1(
 		clause[0] = wvr[1] + i;	//b
 		clause[1] = wvr[2] + i;	//c
 		clause[2] = wvr[3] + i;	//d
-		clause[3] = wvr[5] + i;	//f
 
 		//permutation loop for three unique variables 
 		for (int j = 0; j < 8; j++) {
@@ -129,7 +128,7 @@ int fwriteFClausesSHA1(
 				clause[3] = (
 					((clause[0] > 0) && (clause[1] > 0)) ||
 					((clause[0] < 0) && (clause[2] > 0))
-				) ? clause[3] : -clause[3];
+				) ? wvr[5] + i : -(wvr[5] + i); 
 			}
 			//f = (b and c) or (b and d) or (c and d) 
 			else if (idx > 40 && idx < 60) {
@@ -137,7 +136,7 @@ int fwriteFClausesSHA1(
 					((clause[0] > 0) && (clause[1] > 0)) ||
 					((clause[0] > 0) && (clause[2] > 0)) ||
 					((clause[1] > 0) && (clause[3] > 0))
-				) ? clause[0] : -clause[3];
+				) ? wvr[5] + i : -(wvr[5] + i);
 			}
 			//f = (b xor c xor d)
 			else {
@@ -145,7 +144,7 @@ int fwriteFClausesSHA1(
 					(clause[0] > 0) ^
 					(clause[1] > 0) ^
 					(clause[2] > 0) 
-				) ? clause[0] : -clause[3];
+				) ? wvr[5] + i : -(wvr[5] + i);
 			}
 
 			res = fprintf(
