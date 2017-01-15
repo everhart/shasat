@@ -178,20 +178,20 @@ int fwriteTempClausesSHA1(
 			clause[1] = (j % 2 == 0) ? 
 				clause[1] : -clause[1];
 
-			clause[3] = (
-				(clause[1] > 0) !=
-				(clause[2] > 0) 
+			clause[2] = (
+				(clause[0] > 0) !=
+				(clause[1] > 0) 
 			) ? clause[3] : -clause[3];
 
-			clause[4] = (
-				(clause[1] > 0) &&
-				(clause[2] > 0)
+			clause[3] = (
+				(clause[0] > 0) &&
+				(clause[1] > 0)
 			) ? clause[4] : -clause[4];
 
 			res = fprintf(
 				stream, "%d %d %d 0\n %d %d %d 0\n",
-				clause[1], clause[2], clause[3],
-				clause[1], clause[2], clause[4]
+				clause[0], clause[1], clause[2],
+				clause[0], clause[1], clause[3]
 			);
 			if (res < 0) {
 				return -1;
@@ -201,6 +201,33 @@ int fwriteTempClausesSHA1(
 		//inner add
 		//permutation loop for three unique variables
 		for (int j = 0; j < 8; j++) {
+			clause[0] = -clause[0];
+			clause[1] = (j % 2 == 0) ?
+				clause[1] : -clause[1];
+			clause[2] = (j % 3 == 0) ?	
+				clause[2] : -clause[2];
+
+			clause[3] = (
+				(clause[0] > 0) !=
+				(clause[1] > 0) !=
+				(clause[2] > 0) 
+			) ? clause[3] : -clause[3];
+
+			clause[4] = (
+				(clause[0] > 0) +
+				(clause[1] > 0) +
+				(clause[2] > 0) > 1
+			) ? clause[4] : -clause[4];
+
+			res = fprintf(
+				stream, 
+				"%d %d %d %d 0\n" 
+				"%d %d %d %d 0\n",
+				clause[0], clause[1], clause[2],
+				clause[3],
+				clause[0], clause[1], clause[2],
+				clause[4]
+			);
 		}
 	}
 
