@@ -170,33 +170,34 @@ int fwriteTempClausesSHA1(
 	int res = 0;
 	int clause[5] = { 0, 0, 0, 0 };
 
+	for (int j = 0; j < 4; j++) {
+		clause[0] = -clause[0];
+		clause[1] = (j % 2 == 0) ? 
+			clause[1] : -clause[1];
+		
+		clause[2] = (
+			(clause[0] > 0) !=
+			(clause[1] > 0) 
+		) ? clause[3] : -clause[3];
+
+		clause[3] = (
+			(clause[0] > 0) &&
+			(clause[1] > 0)
+		) ? clause[4] : -clause[4];
+
+		res = fprintf(
+			stream, "%d %d %d 0\n %d %d %d 0\n",
+			clause[0], clause[1], clause[2],
+			clause[0], clause[1], clause[3]
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
 	for (int i = 0; i < 32; i++) {
 		//outer add on the right side
 		//permutation loop for two unique variables
-		for (int j = 0; j < 4; j++) {
-			clause[0] = -clause[0];
-			clause[1] = (j % 2 == 0) ? 
-				clause[1] : -clause[1];
-
-			clause[2] = (
-				(clause[0] > 0) !=
-				(clause[1] > 0) 
-			) ? clause[3] : -clause[3];
-
-			clause[3] = (
-				(clause[0] > 0) &&
-				(clause[1] > 0)
-			) ? clause[4] : -clause[4];
-
-			res = fprintf(
-				stream, "%d %d %d 0\n %d %d %d 0\n",
-				clause[0], clause[1], clause[2],
-				clause[0], clause[1], clause[3]
-			);
-			if (res < 0) {
-				return -1;
-			}
-		}
 
 		//inner add
 		//permutation loop for three unique variables
