@@ -63,6 +63,7 @@ int fwriteWvrClausesSHA1Re(
 	    cons = 0;
 
 	//generate all possible permutations of four atomic states
+	//and store them in perm[][]
 	for (int i = 0; i < (1 << 4); i++) {
 		crr = 1;
 		for (int j = 0; j >= 0 && crr > 0; j--) {
@@ -72,11 +73,12 @@ int fwriteWvrClausesSHA1Re(
 		}
 	}
 
-	//fprintf the result of every possible permutation
 	//for each bit
 	for (int i = 0; i < 32; i++) {
 		//for each permutation
 		for (int j = 0; j < (1 << 4); j++) {
+			//if permutation[j][idx] is true, then the atom 
+			//in the antecedent is signed with NOT
 			ante[0] = (msa[idx-3] + i) * 
 				  (perm[j][0] ? 1 : -1);
 			ante[1] = (msa[idx-3] + i) * 
@@ -86,6 +88,7 @@ int fwriteWvrClausesSHA1Re(
 			ante[3] = (msa[idx-3] + i) * 
 				  (perm[j][3] ? 1 : -1);
 
+			//determine the sign of the consequent
 			cons = (
 				perm[j][0] ^ 
 				perm[j][1] ^ 
@@ -98,6 +101,9 @@ int fwriteWvrClausesSHA1Re(
 				-ante[0], -ante[1], -ante[2], -ante[3],
 				cons
 			);
+			if (res < 0) {
+				return -1;
+			}
 		}
 	}
 
