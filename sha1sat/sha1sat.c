@@ -50,10 +50,11 @@ uint32_t indexMessageBitSHA1(
 
 int fwriteWvrClausesSHA1Re(
 	FILE *			stream,
-	const uint32_t		msa,
+	const uint32_t		msa[],
 	uint32_t		idx
 ) {
 	int res = 0, tmp = 0, crr = 0;
+	int clause[5];
 	bool perm[4][4];
 
 	//generate all possible permutations of four atomic states
@@ -68,7 +69,7 @@ int fwriteWvrClausesSHA1Re(
 
 	//fprintf the result of every possible permutation for each bit
 	for (int i = 0; i < 32; i++) {
-		for (int j < 0; j < (1 << 4); j++) {
+		for (int j = 0; j < (1 << 4); j++) {
 			clause[0] = perm[j][0] ? 
 				msa[idx-3] + i : -(msa[idx-3] + i);
 			clause[1] = perm[j][1] ? 
