@@ -53,9 +53,14 @@ int fwriteWvrClausesSHA1Re(
 	const uint32_t		msa[],
 	uint32_t		idx
 ) {
-	int res = 0, tmp = 0, crr = 0;
-	int clause[5];
-	bool perm[4][4];
+	int res = 0;
+
+	bool tmp = 0, 
+	     crr = 0,
+	     perm[4][4];
+
+	int ante[4] = { 0, 0, 0, 0 },
+	    cons = 0;
 
 	//generate all possible permutations of four atomic states
 	for (int i = 0; i < (1 << 4); i++) {
@@ -67,30 +72,31 @@ int fwriteWvrClausesSHA1Re(
 		}
 	}
 
-	//fprintf the result of every possible permutation for each bit
+	//fprintf the result of every possible permutation
+	//for each bit
 	for (int i = 0; i < 32; i++) {
+		//for each permutation
 		for (int j = 0; j < (1 << 4); j++) {
-			clause[0] = perm[j][0] ? 
-				msa[idx-3] + i : -(msa[idx-3] + i);
-			clause[1] = perm[j][1] ? 
-				msa[idx-8] + i : -(msa[idx-8] + i);
-			clause[2] = perm[j][2] ? 
-				msa[idx-14] + i : -(msa[idx-14] + i);
-			clause[3] = perm[j][3] ?
-				msa[idx-16] + i : -(msa[idx-16] + i);
-			clause[4] = (
-				perm[j][0] ^
-				perm[j][1] ^
-				perm[j][2] ^
+			ante[0] = (msa[idx-3] + i) * 
+				  (perm[j][0] ? 1 : -1);
+			ante[1] = (msa[idx-3] + i) * 
+				  (perm[j][1] ? 1 : -1);
+			ante[2] = (msa[idx-3] + i) * 
+				  (perm[j][2] ? 1 : -1);
+			ante[3] = (msa[idx-3] + i) * 
+				  (perm[j][3] ? 1 : -1);
+
+			cons = (
+				perm[j][0] ^ 
+				perm[j][1] ^ 
+				perm[j][2] ^ 
 				perm[j][3] 
 			) ? msa[idx] + i : -(msa[idx] + i);
 
-
 			res = fprintf(
 				stream, "%d %d %d %d %d 0\n",
-				clause[0], clause[1], 
-				clause[2], clause[3],
-				clause[4]
+				-ante[0], -ante[1], -ante[2], -ante[3],
+				cons
 			);
 		}
 	}
