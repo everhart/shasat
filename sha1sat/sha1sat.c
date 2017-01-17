@@ -79,7 +79,7 @@ int fwriteWvrClausesSHA1Re(
 		for (int j = 0; j < (1 << 4); j++) {
 			//if permutation[j][idx] is true, then the atom 
 			//in the antecedent is signed with NOT
-			ante[0] = (msa[idx-3] + i) * 
+			ante[0] = (msa[idx-3] + i) *
 				  (perm[j][0] ? 1 : -1);
 			ante[1] = (msa[idx-3] + i) * 
 				  (perm[j][1] ? 1 : -1);
@@ -88,13 +88,14 @@ int fwriteWvrClausesSHA1Re(
 			ante[3] = (msa[idx-3] + i) * 
 				  (perm[j][3] ? 1 : -1);
 
-			//determine the sign of the consequent
+			//simple way to account for w[i] = w[i] lro 1
+			cons = (i == 31) ? msa[idx] : msa[idx] + i;
 			cons = (
 				perm[j][0] ^ 
 				perm[j][1] ^ 
 				perm[j][2] ^ 
 				perm[j][3] 
-			) ? msa[idx] + i : -(msa[idx] + i);
+			) ? cons : -cons;
 
 			res = fprintf(
 				stream, "%d %d %d %d %d 0\n",
