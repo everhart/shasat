@@ -48,7 +48,7 @@ uint32_t indexMessageBitSHA1(
 	return 0;
 }
 
-int fwriteWvrClausesSHA1Re(
+int fwriteMsaClausesSHA1(
 	FILE *			stream,
 	const uint32_t		msa[],
 	uint32_t		idx
@@ -90,6 +90,9 @@ int fwriteWvrClausesSHA1Re(
 
 			//simple way to account for w[i] = w[i] lro 1
 			cons = (i == 31) ? msa[idx] : msa[idx] + i;
+
+			//cons is signed with the result of the operation
+			//w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]
 			cons = (
 				perm[j][0] ^ 
 				perm[j][1] ^ 
