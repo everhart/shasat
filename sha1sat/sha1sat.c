@@ -221,10 +221,10 @@ int fwriteTempClausesSHA1(
 				ante[2] = oup[(j - 1) * 2 + 1] + k;
 
 				cons[0] = (perm[0] ^ perm[1] ^ perm[2]) ?
-					cons[0] : -cons[0];
+					oup[j * 2] : -oup[j * 2];
 				cons[1] = (
 					(perm[0] | perm[1]) & perm[2]
-				) ? cons[1] : -ante[1];
+				) ? oup[j * 2 + 1] : -oup[j * 2 + 1];
 
 				res = fprintf(
 					stream, "%d %d %d %d %d 0\n",
