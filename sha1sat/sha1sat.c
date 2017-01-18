@@ -115,9 +115,62 @@ int fwriteMsaClausesSHA1(
 
 int fwriteFClausesSHA1Re(
 	FILE *			stream,
-	const uint32_t		atoms[],
+	const uint32_t		inp[],
+	const uint32_t		oup,
 	uint32_t		idx
 ) {
+	int res = 0, 
+	    ante[3] = { 0, 0, 0 },
+	    cons = 0;
+
+	bool tmp = 0, 
+	     crr = 0,
+	     perm[3] = { true, true, true };
+
+	for (int i = 0; i < (1 << 3); i++) {
+		crr = 1;
+		//determine what permutation ante must represent
+		for (int j = 2; j >= 0 && crr > 0; j--) {
+			tmp = perm[j] + crr;
+			crr = tmp >> 1;
+			perm[j] = tmp & 1;
+		}
+
+		//foreach bit
+		for (int j = 0; j < 32; j++) {
+			ante[0] = (ante[0] + j) * (perm[0] ? 1 : -1);
+			ante[1] = (ante[1] + j) * (perm[1] ? 1 : -1);
+			ante[2] = (ante[2] + j) * (perm[2] ? 1 : -1);
+
+			if (idx > 0 && idx < 20) {
+				cons = (
+					(perm[0] & perm[1]) |
+					(!perm[0] & perm[2])
+				) ? cons : -cons;
+			}
+			else if (idx > 39 && idx < 60) {
+				cons = (
+					(perm[0] & perm[1]) |
+					(perm[0] & perm[2]) |
+					(perm[1] & perm[2])
+				) ? cons : -cons;
+			}
+			else {
+				cons = (perm[0] ^ perm[1] ^ perm[2]) ?
+					cons : -cons;
+			}
+
+			res = fprintf(
+				stream, "%d %d %d %d 0\n",
+				-ante[0], -ante[1], -ante[2],
+				cons
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+	
 	return 0;
 }
 
