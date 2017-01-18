@@ -113,6 +113,51 @@ int fwriteMsaClausesSHA1(
 	return 0;
 }
 
+int fwriteMsaClausesSHA1Re(
+	FILE *		stream,
+	const uint32_t	inp[],
+	uint32_t	oup
+) {
+	int res = 0,
+	    ante[4] = { 0, 0, 0, 0},
+	    cons = 0;
+
+	bool tmp = 0,
+	     crr = 0,
+	     perm[4] = { true, true, true, true };
+
+	for (int i = 0; i < (1 << 3); i++) {
+		for (int j = 3; j >= 0 && crr > 0; j--) {
+			tmp = perm[j] + crr;
+			crr = tmp >> 1;
+			perm[j] = tmp & 1;
+		}
+	
+		for (int j = 0; j < 32; j++) {
+			ante[0] = (inp[0] + j) * (perm[0] ? 1 : -1);
+			ante[1] = (inp[1] + j) * (perm[1] ? 1 : -1);
+			ante[2] = (inp[2] + j) * (perm[2] ? 1 : -1);
+			ante[3] = (inp[3] + j) * (perm[3] ? 1 : -1);
+
+			cons = (i == 31) ? oup : oup + j;
+			cons = (perm[0] ^ perm[1] ^ perm[2] ^ perm[3]) ?
+				cons : -cons; 
+
+			res = fprintf(
+				stream, "%d %d %d %d %d 0\n",
+				-ante[0], -ante[1], -ante[2], -ante[3],
+				cons
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}	
+		
+	}
+
+	return 0;
+}
+
 int fwriteFClausesSHA1(
 	FILE *			stream,
 	const uint32_t		inp[],
@@ -179,57 +224,6 @@ int fwriteFClausesSHA1(
 			}
 		}
 	}
-	
-	return 0;
-}
-
-int fwriteWvrClausesSHA1(
-	FILE *			stream,
-	const uint32_t 		msa[],
-	uint32_t		idx
-) {
-	int res = 0;
-	int clause[5] = { 0, 0, 0, 0, 0};
-
-	//for each bit	
-	for (int i = 0; i < 32; i++) {
-		clause[0] = msa[idx-3] + i;
-		clause[1] = msa[idx-8] + i;
-		clause[2] = msa[idx-14] + i;
-		clause[3] = msa[idx-16] + i;
-
-		//simple way of accounting for w[i] = w[i] lro 1
-		clause[4] = (i == 31) ? msa[idx] : msa[idx] + i;
-
-		//permutation loop for four unique variables
-		for (int j = 0; j < 16; j++) {
-			//determine the current permutation based on each
-			//respective modulus evaluation
-			clause[0] = -clause[0];
-		       	clause[1] = (j % 2) ? clause[1] : -clause[1];
-			clause[2] = (j % 3) ? clause[2] : -clause[2];
-			clause[3] = (j % 4) ? clause[3] : -clause[3];
-
-			//w[i] =
-			//w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]
-			clause[0] = (
-				clause[0] < 0 !=
-				clause[1] < 0 !=
-				clause[2] < 0 !=
-				clause[3]
-			) ? clause[4] : -clause[4];
-
-			res = fprintf(
-				stream, "%d %d %d %d %d 0\n",
-				clause[0], clause[1], 
-				clause[2], clause[3],
-				clause[4]
-			);
-			if (res < 0) {
-				return -1;
-			}
-		}
-	}	
 	
 	return 0;
 }
@@ -367,9 +361,6 @@ int sha1sat(
 	for (int i = 0; i < chcount; i++) {
 		//word extension
 		for (int j = 16; j < 80; j++) {
-			res = fwriteWvrClausesSHA1(
-				stream, msa, j
-			);
 			if (res < 0) { 
 				return res; 
 			}
