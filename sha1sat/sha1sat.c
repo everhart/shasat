@@ -113,7 +113,7 @@ int fwriteFClausesSHA1(
 	     crr = 0,
 	     perm[3] = { true, true, true };
 
-	//for each permutation of three unique atom states
+	//for each permutation of four unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
 		crr = 1;
 		//modify perm[] to represent the next permutation
@@ -171,74 +171,72 @@ int fwriteFClausesSHA1(
 
 int fwriteTempClausesSHA1(
 	FILE *		stream,
-	const uint32_t	add[],
-	uint32_t *	gen,
-	uint32_t	idx
+	const uint32_t	inp[],
+	const uint32_t	oup[]
 ) {
-	int res = 0;
-	int clause[5] = { 0, 0, 0, 0 };
+	int res = 0,
+	    ante[3] = { 0, 0, 0 },
+	    cons[2] = { 0, 0 };
 
-	for (int j = 0; j < 4; j++) {
-		clause[0] = -clause[0];
-		clause[1] = (j % 2 == 0) ? 
-			clause[1] : -clause[1];
-		
-		clause[2] = (
-			(clause[0] > 0) !=
-			(clause[1] > 0) 
-		) ? clause[3] : -clause[3];
+	uint32_t p = 0,
+		 q = 0;
 
-		clause[3] = (
-			(clause[0] > 0) &&
-			(clause[1] > 0)
-		) ? clause[4] : -clause[4];
+	bool tmp = 0,
+	     crr = 0,
+	     perm[3] = { 1, 1, 1 };
 
-		res = fprintf(
-			stream, "%d %d %d 0\n %d %d %d 0\n",
-			clause[0], clause[1], clause[2],
-			clause[0], clause[1], clause[3]
-		);
-		if (res < 0) {
-			return -1;
+	for (int i = 0; i < (1 << 3); i++) {
+		crr = 1;
+		for (int j = 2; j >= 0 && crr > 0; j--) {
+			tmp = perm[j] + crr;
+			crr = tmp >> 1;
+			perm[j] = tmp & 1;
 		}
-	}
 
-	for (int i = 0; i < 32; i++) {
-		//outer add on the right side
-		//permutation loop for two unique variables
+		for (int j = 0; j < 4; j++) {
+			//outer add on the rhs
+			if (i < (1 << 2)) {
+				ante[0] = p * (perm[1] ? 1 : -1);
+				ante[1] = q * (perm[2] ? 1 : -1);
 
-		//inner add
-		//permutation loop for three unique variables
-		for (int j = 0; j < 8; j++) {
-			clause[0] = -clause[0];
-			clause[1] = (j % 2 == 0) ?
-				clause[1] : -clause[1];
-			clause[2] = (j % 3 == 0) ?	
-				clause[2] : -clause[2];
+				cons[0] = (perm[1] ^ perm[2]) ? 
+					oup[j * 2] : -oup[j * 2];
+				cons[1] = (perm[1] && perm[2]) ?
+					oup[j * 2 + 1] : -oup[j * 2 + 1];
 
-			clause[3] = (
-				(clause[0] > 0) !=
-				(clause[1] > 0) !=
-				(clause[2] > 0) 
-			) ? clause[3] : -clause[3];
+				res = fprintf(
+					stream, "%d %d %d %d 0\n",
+					-ante[0], -ante[1],
+					cons[0], cons[1]
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
 
-			clause[4] = (
-				(clause[0] > 0) +
-				(clause[1] > 0) +
-				(clause[2] > 0) > 1
-			) ? clause[4] : -clause[4];
+			//inner add
+			for (int k = 1; k < 32; k++) {
+				ante[0] = (p + k) * (perm[0] ? 1 : -1);
+				ante[1] = (q + k) * (perm[1] ? 1 : -1);
+				ante[2] = oup[(j - 1) * 2 + 1] + k;
 
-			res = fprintf(
-				stream, 
-				"%d %d %d %d 0\n" 
-				"%d %d %d %d 0\n",
-				clause[0], clause[1], clause[2],
-				clause[3],
-				clause[0], clause[1], clause[2],
-				clause[4]
-			);
+				cons[0] = (perm[0] ^ perm[1] ^ perm[2]) ?
+					cons[0] : -cons[0];
+				cons[1] = (
+					(perm[0] | perm[1]) & perm[2]
+				) ? cons[1] : -ante[1];
+
+				res = fprintf(
+					stream, "%d %d %d %d %d 0\n",
+					-ante[0], -ante[1], -ante[2],
+					cons[0], cons[1]
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
 		}
-	}
+	}		
 
 	return 0;
 }
