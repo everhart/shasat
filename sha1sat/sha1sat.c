@@ -126,19 +126,25 @@ int fwriteMsaClausesSHA1Re(
 	     crr = 0,
 	     perm[4] = { true, true, true, true };
 
+	//for each permutation of three unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
+		//modify perm[] to represent the next permutation
 		for (int j = 3; j >= 0 && crr > 0; j--) {
 			tmp = perm[j] + crr;
 			crr = tmp >> 1;
 			perm[j] = tmp & 1;
 		}
 	
+		//for each bit
 		for (int j = 0; j < 32; j++) {
 			ante[0] = (inp[0] + j) * (perm[0] ? 1 : -1);
 			ante[1] = (inp[1] + j) * (perm[1] ? 1 : -1);
 			ante[2] = (inp[2] + j) * (perm[2] ? 1 : -1);
 			ante[3] = (inp[3] + j) * (perm[3] ? 1 : -1);
 
+			//w[i] = 					
+			//(w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]) 
+			//lro 1
 			cons = (i == 31) ? oup : oup + j;
 			cons = (perm[0] ^ perm[1] ^ perm[2] ^ perm[3]) ?
 				cons : -cons; 
