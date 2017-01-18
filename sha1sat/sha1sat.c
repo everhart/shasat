@@ -113,7 +113,7 @@ int fwriteMsaClausesSHA1(
 	return 0;
 }
 
-int fwriteFClausesSHA1Re(
+int fwriteFClausesSHA1(
 	FILE *			stream,
 	const uint32_t		inp[],
 	const uint32_t		oup,
@@ -231,68 +231,6 @@ int fwriteWvrClausesSHA1(
 		}
 	}	
 	
-	return 0;
-}
-
-int fwriteFClausesSHA1(
-	FILE * 			stream,
-	const uint32_t		wvr[],
-	uint32_t		idx
-) {
-	int res = 0;
-	int clause[4] = { 0, 0, 0, 0 };
-
-	//for each bit
-	for (int i = 0; i < 32; i++) {
-		clause[0] = wvr[1] + i;	//b
-		clause[1] = wvr[2] + i;	//c
-		clause[2] = wvr[3] + i;	//d
-
-		//permutation loop for three unique variables 
-		for (int j = 0; j < 8; j++) {
-			//determine the current permutation based on each
-			//respective modulus evaluation
-			clause[0] = -clause[0];
-			clause[1] = (j % 2 == 0) ? 
-				clause[1] : -clause[1];
-			clause[2] = (j % 3 == 0) ? 
-				clause[2] : -clause[2];
-			
-			//f = (b and c) or ((not b) and d)
-			if (idx > 0 && idx < 20) {
-				clause[3] = (
-					((clause[0] > 0) && (clause[1] > 0)) ||
-					((clause[0] < 0) && (clause[2] > 0))
-				) ? wvr[5] + i : -(wvr[5] + i); 
-			}
-			//f = (b and c) or (b and d) or (c and d) 
-			else if (idx > 40 && idx < 60) {
-				clause[3] = (
-					((clause[0] > 0) && (clause[1] > 0)) ||
-					((clause[0] > 0) && (clause[2] > 0)) ||
-					((clause[1] > 0) && (clause[3] > 0))
-				) ? wvr[5] + i : -(wvr[5] + i);
-			}
-			//f = (b xor c xor d)
-			else {
-				clause[3] = (
-					(clause[0] > 0) ^
-					(clause[1] > 0) ^
-					(clause[2] > 0) 
-				) ? wvr[5] + i : -(wvr[5] + i);
-			}
-
-			res = fprintf(
-				stream, "%d %d %d %d 0\n",
-				clause[0], clause[1], clause[2],
-				clause[3]
-			);
-			if (res < 0) {
-				return -1;
-			}
-		}
-	}
-
 	return 0;
 }
 
