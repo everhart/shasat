@@ -127,9 +127,10 @@ int fwriteFClausesSHA1Re(
 	     crr = 0,
 	     perm[3] = { true, true, true };
 
+	//for each permutation of three unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
 		crr = 1;
-		//determine what permutation ante must represent
+		//modify perm[] to represent the next permutation
 		for (int j = 2; j >= 0 && crr > 0; j--) {
 			tmp = perm[j] + crr;
 			crr = tmp >> 1;
@@ -142,20 +143,26 @@ int fwriteFClausesSHA1Re(
 			ante[1] = (ante[1] + j) * (perm[1] ? 1 : -1);
 			ante[2] = (ante[2] + j) * (perm[2] ? 1 : -1);
 
+			//if 0 ≤ i ≤ 19 then
 			if (idx > 0 && idx < 20) {
+				//f = (b and c) or ((not b) and d)
 				cons = (
 					(perm[0] & perm[1]) |
 					(!perm[0] & perm[2])
 				) ? cons : -cons;
 			}
+			//else if 40 ≤ i ≤ 59
 			else if (idx > 39 && idx < 60) {
+				//f = (b and c) or (b and d) or (c and d)
 				cons = (
 					(perm[0] & perm[1]) |
 					(perm[0] & perm[2]) |
 					(perm[1] & perm[2])
 				) ? cons : -cons;
 			}
+			//else
 			else {
+				//f = b xor c xor d
 				cons = (perm[0] ^ perm[1] ^ perm[2]) ?
 					cons : -cons;
 			}
