@@ -87,6 +87,9 @@ int fwriteMsaClausesSHA1(
 			ante[3] = (atoms[3] + i) * 
 				  (perm[j][3] ? 1 : -1);
 
+			//simple way to account for w[i] = w[i] lro 1
+			cons = (i == 31) ? atoms[4] : atoms[4] + i; 
+
 			//cons is signed with the result of the operation
 			//w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]
 			cons = (
