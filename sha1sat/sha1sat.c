@@ -50,8 +50,7 @@ uint32_t indexMessageBitSHA1(
 
 int fwriteMsaClausesSHA1(
 	FILE *			stream,
-	const uint32_t		atoms[],
-	uint32_t		idx
+	const uint32_t		atoms[]
 ) {
 	int res = 0;
 
@@ -79,17 +78,14 @@ int fwriteMsaClausesSHA1(
 		for (int j = 0; j < (1 << 4); j++) {
 			//if permutation[j][idx] is true, then the atom 
 			//in the antecedent is signed with NOT
-			ante[0] = (atoms[idx-3] + i) *
+			ante[0] = (atoms[0] + i) *
 				  (perm[j][0] ? 1 : -1);
-			ante[1] = (atoms[idx-3] + i) * 
+			ante[1] = (atoms[1] + i) * 
 				  (perm[j][1] ? 1 : -1);
-			ante[2] = (atoms[idx-3] + i) * 
+			ante[2] = (atoms[2] + i) * 
 				  (perm[j][2] ? 1 : -1);
-			ante[3] = (atoms[idx-3] + i) * 
+			ante[3] = (atoms[3] + i) * 
 				  (perm[j][3] ? 1 : -1);
-
-			//simple way to account for w[i] = w[i] lro 1
-			cons = (i == 31) ? atoms[idx] : atoms[idx] + i;
 
 			//cons is signed with the result of the operation
 			//w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]
@@ -116,7 +112,7 @@ int fwriteMsaClausesSHA1(
 
 int fwriteFClausesSHA1Re(
 	FILE *			stream,
-	const uint32_t		wvr[],
+	const uint32_t		atoms[],
 	uint32_t		idx
 ) {
 	return 0;
