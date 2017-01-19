@@ -275,6 +275,83 @@ int fwriteWvrClausesSHA1(
 	return 0;
 }
 
+int fwriteHshClausesSHA1(
+	FILE *		stream,
+	const uint32_t	inp[],
+	const uint32_t	oup[]
+) {
+	int res = 0,
+	    ante[3] = { 0 },
+	    cons[2] = { 0 };
+
+	uint32_t p = 0,
+		 q = 0;
+
+	bool tmp = 0,
+	     crr = 0,
+	     perm[3] = { 0 };
+
+	for (int i = 0; i < (1 << 3); i++) {
+		crr = 1;
+		for (int j = 2; j >= 0 && crr > 0; j--) {
+			tmp = perm[j] + crr;
+			crr = tmp >> 1;
+			perm[j] = tmp & 1;
+		}
+
+		for (int j = 0; j < 5; j++) {
+			p = inp[2 * j];
+			q = inp[2 * j + 1];
+
+			if (i < (1 << 2)) {
+				ante[0] = p * (perm[1] ? 1 : -1);
+				ante[1] = q * (perm[2] ? 1 : -1);
+
+				cons[0] = (perm[1] ^ perm[2]) ? 
+					oup[j * 2] : -oup[j * 2];
+				cons[1] = (perm[1] && perm[2]) ?
+					oup[j * 2 + 1] : -oup[j * 2 + 1];
+
+				res = fprintf(
+					stream, 
+					"%1$d %2$d %3$d 0\n"
+					"%1$d %2$d %4$d 0\n",
+					-ante[0], -ante[1], 
+					cons[0], cons[1]	
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
+
+			for (int k = 1; k < 32; k++) {
+				ante[0] = (p + k) * (perm[0] ? 1 : -1);
+				ante[1] = (q + k) * (perm[1] ? 1 : -1);
+				ante[2] = oup[(j - 1) * 2 + 1] + k;
+
+				cons[0] = (perm[0] ^ perm[1] ^ perm[2]) ?
+					oup[j * 2] : -oup[j * 2];
+				cons[1] = (
+					(perm[0] | perm[1]) & perm[2]
+				) ? oup[j * 2 + 1] : -oup[j * 2 + 1];
+
+				res = fprintf(
+					stream, 
+					"%1$d %2$d %3$d %4$d 0\n"
+					"%1$d %2$d %3$d %5$d 0\n",
+					-ante[0], -ante[1], -ante[2],
+					cons[0], cons[1]
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
 int preprocessSHA1(
 	FILE *		stream,
 	size_t		msize
