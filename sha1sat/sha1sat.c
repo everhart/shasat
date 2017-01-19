@@ -80,7 +80,7 @@ int fwriteMsaClausesSHA1(
 			//w[i] = 					
 			//(w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]) 
 			//lro 1
-			cons = (i == 31) ? oup : oup + j;
+			cons = (j == 31) ? oup : oup + j + 1;
 			cons = (perm[0] ^ perm[1] ^ perm[2] ^ perm[3]) ?
 				cons : -cons; 
 
