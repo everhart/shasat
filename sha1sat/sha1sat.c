@@ -54,12 +54,12 @@ int fwriteMsaClausesSHA1(
 	uint32_t	oup
 ) {
 	int res = 0,
-	    ante[4] = { 0, 0, 0, 0},
+	    ante[4] = { 0 },
 	    cons = 0;
 
 	bool tmp = 0,
 	     crr = 0,
-	     perm[4] = { true, true, true, true };
+	     perm[4] = { 0 };
 
 	//for each permutation of three unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
@@ -106,12 +106,12 @@ int fwriteFClausesSHA1(
 	uint32_t		idx
 ) {
 	int res = 0, 
-	    ante[3] = { 0, 0, 0 },
+	    ante[3] = { 0 },
 	    cons = 0;
 
 	bool tmp = 0, 
 	     crr = 0,
-	     perm[3] = { true, true, true };
+	     perm[3] = { 0 };
 
 	//for each permutation of four unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
@@ -175,15 +175,15 @@ int fwriteTempClausesSHA1(
 	const uint32_t	oup[]
 ) {
 	int res = 0,
-	    ante[3] = { 0, 0, 0 },
-	    cons[2] = { 0, 0 };
+	    ante[3] = { 0 },
+	    cons[2] = { 0 };
 
 	uint32_t p = 0,
 		 q = 0;
 
 	bool tmp = 0,
 	     crr = 0,
-	     perm[3] = { 1, 1, 1 };
+	     perm[3] = { 0 };
 
 	for (int i = 0; i < (1 << 3); i++) {
 		crr = 1;
