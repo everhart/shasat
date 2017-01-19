@@ -250,43 +250,25 @@ int fwriteWvrClausesSHA1(
 	    ante = 0,
 	    cons = 0;
 
-	bool tmp = 0,
-	     crr = 0,
-	     perm = 0;
-
-	for (int i = 0; i < 2; i++) {
-		crr = 1;
-		
-		tmp = perm + crr;
-		crr = tmp >> 1;
-		perm = tmp & 1;
-
-		for (int j = 0; j < 5; j++) {
-			for (int k = 0; k < 32; k++) {
-				ante = (inp[j] + k) * (perm ? 1 : -1);
-
-				//if the current operation is 
-				//c = b lro 30  
-				if (j == 2) {
-					//simple way to account for 
-					//c = b lro 30  
-					cons = oup[j] + 
-					       ((k >= 2) ? (k - 2) : k);
-				}
-				//otherwise, it's a generic assignment
-				else {
-					cons = oup[j] + k;
-				}
-				cons = (perm) ? cons : -cons;
-
-				res = fprintf(
-					stream, "%d %d 0\n", -ante, cons
-				);
-				if (res < 0) {
-					return -1;
-				}
-
+	for (int j = 0; j < 5; j++) {
+		for (int k = 0; k < 32; k++) { 
+			if (j == 2) {
+				cons = (k >= 2) ? 
+					oup[j] + (k - 2) : oup[j] + k;
 			}
+			else {
+				cons = oup[j] + k;
+			}
+			
+			res = fprintf(
+				stream, "%d %d 0\n %d %d 0\n", 
+				-ante, cons,
+				ante, -cons
+			);
+			if (res < 0) {
+				return -1;
+			}
+
 		}
 	}
 
