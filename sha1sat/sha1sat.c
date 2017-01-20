@@ -399,6 +399,28 @@ int sha1sat(
 				return -1;
 			}
 		}
+
+		for (int j = 16; j < 80; j++) {
+			uint32_t inp[4] = {
+				indexMsaBitSHA1(i, j - 3, 0),
+				indexMsaBitSHA1(i, j - 8, 0),
+				indexMsaBitSHA1(i, j - 14, 0),
+				indexMsaBitSHA1(i, j - 16, 0)
+			};
+
+			uint32_t oup = indexMsaBitSHA1(i, j, 0);
+
+			res = fwriteMsaClausesSHA1(
+				stream, inp, oup
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+
+		for (int j = 0; j < 80; j++) {
+				
+		}
 	}
 
 	return 0;	
