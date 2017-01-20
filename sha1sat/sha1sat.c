@@ -48,6 +48,32 @@ uint32_t indexMessageBitSHA1(
 	return 0;
 }
 
+int fwriteMsgClausesSHA1(
+	FILE *		stream,
+	const uint32_t	inp,
+	uint32_t	oup
+) {
+	int res = 0,
+	    ante = 0,
+	    cons = 0;
+
+	for (int i = 0; i < 32; i++) {
+		ante = inp + i;
+		cons = oup + i;
+
+		res = fprintf(
+			stream, "%d %d 0\n %d %d 0\n",
+			-ante, cons,
+			ante, -cons
+		);
+		if (res < 0) {
+			return res;
+		}
+	}
+
+	return 0;
+}
+
 int fwriteMsaClausesSHA1(
 	FILE *		stream,
 	const uint32_t	inp[],
@@ -406,7 +432,6 @@ int sha1sat(
 
 	//for each chunk
 	for (int i = 0; i < chcount; i++) {
-		
 	}
 
 	return 0;	
