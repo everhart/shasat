@@ -446,6 +446,33 @@ int sha1sat(
 					return -1;
 				}
 			}
+			
+			//
+			{
+				uint32_t inp[5] = {
+					indexWvrBitSHA1(0, i, j, 0),
+					indexWvrBitSHA1(5, i, j, 0),
+					indexWvrBitSHA1(4, i, j, 0),
+					indexRndBitSHA1(
+						msize, j / 20 - 1
+					),
+					indexMsaBitSHA1(i, j, 0)
+				};
+
+				uint32_t oup[8] = { 0 };
+				for (int k = 0; k < 8; k++) {
+					oup[k] = indexGenBitSHA1(
+						i, ++inc, 0
+					);
+				}
+
+				res = fwriteTempClausesSHA1(
+					stream, inp, oup
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
 		}
 	}
 
