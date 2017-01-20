@@ -19,6 +19,7 @@ uint32_t indexMsaBitSHA1(
 }
 
 uint32_t indexWvrBitSHA1(
+	uint32_t	kind,
 	uint32_t 	chunk,
 	uint32_t 	word,
 	uint32_t	bit
@@ -26,7 +27,7 @@ uint32_t indexWvrBitSHA1(
 	return 0;
 }
 
-uint32_t indexGnrBitSHA1(
+uint32_t indexGenBitSHA1(
 	uint32_t	chunk,
 	uint32_t	word,
 	uint32_t	bit
@@ -385,41 +386,66 @@ int sha1sat(
 	const char * 	digest
 ) {
 	int res = 0;
-	uint32_t chcount = 0;
+	uint32_t chcount = 0,
+		 inc = 0;
 
 	//for each chunk
 	for (int i = 0; i < chcount; i++) {
 		for (int j = 0; j < 16; j++) {
-			res = fwriteMsgClausesSHA1(
-				stream,
-				indexMsgBitSHA1(i, j, 0),
-				indexMsaBitSHA1(i, j, 0)
-			);
-			if (res < 0) {
-				return -1;
+			//
+			{
+				res = fwriteMsgClausesSHA1(
+					stream,
+					indexMsgBitSHA1(i, j, 0),
+					indexMsaBitSHA1(i, j, 0)
+				);
+				if (res < 0) {
+					return -1;
+				}
 			}
 		}
 
 		for (int j = 16; j < 80; j++) {
-			uint32_t inp[4] = {
-				indexMsaBitSHA1(i, j - 3, 0),
-				indexMsaBitSHA1(i, j - 8, 0),
-				indexMsaBitSHA1(i, j - 14, 0),
-				indexMsaBitSHA1(i, j - 16, 0)
-			};
+			//
+			{
+				uint32_t inp[4] = {
+					indexMsaBitSHA1(i, j - 3, 0),
+					indexMsaBitSHA1(i, j - 8, 0),
+					indexMsaBitSHA1(i, j - 14, 0),
+					indexMsaBitSHA1(i, j - 16, 0)
+				};
 
-			uint32_t oup = indexMsaBitSHA1(i, j, 0);
+				uint32_t oup = 
+					indexMsaBitSHA1(i, j, 0);
 
-			res = fwriteMsaClausesSHA1(
-				stream, inp, oup
-			);
-			if (res < 0) {
-				return -1;
+				res = fwriteMsaClausesSHA1(
+					stream, inp, oup
+				);
+				if (res < 0) {
+					return -1;
+				}
 			}
 		}
 
 		for (int j = 0; j < 80; j++) {
-				
+			//
+			{
+				uint32_t inp[3] = {
+					indexWvrBitSHA1(1, i, j, 0),
+					indexWvrBitSHA1(2, i, j, 0),
+					indexWvrBitSHA1(3, i, j, 0)
+				};
+
+				uint32_t oup = 
+					indexWvrBitSHA1(5, i, j, 0);
+
+				res = fwriteFClausesSHA1(
+					stream, inp, oup, j
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
 		}
 	}
 
