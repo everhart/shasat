@@ -391,6 +391,7 @@ int sha1sat(
 
 	//for each chunk
 	for (int i = 0; i < chcount; i++) {
+		inc = 0;
 		for (int j = 0; j < 16; j++) {
 			//
 			{
@@ -467,6 +468,32 @@ int sha1sat(
 				}
 
 				res = fwriteTempClausesSHA1(
+					stream, inp, oup
+				);
+				if (res < 0) {
+					return -1;
+				}
+			}
+
+			//
+			{
+				uint32_t inp[5] = {
+					indexWvrBitSHA1(3, i, j, 0),
+					indexWvrBitSHA1(2, i, j, 0),
+					indexWvrBitSHA1(1, i, j, 0),
+					indexWvrBitSHA1(0, i, j, 0),
+					indexGenBitSHA1(i, inc - 2, 0)
+				};
+
+				uint32_t oup[5] = {
+					indexWvrBitSHA1(4, i, j + 1, 0),
+					indexWvrBitSHA1(3, i, j + 1, 0),
+					indexWvrBitSHA1(2, i, j + 1, 0),
+					indexWvrBitSHA1(1, i, j + 1, 0),
+					indexWvrBitSHA1(0, i, j + 1, 0),
+				};
+
+				res = fwriteWvrClausesSHA1(
 					stream, inp, oup
 				);
 				if (res < 0) {
