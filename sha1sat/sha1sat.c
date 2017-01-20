@@ -404,27 +404,9 @@ int sha1sat(
 	int res = 0;
 	uint32_t chcount = 0;
 
-	uint32_t msa[80];
-	uint32_t wvr[5] = { 0, 0, 0, 0, 0 };
-
 	//for each chunk
 	for (int i = 0; i < chcount; i++) {
-		//word extension
-		for (int j = 16; j < 80; j++) {
-			if (res < 0) { 
-				return res; 
-			}
-		}
-
-		//compression function
-		for (int j = 0; j < 80; j++) {
-			if (j > 0 && j < 20) {
-			}
-			else if (j > 40 && j < 60) {
-			}
-			else {
-			}
-		}
+		
 	}
 
 	return 0;	
