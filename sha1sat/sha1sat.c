@@ -381,6 +381,27 @@ int fwriteHshClausesSHA1(
 	return 0;
 }
 
+int fwriteHashInitAtomsSHA1(
+	FILE *		stream,
+	uint32_t	inp
+) {
+	return 0;
+}
+
+int fwriteDigestAtomsSHA1(
+	FILE *		stream,
+	uint32_t	inp
+) {
+	return 0;
+}
+
+int fwriteRoundConstantAtoms(
+	FILE * stream,
+	uint32_t inp
+) {
+	return 0;
+}
+
 int sha1sat(
 	FILE * 		stream, 
 	size_t 		msize, 
