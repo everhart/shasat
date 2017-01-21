@@ -3,6 +3,7 @@
 int w[80]; 
 
 uint32_t indexHshBitSHA1(
+	uint32_t	kind,
 	uint32_t 	chunk,
 	uint32_t	word,
 	uint32_t 	bit
@@ -388,120 +389,6 @@ int sha1sat(
 	int res = 0;
 	uint32_t chcount = 0,
 		 inc = 0;
-
-	//for each chunk
-	for (int i = 0; i < chcount; i++) {
-		inc = 0;
-		for (int j = 0; j < 16; j++) {
-			//
-			{
-				res = fwriteMsgClausesSHA1(
-					stream,
-					indexMsgBitSHA1(i, j, 0),
-					indexMsaBitSHA1(i, j, 0)
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-		}
-
-		for (int j = 16; j < 80; j++) {
-			//
-			{
-				uint32_t inp[4] = {
-					indexMsaBitSHA1(i, j - 3, 0),
-					indexMsaBitSHA1(i, j - 8, 0),
-					indexMsaBitSHA1(i, j - 14, 0),
-					indexMsaBitSHA1(i, j - 16, 0)
-				};
-
-				uint32_t oup = 
-					indexMsaBitSHA1(i, j, 0);
-
-				res = fwriteMsaClausesSHA1(
-					stream, inp, oup
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-		}
-
-		for (int j = 0; j < 80; j++) {
-			//
-			{
-				uint32_t inp[3] = {
-					indexWvrBitSHA1(1, i, j, 0),
-					indexWvrBitSHA1(2, i, j, 0),
-					indexWvrBitSHA1(3, i, j, 0)
-				};
-
-				uint32_t oup = 
-					indexWvrBitSHA1(5, i, j, 0);
-
-				res = fwriteFClausesSHA1(
-					stream, inp, oup, j
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-			
-			//
-			{
-				uint32_t inp[5] = {
-					indexWvrBitSHA1(0, i, j, 0),
-					indexWvrBitSHA1(5, i, j, 0),
-					indexWvrBitSHA1(4, i, j, 0),
-					indexRndBitSHA1(
-						msize, j / 20 - 1
-					),
-					indexMsaBitSHA1(i, j, 0)
-				};
-
-				uint32_t oup[8] = { 0 };
-				for (int k = 0; k < 8; k++) {
-					oup[k] = indexGenBitSHA1(
-						i, ++inc, 0
-					);
-				}
-
-				res = fwriteTempClausesSHA1(
-					stream, inp, oup
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-
-			//
-			{
-				uint32_t inp[5] = {
-					indexWvrBitSHA1(3, i, j, 0),
-					indexWvrBitSHA1(2, i, j, 0),
-					indexWvrBitSHA1(1, i, j, 0),
-					indexWvrBitSHA1(0, i, j, 0),
-					indexGenBitSHA1(i, inc - 2, 0)
-				};
-
-				uint32_t oup[5] = {
-					indexWvrBitSHA1(4, i, j + 1, 0),
-					indexWvrBitSHA1(3, i, j + 1, 0),
-					indexWvrBitSHA1(2, i, j + 1, 0),
-					indexWvrBitSHA1(1, i, j + 1, 0),
-					indexWvrBitSHA1(0, i, j + 1, 0),
-				};
-
-				res = fwriteWvrClausesSHA1(
-					stream, inp, oup
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-		}
-	}
 
 	return 0;	
 }
