@@ -410,7 +410,7 @@ int fwriteHashInitAtomsSHA1(
 		}
 	}
 
-	return 0;
+	return oup;
 }
 
 int fwriteDigestAtomsSHA1(
@@ -435,10 +435,10 @@ int fwriteDigestAtomsSHA1(
 		}
 	}
 
-	return 0;
+	return oup;
 }
 
-int fwriteRoundConstantAtoms(
+int fwriteRoundConstantAtomsSHA1(
 	FILE * 		stream,
 	uint32_t 	oup
 ) {
@@ -466,7 +466,49 @@ int fwriteRoundConstantAtoms(
 		}
 	}
 
-	return 0;
+	return oup;
+}
+
+int preprocessSHA1(
+	FILE *		stream,
+	size_t		msize
+) {
+	int res = 0,
+	    atom = 0;
+	const uint64_t osize = msize;
+
+	msize++;
+	res = fprintf(
+		stream, "%zd 0\n", msize
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	//append '0' to the message until message length % 512 is 448
+	while (msize % 512 != 448) {
+		msize++;
+		res = fprintf(
+			stream, "%zd 0\n", -msize
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	//append original message length to the message as a 64 bit
+	//big-endian integer
+	for (int i = 63; i >= 0; i--) {
+		atom = msize * 
+		       ((osize >> i & 1) ? 1 : -1);
+
+		res = fprintf(stream, "%d 0\n", atom);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return msize;
 }
 
 int sha1sat(
