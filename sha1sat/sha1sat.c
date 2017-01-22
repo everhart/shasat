@@ -383,22 +383,89 @@ int fwriteHshClausesSHA1(
 
 int fwriteHashInitAtomsSHA1(
 	FILE *		stream,
-	uint32_t	inp
+	uint32_t	oup
 ) {
+	int res = 0,
+	    atom = 0;
+
+	uint32_t inp[5] = {
+		0x67452301,
+		0xEFCDAB89,
+		0x98BADCFE,
+		0x10325476,
+		0xC3D2E1F0
+	};
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 32; j++) {
+			atom = ++oup * 
+			       ((inp[i] >> j) & 1) ? 1 : -1;
+
+			res = fprintf(
+				stream, "%d 0\n", atom
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
 	return 0;
 }
 
 int fwriteDigestAtomsSHA1(
 	FILE *		stream,
-	uint32_t	inp
+	const char	inp[],
+	uint32_t	oup
 ) {
+	int res = 0,
+	    atom = 0;
+
+	for (int i = 0; i < 160 / sizeof(char); i++) {
+		for (int j = 0; j < sizeof(char); j++) {
+			atom = ++oup *
+			       ((inp[i] >> j) & 1) ? 1 : -1;
+
+			res = fprintf(
+				stream, "%d 0\n", atom
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
 	return 0;
 }
 
 int fwriteRoundConstantAtoms(
-	FILE * stream,
-	uint32_t inp
+	FILE * 		stream,
+	uint32_t 	oup
 ) {
+	int res = 0,
+	    atom = 0;
+
+	uint32_t inp[4] = {
+		0x5A827999,
+		0x6ED9EBA1,
+		0x8F1BBCDC,
+		0xCA62C1D6
+	};
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 32; j++) {
+			atom = ++oup * 
+			       ((inp[i] >> j) & 1) ? 1 : -1;
+
+			res = fprintf(
+				stream, "%d 0\n", atom
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
 	return 0;
 }
 
