@@ -51,7 +51,7 @@ uint32_t indexMsgBitSHA1(
 	return 0;
 }
 
-int fwriteMsgClausesSHA1(
+int fwriteChunkClausesSHA1(
 	FILE *		stream,
 	const uint32_t	inp,
 	uint32_t	oup
@@ -77,7 +77,7 @@ int fwriteMsgClausesSHA1(
 	return 0;
 }
 
-int fwriteMsaClausesSHA1(
+int fwriteMessageScheduleClausesSHA1(
 	FILE *		stream,
 	const uint32_t	inp[],
 	uint32_t	oup
@@ -270,7 +270,7 @@ int fwriteTempClausesSHA1(
 	return 0;
 }
 
-int fwriteWvrClausesSHA1(
+int fwriteWorkingVarClausesSHA1(
 	FILE *		stream,
 	const uint32_t	inp[],
 	const uint32_t	oup[]
@@ -304,7 +304,7 @@ int fwriteWvrClausesSHA1(
 	return 0;
 }
 
-int fwriteHshClausesSHA1(
+int fwriteHashClausesSHA1(
 	FILE *		stream,
 	const uint32_t	inp[],
 	const uint32_t	oup[]
@@ -477,6 +477,7 @@ int preprocessSHA1(
 	    atom = 0;
 	const uint64_t osize = msize;
 
+	//append the bit '1' to the message
 	msize++;
 	res = fprintf(
 		stream, "%zd 0\n", msize
@@ -516,9 +517,5 @@ int sha1sat(
 	size_t 		msize, 
 	const char * 	digest
 ) {
-	int res = 0;
-	uint32_t chcount = 0,
-		 inc = 0;
-
-	return 0;	
+	return 0;
 }
