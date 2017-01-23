@@ -71,7 +71,7 @@ int preprocessSHA(
 		return -1;
 	}
 
-	//append '0' to the message until message length % wsize is
+	//append '0' to the message until message length % csize is
 	//csize - 64
 	while (msize % csize != csize - 64) {
 		msize++;
