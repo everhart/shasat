@@ -1,56 +1,5 @@
 #include "sha1sat.h"
 
-int w[80]; 
-
-uint32_t indexHshBitSHA1(
-	uint32_t	kind,
-	uint32_t 	chunk,
-	uint32_t	word,
-	uint32_t 	bit
-) {
-	return 0;
-}
-
-uint32_t indexMsaBitSHA1(
-	uint32_t	chunk,
-	uint32_t	word,
-	uint32_t	bit
-) {
-	return 0;
-}
-
-uint32_t indexWvrBitSHA1(
-	uint32_t	kind,
-	uint32_t 	chunk,
-	uint32_t 	word,
-	uint32_t	bit
-) {
-	return 0;
-}
-
-uint32_t indexGenBitSHA1(
-	uint32_t	chunk,
-	uint32_t	word,
-	uint32_t	bit
-) {
-	return 0;
-}
-
-uint32_t indexRndBitSHA1(
-	size_t 		msize,
-	uint32_t	bit
-) {
-	return 0;
-}
-
-uint32_t indexMsgBitSHA1(
-	uint32_t	chunk,
-	uint32_t 	word,
-	uint32_t	bit
-) {
-	return 0;
-}
-
 int fwriteChunkClausesSHA1(
 	FILE *		stream,
 	const uint32_t	inp,
