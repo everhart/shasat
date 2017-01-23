@@ -12,4 +12,11 @@ int fwriteAtoms32(
 	uint64_t	leng
 );
 
+int fwriteAtoms64(
+	FILE *		stream,
+	const uint64_t	inp[],
+	const uint64_t 	oup[],
+	uint64_t	leng
+);
+
 #endif
