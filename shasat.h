@@ -19,4 +19,11 @@ int fwriteAtoms64(
 	uint64_t	leng
 );
 
+int preprocessSHA(
+	FILE *		stream,
+	size_t		msize,
+	size_t		csize,
+	size_t		wsize
+);
+
 #endif
