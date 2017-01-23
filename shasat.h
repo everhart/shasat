@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-int fwriteAtoms(
+int fwriteAtoms32(
 	FILE *		stream,
 	const uint32_t	inp[],
 	const uint32_t 	oup[],
-	size_t		size
+	uint64_t	leng
 );
 
 #endif
