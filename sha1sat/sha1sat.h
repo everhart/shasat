@@ -32,6 +32,12 @@ int fwriteChunkClausesSHA1(
 	uint32_t 	idx
 );
 
+int fwriteMessageScheduleClausesSHA1(
+	FILE *		stream,
+	uint32_t	msa[80],
+	uint32_t 	idx
+);
+
 int sha1sat(
 	FILE *		stream, 
 	size_t 		msize, 
