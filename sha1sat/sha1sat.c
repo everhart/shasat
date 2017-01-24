@@ -154,8 +154,12 @@ int fwriteFClausesSHA1(
 
 int fwriteTempClausesSHA1(
 	FILE *		stream,
-	const uint32_t	inp[],
-	const uint32_t	oup[]
+	WVSHA1		wv,
+	uint32_t	f,
+	uint32_t	k,
+	uint32_t	w[80],
+	uint32_t	temp,
+	uint32_t	inc
 ) {
 	int res = 0,
 	    ante[3] = { 0 },
@@ -182,10 +186,17 @@ int fwriteTempClausesSHA1(
 				ante[0] = p * (perm[1] ? 1 : -1);
 				ante[1] = q * (perm[2] ? 1 : -1);
 
-				cons[0] = (perm[1] ^ perm[2]) ? 
-					oup[j * 2] : -oup[j * 2];
+				if (j < 3) {
+					cons[0] = (perm[1] ^ perm[2]) ?
+						++inc : -(++inc);
+				} 
+				else {
+					cons[0] = (perm[1] ^ perm[2]) ? 
+						temp : -temp;
+				}
+
 				cons[1] = (perm[1] && perm[2]) ?
-					oup[j * 2 + 1] : -oup[j * 2 + 1];
+					++inc : -(++inc);
 
 				res = fprintf(
 					stream, "%d %d %d %d 0\n",
@@ -201,13 +212,26 @@ int fwriteTempClausesSHA1(
 			for (int k = 1; k < 32; k++) {
 				ante[0] = (p + k) * (perm[0] ? 1 : -1);
 				ante[1] = (q + k) * (perm[1] ? 1 : -1);
-				ante[2] = oup[(j - 1) * 2 + 1] + k;
+				ante[2] = (++inc) + k;
 
-				cons[0] = (perm[0] ^ perm[1] ^ perm[2]) ?
-					oup[j * 2] : -oup[j * 2];
+				if (j < 3) {
+					cons[0] = (
+						perm[0] ^ 
+						perm[1] ^ 
+						perm[2]
+					) ? ++inc : -(++inc);
+				}
+				else {
+					cons[0] = (
+						perm[0] ^
+						perm[1] ^
+						perm[2]
+					) ? temp + k : -(temp + k);
+				}
+
 				cons[1] = (
 					(perm[0] | perm[1]) & perm[2]
-				) ? oup[j * 2 + 1] : -oup[j * 2 + 1];
+				) ? ++inc : -(++inc);
 
 				res = fprintf(
 					stream, "%d %d %d %d %d 0\n",
@@ -221,7 +245,7 @@ int fwriteTempClausesSHA1(
 		}
 	}		
 
-	return 0;
+	return inc;
 }
 
 int fwriteWorkingVarClausesSHA1(
