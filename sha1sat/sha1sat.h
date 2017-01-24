@@ -50,7 +50,8 @@ int fwriteTempClausesSHA1(
 	WVSHA1		wv,
 	uint32_t	f,
 	uint32_t	k,
-	uint32_t	w[80]
+	uint32_t	w[80],
+	uint32_t	temp
 );
 
 int sha1sat(
