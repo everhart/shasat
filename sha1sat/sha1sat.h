@@ -40,7 +40,8 @@ int fwriteMessageScheduleClausesSHA1(
 
 int fwriteFClausesSHA1(
 	FILE *		stream,
-	WVSHA1		wvr,
+	WVSHA1		wv,
+	uint32_t	f,
 	uint32_t	idx
 );
 
