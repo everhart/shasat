@@ -38,6 +38,12 @@ int fwriteMessageScheduleClausesSHA1(
 	uint32_t 	idx
 );
 
+int fwriteFClausesSHA1(
+	FILE *		stream,
+	WVSHA1		wvr,
+	uint32_t	idx
+);
+
 int sha1sat(
 	FILE *		stream, 
 	size_t 		msize, 
