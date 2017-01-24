@@ -28,13 +28,13 @@ typedef struct WVSHA1 {
 int fwriteChunkClausesSHA1(
 	FILE *		stream,
 	uint32_t	word,
-	uint32_t	msa[80],
+	uint32_t	w[80],
 	uint32_t 	idx
 );
 
 int fwriteMessageScheduleClausesSHA1(
 	FILE *		stream,
-	uint32_t	msa[80],
+	uint32_t	w[80],
 	uint32_t 	idx
 );
 
@@ -43,6 +43,14 @@ int fwriteFClausesSHA1(
 	WVSHA1		wv,
 	uint32_t	f,
 	uint32_t	idx
+);
+
+int fwriteTempClausesSHA1(
+	FILE *		stream,
+	WVSHA1		wv,
+	uint32_t	f,
+	uint32_t	k,
+	uint32_t	w[80]
 );
 
 int sha1sat(
