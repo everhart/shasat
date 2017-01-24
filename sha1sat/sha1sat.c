@@ -84,8 +84,8 @@ int fwriteMessageScheduleClausesSHA1(
 
 int fwriteFClausesSHA1(
 	FILE *			stream,
-	const uint32_t		inp[],
-	const uint32_t		oup,
+	WVSHA1			wv,
+	uint32_t		f,
 	uint32_t		idx
 ) {
 	int res = 0, 
@@ -108,11 +108,11 @@ int fwriteFClausesSHA1(
 
 		//foreach bit
 		for (int j = 0; j < 32; j++) {
-			ante[0] = (inp[0] + j) * (perm[0] ? 1 : -1);
-			ante[1] = (inp[1] + j) * (perm[1] ? 1 : -1);
-			ante[2] = (inp[2] + j) * (perm[2] ? 1 : -1);
+			ante[0] = (wv.b + j) * (perm[0] ? 1 : -1);
+			ante[1] = (wv.c + j) * (perm[1] ? 1 : -1);
+			ante[2] = (wv.d + j) * (perm[2] ? 1 : -1);
 
-			cons = oup + j;
+			cons = f + j;
 
 			//if 0 ≤ i ≤ 19 then
 			if (idx > 0 && idx < 20) {
