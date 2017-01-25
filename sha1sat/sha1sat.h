@@ -46,7 +46,13 @@ int fwriteFClausesSHA1(
 int fwriteTempClausesSHA1(
 	FILE *		stream,
 	uint32_t	inp[8],
-	uint32_t 	oup[10]
+	uint32_t 	oup[8]
+);
+
+int fwriteWorkingVariableClausesSHA1(
+	FILE *		stream,
+	uint32_t	inp[5],
+	uint32_t	oup[5]
 );
 
 int sha1sat(
