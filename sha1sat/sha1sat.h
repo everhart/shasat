@@ -55,6 +55,12 @@ int fwriteWorkingVariableClausesSHA1(
 	uint32_t	oup[5]
 );
 
+int fwriteHashClausesSHA1(
+	FILE *		stream,
+	uint32_t	inp[10],
+	uint32_t	oup[10]
+);
+
 int sha1sat(
 	FILE *		stream, 
 	size_t 		msize, 
