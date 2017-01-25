@@ -96,7 +96,7 @@ int fwriteFClausesSHA1(
 	     crr = 0,
 	     perm[3] = { 0 };
 
-	//for each permutation of four unique atom states
+	//for each permutation of three unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
 		crr = 1;
 		//modify perm[] to represent the next permutation
@@ -152,100 +152,40 @@ int fwriteFClausesSHA1(
 	return 0;
 }
 
-int fwriteTempClausesSHA1(
+int fwriteTempClausesSHA1Re(
 	FILE *		stream,
 	WVSHA1		wv,
 	uint32_t	f,
 	uint32_t	k,
-	uint32_t	w[80],
+	uint32_t	w,
 	uint32_t	temp,
 	uint32_t	inc
 ) {
 	int res = 0,
-	    ante[3] = { 0 },
-	    cons[2] = { 0 };
+	    ante = { 0 },
+	    cons = { 0 };
 
-	uint32_t p = 0,
-		 q = 0;
+	uint32_t p = 0, q = 0;
 
 	bool tmp = 0,
 	     crr = 0,
 	     perm[3] = { 0 };
-
+	
+	//for each permutation of three unique atom states
 	for (int i = 0; i < (1 << 3); i++) {
 		crr = 1;
+		//modify perm[] to represent the next permutation
 		for (int j = 2; j >= 0 && crr > 0; j--) {
 			tmp = perm[j] + crr;
 			crr = tmp >> 1;
 			perm[j] = tmp & 1;
 		}
 
-		for (int j = 0; j < 4; j++) {
-			//outer add on the rhs
-			if (i < (1 << 2)) {
-				ante[0] = p * (perm[1] ? 1 : -1);
-				ante[1] = q * (perm[2] ? 1 : -1);
+		//for each '+' operator in the expression
+		//temp = f + e + k + w[i] + (a lro 5)
+	}
 
-				if (j < 3) {
-					cons[0] = (perm[1] ^ perm[2]) ?
-						++inc : -(++inc);
-				} 
-				else {
-					cons[0] = (perm[1] ^ perm[2]) ? 
-						temp : -temp;
-				}
-
-				cons[1] = (perm[1] && perm[2]) ?
-					++inc : -(++inc);
-
-				res = fprintf(
-					stream, "%d %d %d %d 0\n",
-					-ante[0], -ante[1],
-					cons[0], cons[1]
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-
-			//inner add
-			for (int k = 1; k < 32; k++) {
-				ante[0] = (p + k) * (perm[0] ? 1 : -1);
-				ante[1] = (q + k) * (perm[1] ? 1 : -1);
-				ante[2] = (++inc) + k;
-
-				if (j < 3) {
-					cons[0] = (
-						perm[0] ^ 
-						perm[1] ^ 
-						perm[2]
-					) ? ++inc : -(++inc);
-				}
-				else {
-					cons[0] = (
-						perm[0] ^
-						perm[1] ^
-						perm[2]
-					) ? temp + k : -(temp + k);
-				}
-
-				cons[1] = (
-					(perm[0] | perm[1]) & perm[2]
-				) ? ++inc : -(++inc);
-
-				res = fprintf(
-					stream, "%d %d %d %d %d 0\n",
-					-ante[0], -ante[1], -ante[2],
-					cons[0], cons[1]
-				);
-				if (res < 0) {
-					return -1;
-				}
-			}
-		}
-	}		
-
-	return inc;
+	return 0;
 }
 
 int fwriteWorkingVarClausesSHA1(
