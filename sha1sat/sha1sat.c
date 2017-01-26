@@ -2,17 +2,16 @@
 
 int fwriteChunkClausesSHA1(
 	FILE *		stream,
-	uint32_t	word,
-	uint32_t	msa[80],
-	uint32_t	idx
+	uint32_t	inp,
+	uint32_t	oup
 ) {
 	int res = 0,
 	    ante = 0,
 	    cons = 0;
 
 	for (int i = 0; i < 32; i++) {
-		ante = word + i;
-		cons = msa[idx] + i;
+		ante = inp + i;
+		cons = oup + i;
 
 		res = fprintf(
 			stream, "%d %d 0\n %d %d 0\n",
