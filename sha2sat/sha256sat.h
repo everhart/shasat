@@ -45,5 +45,8 @@ uint32_t indexTemp1BitSha256(
 uint32_t indexTemp2BitSha256(
 	uint32_t chunk, uint32_t word, uint32_t bit
 );
+uint32_t indexGenericBitSHA256(
+	uint32_t chunk, uint32_t word, uint32_t bit
+);
 
 #endif
