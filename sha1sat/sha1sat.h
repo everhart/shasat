@@ -44,34 +44,38 @@ uint32_t indexTempBitSha1(
 	uint32_t chunk, uint32_t word, uint32_t bit
 );
 
-int fwriteMessageScheduleClausesSHA1(
+int fwriteMessageScheduleClausesSha1(
 	FILE *		stream,
-	uint32_t	w[80],
+	uint32_t	ms[80],
 	uint32_t	idx
 );
 
-int fwriteFClausesSHA1(
+int fwriteFClausesSha1(
 	FILE *		stream,
-	uint32_t	wv[5],
+	WvSha1		wv,
 	uint32_t	idx
 );
 
-int fwriteTempClausesSHA1(
+int fwriteTempClausesSha1(
 	FILE *		stream,
-	uint32_t	wv[5],
-	uint32_t 
+	WvSha1		wv,
+	uint32_t 	f,
+	uint32_t 	k,
+	uint32_t	ms,
+	uint32_t 	temp,
+	uint32_t	inc
 );
 
 int fwriteWorkingVariableClausesSHA1(
 	FILE *		stream,
-	uint32_t	inp[5],
-	uint32_t	oup[5]
+	WvSha1 *	wv
 );
 
-int fwriteHashClausesSHA1(
+int fwriteHashClausesSha1(
 	FILE *		stream,
-	uint32_t	inp[10],
-	uint32_t	oup[10]
+	HhSha1 *	hh,
+	WvSha1		wv,
+	uint32_t 	inc
 );
 
 int sha1sat(
