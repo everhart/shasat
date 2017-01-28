@@ -9,32 +9,29 @@
 
 #define SHA1_ATOMS_PER_CHUNK 35136
 
-typedef struct HHSHA1 {
-	uint32_t h0,
-		 h1,
-		 h2,
-		 h3,
-		 h4;
-} HHSHA1;
-
-typedef struct WVSHA1 {
-	uint32_t a,
-		 b,
-		 c,
-		 d,
-		 e;
-} WVSHA1;
-
-int fwriteChunkClausesSHA1(
-	FILE *		stream,
-	uint32_t	msg,
-	uint32_t	w
+uint32_t indexKBitSHA1(
+	uint32_t word, uint32_t bit
+);
+uint32_t indexWBitSHA1(
+	uint32_t chunk, uint32_t word, uint32_t bit
+);
+uint32_t indexWvBitSHA1(
+	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
+);
+uint32_t indexHhBitSHA1(
+	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
+);
+uint32_t indexFBitSHA1(
+	uint32_t chunk, uint32_t word, uint32_t bit
+);
+uint32_t indexTempBitSHA1(
+	uint32_t chunk, uint32_t word, uint32_t bit
 );
 
 int fwriteMessageScheduleClausesSHA1(
 	FILE *		stream,
-	uint32_t	inp[4],
-	uint32_t	oup
+	uint32_t	w[80],
+	uint32_t	idx
 );
 
 int fwriteFClausesSHA1(
