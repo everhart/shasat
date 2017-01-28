@@ -23,24 +23,24 @@ typedef struct HhSha1 {
 		 h2, 
 		 h3,
 		 h4;
-} HHSHA1;
+} HhSha1;
 
-uint32_t indexKBitSHA1(
+uint32_t indexKBitSha1(
 	uint32_t word, uint32_t bit
 );
-uint32_t indexWBitSHA1(
+uint32_t indexWBitSha1(
 	uint32_t chunk, uint32_t word, uint32_t bit
 );
-uint32_t indexWvBitSHA1(
+uint32_t indexWvBitSha1(
 	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
 );
-uint32_t indexHhBitSHA1(
+uint32_t indexHhBitSha1(
 	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
 );
-uint32_t indexFBitSHA1(
+uint32_t indexFBitSha1(
 	uint32_t chunk, uint32_t word, uint32_t bit
 );
-uint32_t indexTempBitSHA1(
+uint32_t indexTempBitSha1(
 	uint32_t chunk, uint32_t word, uint32_t bit
 );
 
