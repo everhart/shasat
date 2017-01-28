@@ -16,10 +16,10 @@ uint32_t indexWBitSha256(
 	uint32_t chunk, uint32_t word, uint32_t bit
 );
 uint32_t indexWvBitSha256(
-	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
+	uint8_t type, uint32_t chunk, uint32_t word, uint32_t bit
 );
 uint32_t indexHhBitSha256(
-	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
+	uint8_t type, uint32_t chunk, uint32_t word, uint32_t bit
 );
 uint32_t indexEp0BitSha256(
 	uint32_t chunk, uint32_t word, uint32_t bit
