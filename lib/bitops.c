@@ -31,3 +31,11 @@ int bitPositionLsh(uint32_t wsize, uint32_t pos, uint32_t lsh) {
 
 	return pos + lsh;
 }
+
+uint32_t bitPositionRro(uint32_t wsize, uint32_t pos, uint32_t rro) {
+	if (rro > wsize) {
+		rro = wsize - rro;
+	}
+
+	return (pos > rro) ? pos - rro : wsize - rro + pos;
+}	
