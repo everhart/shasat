@@ -15,3 +15,11 @@ int bitValue64(uint64_t word, uint32_t pos) {
 
 	return (word >> pos) & 1;
 }
+
+int bitPositionRsh(uint32_t wsize, uint32_t pos, uint32_t rsh) {
+	if (pos >= wsize || pos < rsh) {
+		return -1;
+	}
+
+	return pos - rsh;
+}
