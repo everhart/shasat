@@ -23,3 +23,11 @@ int bitPositionRsh(uint32_t wsize, uint32_t pos, uint32_t rsh) {
 
 	return pos - rsh;
 }
+
+int bitPositionLsh(uint32_t wsize, uint32_t pos, uint32_t lsh) {
+	if (pos + lsh >= wsize) {
+		return -1;
+	}
+
+	return pos + lsh;
+}
