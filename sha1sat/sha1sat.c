@@ -76,6 +76,57 @@ static int fwriteMsClausesSha1(
 	return 0;
 }
 
+
+static int fwriteFClausesSha1(
+	FILE * stream, uint32_t wv[5], uint32_t f, uint32_t idx
+) {
+	int res = 0;
+	bool perm[3] = { 0 };
+
+	for (int i = 0; i < (1 << 3); i++) {
+		*perm = nextPermutation(perm, 3);
+
+		for (int i = 0; i < 32; i++) {
+			int ante[3] = {
+				signAtom(wv[1], perm[0]),
+				signAtom(wv[2], perm[1]),
+				signAtom(wv[3], perm[2])
+			};
+
+			int cons = 0;
+
+			if (idx > 0 && idx < 20) {
+				cons = signAtom(
+					f,
+					(perm[0] & perm[1]) |
+					(!perm[0] & perm[2])
+				);
+			}
+			else if (idx > 39 && idx < 60) {
+				cons = signAtom(
+					f,
+					(perm[0] & perm[1]) |
+					(perm[0] & perm[1]) |
+					(perm[1] & perm[2])
+				);
+			}
+			else {
+				cons = signAtom(
+					f,
+					(perm[0] ^ perm[1] ^ perm[2])
+				);
+			}
+
+			res = fwriteClauses(stream, ante, 3, &cons, 1);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
+	return 0;
+}
+
 int sha1sat(
 	FILE * 		stream, 
 	size_t 		msize, 
