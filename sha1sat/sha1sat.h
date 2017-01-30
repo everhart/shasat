@@ -25,25 +25,6 @@ typedef struct HhSha1 {
 		 h4;
 } HhSha1;
 
-uint32_t indexKBitSha1(
-	uint32_t word, uint32_t bit
-);
-uint32_t indexWBitSha1(
-	uint32_t chunk, uint32_t word, uint32_t bit
-);
-uint32_t indexWvBitSha1(
-	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
-);
-uint32_t indexHhBitSha1(
-	uint32_t type, uint32_t chunk, uint32_t word, uint32_t bit
-);
-uint32_t indexFBitSha1(
-	uint32_t chunk, uint32_t word, uint32_t bit
-);
-uint32_t indexTempBitSha1(
-	uint32_t chunk, uint32_t word, uint32_t bit
-);
-
 int fwriteMsClausesSha1(
 	FILE *		stream,
 	uint32_t	ms[80],
