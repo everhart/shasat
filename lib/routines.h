@@ -12,4 +12,12 @@ int bitPositionLro(size_t wsize, uint32_t pos, uint32_t lro);
 inline int signAtom(int atom, bool state);
 bool * nextPermutation(bool *arr, size_t leng);
 
+int fwriteClauses(
+	FILE *		stream,
+	int * 		ante, 
+	size_t 		aleng, 
+	int * 		cons, 
+	size_t 		cleng
+);
+
 #endif
