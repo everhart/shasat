@@ -53,12 +53,12 @@ static int fwriteMsClausesSha1(
 	for (int i = 0; i < (1 << 4); i++) {
 		*perm = nextPermutation(perm, 4);
 
-		for (int i = 0; i < 32; i++) {
+		for (int j = 0; j < 32; j++) {
 			int ante[4] = {
-				signAtom(ms[idx - 3], perm[0]),
-				signAtom(ms[idx - 8], perm[1]),
-				signAtom(ms[idx - 14], perm[2]),
-				signAtom(ms[idx - 16], perm[3])
+				signAtom(ms[idx - 3] + j, perm[0]),
+				signAtom(ms[idx - 8] + j, perm[1]),
+				signAtom(ms[idx - 14] + j, perm[2]),
+				signAtom(ms[idx - 16] + j, perm[3])
 			};
 
 			int cons = signAtom(
@@ -86,11 +86,11 @@ static int fwriteFClausesSha1(
 	for (int i = 0; i < (1 << 3); i++) {
 		*perm = nextPermutation(perm, 3);
 
-		for (int i = 0; i < 32; i++) {
+		for (int j = 0; j < 32; j++) {
 			int ante[3] = {
-				signAtom(wv[1], perm[0]),
-				signAtom(wv[2], perm[1]),
-				signAtom(wv[3], perm[2])
+				signAtom(wv[1] + j, perm[0]),
+				signAtom(wv[2] + j, perm[1]),
+				signAtom(wv[3] + j, perm[2])
 			};
 
 			bool state = 0;
@@ -108,7 +108,7 @@ static int fwriteFClausesSha1(
 				state = (perm[0] ^ perm[1] ^ perm[2]);
 			}
 
-			int cons = signAtom(f, state);
+			int cons = signAtom(f + j, state);
 
 			res = fwriteClauses(stream, ante, 3, &cons, 1);
 			if (res < 0) {
