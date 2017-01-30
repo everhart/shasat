@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-int signAtom(int atom, int state);
+inline int signAtom(int atom, int state);
 
 #endif
