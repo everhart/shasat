@@ -58,3 +58,30 @@ bool * nextPermutation(bool * arr, size_t leng) {
 
 	return arr;
 }
+
+int fwriteClauses(
+	FILE * 		stream, 
+	int * 		ante, 
+	size_t 		aleng, 
+	int * 		cons, 
+	size_t 		cleng
+) {
+	int res = 0; 
+
+	for (int i = 0; i < cleng; i++) {
+		for (int j = 0; j < aleng; j++) {
+			res = fprintf(stream, "%d ", -ante[j]);
+			if (res < 0) {
+				return -1;
+			}
+		}
+
+		res = fprintf(stream, "%d 0\n", cons[i]);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
