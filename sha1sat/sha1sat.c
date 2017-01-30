@@ -53,7 +53,7 @@ static int fwriteMsClausesSha1(
 
 	bool perm[4] = { 0 };
 
-	for (int i = 0; i < (1 << 3); i++) {
+	for (int i = 0; i < (1 << 4); i++) {
 		*perm = nextPermutation(perm, 4);
 
 		for (int i = 0; i < 32; i++) {
