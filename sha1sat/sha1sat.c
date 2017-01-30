@@ -93,29 +93,22 @@ static int fwriteFClausesSha1(
 				signAtom(wv[3], perm[2])
 			};
 
-			int cons = 0;
+			bool state = 0;
 
 			if (idx > 0 && idx < 20) {
-				cons = signAtom(
-					f,
-					(perm[0] & perm[1]) |
-					(!perm[0] & perm[2])
-				);
+				state = (perm[0] & perm[1]) |
+					(!perm[0] & perm[2]);
 			}
 			else if (idx > 39 && idx < 60) {
-				cons = signAtom(
-					f,
-					(perm[0] & perm[1]) |
-					(perm[0] & perm[1]) |
-					(perm[1] & perm[2])
-				);
+				state = (perm[0] & perm[1]) |
+					(perm[0] & perm[2]) |
+					(perm[1] & perm[2]);
 			}
 			else {
-				cons = signAtom(
-					f,
-					(perm[0] ^ perm[1] ^ perm[2])
-				);
+				state = (perm[0] ^ perm[1] ^ perm[2]);
 			}
+
+			int cons = signAtom(f, state);
 
 			res = fwriteClauses(stream, ante, 3, &cons, 1);
 			if (res < 0) {
