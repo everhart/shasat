@@ -1,4 +1,4 @@
-#ifndef ROUTINES_C
+#ifndef ROUTINES_H
 #define ROUTINES_H
 
 #include <stdio.h>
