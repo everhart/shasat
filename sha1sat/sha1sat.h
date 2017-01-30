@@ -7,8 +7,6 @@
 #include <string.h>
 #include "../shasat.h"
 
-#define SHA1_ATOMS_PER_CHUNK 35136
-
 int sha1sat(
 	FILE *		stream, 
 	size_t 		msize, 
