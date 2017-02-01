@@ -4,8 +4,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <string.h>
-#include "../shasat.h"
+#include <stdlib.h>
+
+#include "../lib/atom.h"
+#include "../lib/circuit.h"
+#include "../lib/bitops.h"
 
 int sha1sat(
 	FILE *		stream, 
