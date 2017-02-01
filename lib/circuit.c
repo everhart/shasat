@@ -52,6 +52,32 @@ int fwriteAtoms64(
 	return 0;
 }
 
+int fwriteClauses(
+	FILE * 		stream, 
+	int * 		ante, 
+	size_t 		aleng, 
+	int * 		cons, 
+	size_t 		cleng
+) {
+	int res = 0; 
+
+	for (int i = 0; i < cleng; i++) {
+		for (int j = 0; j < aleng; j++) {
+			res = fprintf(stream, "%d ", -ante[j]);
+			if (res < 0) {
+				return -1;
+			}
+		}
+
+		res = fprintf(stream, "%d 0\n", cons[i]);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
 int fwriteAssignClauses(
 	FILE *		stream,
 	size_t		wsize,

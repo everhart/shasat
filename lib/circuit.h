@@ -17,6 +17,14 @@ int fwriteAtoms64(
 	uint64_t	leng
 );
 
+int fwriteClauses(
+	FILE *		stream,
+	int * 		ante, 
+	size_t 		aleng, 
+	int * 		cons, 
+	size_t 		cleng
+);
+
 int fwriteAssignClauses(
 	FILE *		stream,
 	size_t		wsize,
