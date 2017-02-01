@@ -10,10 +10,6 @@
 #include "../lib/circuit.h"
 #include "../lib/bitops.h"
 
-int sha1sat(
-	FILE *		stream, 
-	size_t 		msize, 
-	const char * 	digest
-);
+int sha1sat(FILE * stream, size_t msize, const char * digest);
 
 #endif
