@@ -1,5 +1,7 @@
 #include "./sha1sat.h"
 
+static const uint32_t INDICES_PER_CHUNK = 0;
+
 typedef struct SHA1SAT {
 	FILE *	stream;
 	atom_t	chunk,
@@ -51,6 +53,12 @@ static int fwriteH1Clauses(SHA1SAT sha1sat);
 static int fwriteH2Clauses(SHA1SAT sha1sat);
 static int fwriteH3Clauses(SHA1SAT sha1sat);
 static int fwriteH4Clauses(SHA1SAT sha1sat);
+
+static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * ccount +
+	       idx * 32 + 
+	       bit;
+}
 
 int sha1sat(FILE * stream, size_t msize, const char * digest);
 
