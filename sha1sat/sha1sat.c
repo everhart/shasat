@@ -67,7 +67,13 @@ static index_t indexMessage(uint32_t ccount, uint32_t idx, uint32_t bit) {
 }
 
 static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 
+	return INDICES_PER_CHUNK * chunk + 1 +
+	       idx * 32 +
+	       bit;
+}
+
+static index_t indexA(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 2561 +
 	       idx * 32 +
 	       bit;
 }
