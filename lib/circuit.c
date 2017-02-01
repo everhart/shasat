@@ -11,8 +11,7 @@ int fwriteAtoms32(
 
 	for (int i = 0; i < leng; i++) {
 		for (int j = 0; j < sizeof(uint32_t); j++) {
-			atom = oup[i] * 
-			       (inp[j] >> i & 1) ? 1 : -1;
+			atom = signAtom(oup[i], inp[j] >> i & 1);
 
 			res = fprintf(
 				stream, "%d 0\n", atom
@@ -37,8 +36,7 @@ int fwriteAtoms64(
 
 	for (int i = 0; i < leng; i++) {
 		for (int j = 0; j < sizeof(uint64_t); j++) {
-			atom = oup[i] * 
-			       (inp[j] >> i & 1) ? 1 : -1;
+			atom = signAtom(oup[j], inp[j] >> i & 1);
 
 			res = fprintf(
 				stream, "%d 0\n", atom
