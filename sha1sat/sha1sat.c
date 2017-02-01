@@ -55,16 +55,21 @@ static int fwriteH3Clauses(SHA1SAT sha1sat);
 static int fwriteH4Clauses(SHA1SAT sha1sat);
 
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * ccount +
-	       idx * 32 + 
-	       bit;
+	return INDICES_PER_CHUNK * ccount + 	//amount of previous indices
+	       idx * 32 + 			//word index
+	       bit;				//bit index
 }
 
 static index_t indexMessage(uint32_t ccount, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * ccount + 
+	return INDICES_PER_CHUNK * ccount + 128 +  
 	       idx * 32 +
-	       bit +
-	       128;	//how many indices there were before 'message'
+	       bit;	
+}
+
+static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 
+	       idx * 32 +
+	       bit;
 }
 
 int sha1sat(FILE * stream, size_t msize, const char * digest);
