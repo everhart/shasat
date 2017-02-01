@@ -3,8 +3,8 @@
 int fwriteAtoms32(
 	FILE *		stream,
 	const uint32_t	inp[],
-	const uint32_t	oup[],
-	uint64_t	leng
+	const index_t	oup[],
+	size_t		leng
 ) {
 	int res = 0,
 	    atom = 0;
@@ -28,9 +28,9 @@ int fwriteAtoms32(
 
 int fwriteAtoms64(
 	FILE *		stream,
-	const uint32_t	inp[],
-	const uint64_t	oup[],
-	uint64_t	leng
+	const uint64_t	inp[],
+	const index_t	oup[],
+	size_t		leng
 ) {
 	int res = 0,
 	    atom = 0;
@@ -54,9 +54,9 @@ int fwriteAtoms64(
 
 int fwriteClauses(
 	FILE * 		stream, 
-	int * 		ante, 
+	const atom_t	ante[], 
 	size_t 		aleng, 
-	int * 		cons, 
+	const atom_t 	cons[], 
 	size_t 		cleng
 ) {
 	int res = 0; 
@@ -81,8 +81,8 @@ int fwriteClauses(
 int fwriteAssignClauses(
 	FILE *		stream,
 	size_t		wsize,
-	uint32_t	a,
-	uint32_t	b
+	index_t		inp,
+	index_t		oup
 ) {
 	int res = 0;
 	bool perm = 0;
@@ -91,8 +91,8 @@ int fwriteAssignClauses(
 		perm = !perm;
 
 		for (int j = 0; j < 32; j++) {
-			int ante = signAtom(a + j, perm);
-			int cons = signAtom(b + j, perm);
+			int ante = signAtom(inp + j, perm);
+			int cons = signAtom(oup + j, perm);
 
 			res = fwriteClauses(
 				stream, &ante, 1, &cons, 1
