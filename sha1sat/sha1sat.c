@@ -33,11 +33,11 @@ static index_t indexD(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexE(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexF(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexH0(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexH1(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexH2(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexH3(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexH4(uint32_t chunk, uint32_t idx, uint32_t bit);
+static index_t indexH0(uint32_t chunk, uint32_t bit);
+static index_t indexH1(uint32_t chunk, uint32_t bit);
+static index_t indexH2(uint32_t chunk, uint32_t bit);
+static index_t indexH3(uint32_t chunk, uint32_t bit);
+static index_t indexH4(uint32_t chunk, uint32_t bit);
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit);
 
 static int fwriteWClauses(SHA1SAT sha1sat);
@@ -111,6 +111,11 @@ static index_t indexF(uint32_t chunk, uint32_t idx, uint32_t bit) {
 static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 17927 +
 	       idx * 32 +
+	       bit;
+}
+
+static index_t indexH0(uint32_t chunk, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 20488 +
 	       bit;
 }
 
