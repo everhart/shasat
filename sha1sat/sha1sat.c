@@ -124,5 +124,10 @@ static index_t indexH1(uint32_t chunk, uint32_t bit) {
 	       bit;
 }
 
+static index_t indexH2(uint32_t chunk, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 20554 +
+	       bit;	
+}
+
 int sha1sat(FILE * stream, size_t msize, const char * digest);
 
