@@ -20,9 +20,9 @@ int fwriteAtoms64(
 
 int fwriteClauses(
 	FILE *		stream,
-	atom_t * 	ante, 
+	const atom_t 	ante[], 
 	size_t 		aleng, 
-	atom_t * 	cons, 
+	const atom_t  	cons[], 
 	size_t 		cleng
 );
 
