@@ -1,6 +1,6 @@
 #include "./sha1sat.h"
 
-static const uint32_t INDICES_PER_CHUNK = 0;
+static const uint32_t INDICES_PER_CHUNK = 20653;
 
 typedef struct SHA1SAT {
 	FILE *	stream;
