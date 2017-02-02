@@ -255,7 +255,7 @@ int fwriteEClauses(SHA1SAT * sha1sat) {
 int fwriteDClauses(SHA1SAT * sha1sat) {
 	int res = 0;
 
-	sha1sat->e = indexD(sha1sat->chunk, sha1sat->loop, 0);
+	sha1sat->d = indexD(sha1sat->chunk, sha1sat->loop, 0);
 	
 	res = fwriteAssignClauses(
 		sha1sat->stream, 32, sha1sat->c, sha1sat->d
@@ -274,6 +274,21 @@ int fwriteCClauses(SHA1SAT * sha1sat) {
 
 	res = fwriteLroClauses(
 		sha1sat->stream, 32, sha1sat->b, sha1sat->c, 30
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
+int fwriteBClauses(SHA1SAT * sha1sat) {
+	int res = 0; 
+
+	sha1sat->b = indexB(sha1sat->chunk, sha1sat->loop, 0);
+
+	res = fwriteAssignClauses(
+		sha1sat->stream, 32, sha1sat->a, sha1sat->b
 	);
 	if (res < 0) {
 		return -1;
