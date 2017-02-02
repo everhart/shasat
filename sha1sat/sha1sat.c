@@ -173,7 +173,6 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 				comb[3]
 			);
 
-			//determine cons
 			cons = signAtom(
 				sha1sat.w[sha1sat.loop] + bitPosLro(32, j, 1),
 				comb[0] ^ comb[1] ^ comb[2] ^ comb[3]
