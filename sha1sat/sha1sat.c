@@ -147,13 +147,15 @@ static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
 
 static int fwriteWClauses(SHA1SAT sha1sat) {
 	int res = 0;
-	bool comb[4] = { 0 };
+	bool comb[4] = { 0 },
+	     eval = 0;
 
 	atom_t ante[4] = { 0 },
 	       cons = 0;
 
 	for (int i = 0; i < (1 << 4); i++) {
 		*comb = nextCombination(comb, 4);
+		eval = comb[0] ^ comb[1] ^ comb[2] ^ comb[3];
 
 		for (int j = 0; j < 32; j++) {
 			ante[0] = signAtom(
@@ -175,7 +177,7 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 
 			cons = signAtom(
 				sha1sat.w[sha1sat.loop] + bitPosLro(32, j, 1),
-				comb[0] ^ comb[1] ^ comb[2] ^ comb[3]
+				eval
 			);
 
 			res = fwriteClauses(
