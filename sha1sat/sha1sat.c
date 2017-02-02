@@ -200,23 +200,26 @@ int fwriteFClauses(SHA1SAT sha1sat) {
 	       cons = 0;
 
 	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+
+		if (sha1sat.loop > 0 && sha1sat.loop < 20) {
+			eval = (comb[0] & comb[1]) | 
+			       (!comb[0] & comb[2]);
+		}
+		else if (sha1sat.loop > 40 && sha1sat.loop < 60) {
+			eval = (comb[0] & comb[1]) | 
+			       (comb[0] & comb[2]) | 
+			       (comb[1] & comb[2]);
+		}
+		else {
+			eval = (comb[0] ^ comb[1] ^ comb[2]);
+		}
+
 		for (int j = 0; j < 32; j++) {
 			ante[0] = signAtom(sha1sat.b + j, comb[0]);
 			ante[1] = signAtom(sha1sat.c + j, comb[1]);
 			ante[2] = signAtom(sha1sat.d + j, comb[2]);
 
-			if (sha1sat.loop > 0 && sha1sat.loop < 20) {
-				eval = (comb[0] & comb[1]) | 
-				       (!comb[0] & comb[2]);
-			}
-			else if (sha1sat.loop > 40 && sha1sat.loop < 60) {
-				eval = (comb[0] & comb[1]) | 
-				       (comb[0] & comb[2]) | 
-				       (comb[1] & comb[2]);
-			}
-			else {
-				eval = (comb[0] ^ comb[1] ^ comb[2]);
-			}
 			cons = signAtom(sha1sat.f + j, eval);
 
 			res = fwriteClauses(
@@ -228,6 +231,7 @@ int fwriteFClauses(SHA1SAT sha1sat) {
 
 		}
 	}
+
 	return 0;
 }
 
