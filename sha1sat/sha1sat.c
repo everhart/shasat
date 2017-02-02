@@ -168,7 +168,7 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 				sha1sat.w[sha1sat.loop - 14] + j, 
 				comb[2]
 			);
-			ante[0] = signAtom(
+			ante[3] = signAtom(
 				sha1sat.w[sha1sat.loop - 16] + j, 
 				comb[3]
 			);
