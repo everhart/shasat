@@ -193,7 +193,7 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
-int fwriteFClauses(SHA1SAT sha1sat) {
+static int fwriteFClauses(SHA1SAT sha1sat) {
 	int res = 0;
 	bool comb[3] = { 0 },
 	     eval = 0;
@@ -237,7 +237,7 @@ int fwriteFClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
-int fwriteEClauses(SHA1SAT * sha1sat) {
+static int fwriteEClauses(SHA1SAT * sha1sat) {
 	int res = 0;
 
 	sha1sat->e = indexE(sha1sat->chunk, sha1sat->loop, 0);
@@ -252,7 +252,7 @@ int fwriteEClauses(SHA1SAT * sha1sat) {
 	return 0;
 }
 
-int fwriteDClauses(SHA1SAT * sha1sat) {
+static int fwriteDClauses(SHA1SAT * sha1sat) {
 	int res = 0;
 
 	sha1sat->d = indexD(sha1sat->chunk, sha1sat->loop, 0);
@@ -267,7 +267,7 @@ int fwriteDClauses(SHA1SAT * sha1sat) {
 	return 0;
 }
 
-int fwriteCClauses(SHA1SAT * sha1sat) {
+static int fwriteCClauses(SHA1SAT * sha1sat) {
 	int res = 0; 
 
 	sha1sat->c = indexC(sha1sat->chunk, sha1sat->loop, 0);
@@ -282,7 +282,7 @@ int fwriteCClauses(SHA1SAT * sha1sat) {
 	return 0;
 }
 
-int fwriteBClauses(SHA1SAT * sha1sat) {
+static int fwriteBClauses(SHA1SAT * sha1sat) {
 	int res = 0; 
 
 	sha1sat->b = indexB(sha1sat->chunk, sha1sat->loop, 0);
@@ -297,7 +297,7 @@ int fwriteBClauses(SHA1SAT * sha1sat) {
 	return 0;
 }
 
-int fwriteAClauses(SHA1SAT * sha1sat) {
+static int fwriteAClauses(SHA1SAT * sha1sat) {
 	int res = 0;
 
 	sha1sat->a = indexA(sha1sat->chunk, sha1sat->loop, 0);
