@@ -41,6 +41,14 @@ int fwriteRshClauses(
 	uint32_t	rsh
 );
 
+int fwriteLroClauses(
+	FILE *		stream,
+	size_t 		wsize,
+	index_t		inp,
+	index_t		oup,
+	uint32_t	lro
+);
+
 int fwriteSumClauses(
 	FILE *		stream,
 	size_t		wsize,
