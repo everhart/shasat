@@ -4,7 +4,7 @@ static const uint32_t INDICES_PER_CHUNK = 38733;
 
 typedef struct SHA1SAT {
 	FILE *	stream;
-	atom_t	chunk,
+	index_t	chunk,
 		loop,
 		generic,
 		k[4],
@@ -145,5 +145,54 @@ static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//18080 generic indices
 
-int sha1sat(FILE * stream, size_t msize, const char * digest);
+static int fwriteWClauses(SHA1SAT sha1sat) {
+	int res = 0;
+	bool comb[4] = { 0 };
+
+	atom_t ante[4] = { 0 },
+	       cons = 0;
+
+	for (int i = 0; i < (1 << 4); i++) {
+		*comb = nextCombination(comb, 4);
+
+		for (int j = 0; j < 32; j++) {
+			ante[0] = signAtom(
+				sha1sat.w[sha1sat.loop - 3] + j, 
+				comb[0]
+			);
+			ante[1] = signAtom(
+				sha1sat.w[sha1sat.loop - 8] + j, 
+				comb[1]
+			);
+			ante[2] = signAtom(
+				sha1sat.w[sha1sat.loop - 14] + j, 
+				comb[2]
+			);
+			ante[0] = signAtom(
+				sha1sat.w[sha1sat.loop - 16] + j, 
+				comb[3]
+			);
+
+			//determine cons
+			cons = signAtom(
+				sha1sat.w[sha1sat.loop] + bitPosLro(32, j, 1),
+				comb[0] ^ comb[1] ^ comb[2] ^ comb[3]
+			);
+
+			res = fwriteClauses(
+				sha1sat.stream, ante, 3, &cons, 1
+			);
+			if (res < 0) {
+				return -1;
+			}
+
+		}
+	}
+
+	return 0;
+}
+
+int sha1sat(FILE * stream, size_t msize, const char * digest) {
+	return 0;
+}
 
