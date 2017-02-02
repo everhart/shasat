@@ -267,6 +267,21 @@ int fwriteDClauses(SHA1SAT * sha1sat) {
 	return 0;
 }
 
+int fwriteCClauses(SHA1SAT * sha1sat) {
+	int res = 0; 
+
+	sha1sat->c = indexC(sha1sat->chunk, sha1sat->loop, 0);
+
+	res = fwriteLroClauses(
+		sha1sat->stream, 32, sha1sat->b, sha1sat->c, 30
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	return 0;
 }
