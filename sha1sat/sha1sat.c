@@ -191,6 +191,46 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
+int fwriteFClauses(SHA1SAT sha1sat) {
+	int res = 0;
+	bool comb[3] = { 0 },
+	     eval = 0;
+
+	atom_t ante[3] = { 0 },
+	       cons = 0;
+
+	for (int i = 0; i < (1 << 3); i++) {
+		for (int j = 0; j < 32; j++) {
+			ante[0] = signAtom(sha1sat.b + j, comb[0]);
+			ante[1] = signAtom(sha1sat.c + j, comb[1]);
+			ante[2] = signAtom(sha1sat.d + j, comb[2]);
+
+			if (sha1sat.loop > 0 && sha1sat.loop < 20) {
+				eval = (comb[0] & comb[1]) | 
+				       (!comb[0] & comb[2]);
+			}
+			else if (sha1sat.loop > 40 && sha1sat.loop < 60) {
+				eval = (comb[0] & comb[1]) | 
+				       (comb[0] & comb[2]) | 
+				       (comb[1] & comb[2]);
+			}
+			else {
+				eval = (comb[0] ^ comb[1] ^ comb[2]);
+			}
+			cons = signAtom(sha1sat.f + j, eval);
+
+			res = fwriteClauses(
+				sha1sat.stream, ante, 3, &cons, 1
+			);
+			if (res < 0) {
+				return -1;
+			}
+
+		}
+	}
+	return 0;
+}
+
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	return 0;
 }
