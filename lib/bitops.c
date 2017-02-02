@@ -1,6 +1,6 @@
 #include "./bitops.h"
 
-int bitValue32(uint32_t word, uint32_t pos) {
+int bitVal32(uint32_t word, uint32_t pos) {
 	if (pos >= 32) {
 		return -1;
 	}
@@ -8,7 +8,7 @@ int bitValue32(uint32_t word, uint32_t pos) {
 	return (word >> pos) & 1;
 }
 
-int bitValue64(uint64_t word, uint32_t pos) {
+int bitVal64(uint64_t word, uint32_t pos) {
 	if (pos >= 64) {
 		return -1;
 	}
@@ -16,7 +16,7 @@ int bitValue64(uint64_t word, uint32_t pos) {
 	return (word >> pos) & 1;
 }
 
-int bitPositionRro(size_t wsize, uint32_t pos, uint32_t rro) {
+int bitPosRro(size_t wsize, uint32_t pos, uint32_t rro) {
 	if (pos >= wsize) {
 		return -1;
 	}
@@ -29,7 +29,7 @@ int bitPositionRro(size_t wsize, uint32_t pos, uint32_t rro) {
 		pos - rro : wsize - rro + pos;
 }
 
-int bitPositionLro(size_t wsize, uint32_t pos, uint32_t lro) {
+int bitPosLro(size_t wsize, uint32_t pos, uint32_t lro) {
 	if (pos >= wsize) {
 		return -1;
 	}
