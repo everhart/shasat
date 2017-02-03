@@ -158,6 +158,17 @@ int fwriteRroClauses(
 	index_t		lhs,
 	uint32_t	rot
 ) {
+	int res = 0;
+
+	for (int i = 0; i < wsize; i++) {
+		res = fwriteAssignClauses(
+			stream, wsize, rhs + i, lhs + bitPosRro(wsize, i, rot)
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
 	return 0;
 }
 
