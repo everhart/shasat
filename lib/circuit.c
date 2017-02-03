@@ -1,5 +1,9 @@
 #include "./circuit.h"
 
+int fwriteAtom(FILE * stream, atom_t atom) {
+	return fprintf(stream, "%d 0\n", atom);
+}
+
 int fwriteAtoms32(
 	FILE *		stream,
 	const uint32_t	inp[],
