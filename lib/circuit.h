@@ -58,14 +58,4 @@ int fwriteSumClauses(
 	index_t		crr
 );
 
-int fwriteSumLroClauses(
-	FILE *		stream,
-	size_t		wsize,
-	index_t		inp1,
-	index_t		inp2,
-	index_t		sum,
-	index_t		crr,
-	uint32_t	lro
-);
-
 #endif
