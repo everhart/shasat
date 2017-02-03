@@ -11,9 +11,8 @@ int fwriteAtom(
 
 int fwriteAtoms32(
 	FILE *		stream,
-	const uint32_t	rhs[],
-	const index_t 	lhs[],
-	size_t		leng
+	uint32_t	rhs,
+	index_t 	lhs
 );
 
 int fwriteAtoms64(
