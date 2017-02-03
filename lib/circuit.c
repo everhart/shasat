@@ -210,4 +210,61 @@ int fwriteLroClauses(
 	return 0;
 }
 
+int fwriteSumClauses(
+	FILE *		stream,
+	size_t 		wsize,
+	index_t		a,
+	index_t		b,
+	index_t		sum,
+	index_t		crr
+) {
+	int res = 0;
 
+	bool comb[3] = { 0 },
+	     eval[2] = { 0 };
+
+	int ante[3] = { 0 },
+	    cons[2] = { 0 };
+
+	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+
+		eval[0] = comb[0] ^ comb[1] ^ comb[2];
+		eval[1] = comb[0] + comb[1] + comb[2] > 1;
+
+		//outer add
+		if (i < (1 << 2)) {
+			ante[0] = signAtom(a, comb[1]);
+			ante[1] = signAtom(b, comb[2]);
+
+			cons[0] = signAtom(sum, eval[0]);
+			ante[1] = signAtom(crr, eval[1]);
+
+			res = fwriteClauses(
+				stream, ante, 2, cons, 2
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+
+		//inner add
+		for (int j = 1; j < wsize; j++) {
+			ante[0] = signAtom(a + j, comb[0]);
+			ante[1] = signAtom(b + j, comb[1]);
+			ante[2] = signAtom(crr + j - 1, comb[2]);
+		      	
+			cons[0] = signAtom(sum + j, eval[0]);
+			cons[1] = signAtom(crr + j, eval[1]);
+
+			res = fwriteClauses(
+				stream, ante, 3, cons, 3
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
+	return 0;
+}
