@@ -200,6 +200,7 @@ int fwriteLroClauses(
 	return 0;
 }
 
+//a + b = sum, crr
 int fwriteSumClauses(
 	FILE *		stream,
 	size_t 		wsize,
