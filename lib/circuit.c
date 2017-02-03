@@ -6,23 +6,18 @@ int fwriteAtom(FILE * stream, atom_t atom) {
 
 int fwriteAtoms32(
 	FILE *		stream,
-	const uint32_t	inp[],
-	const index_t	oup[],
-	size_t		leng
+	uint32_t	rhs,
+	index_t 	lhs
 ) {
-	int res = 0,
-	    atom = 0;
+	int res = 0;
 
-	for (int i = 0; i < leng; i++) {
-		for (int j = 0; j < sizeof(uint32_t); j++) {
-			atom = signAtom(oup[i], inp[j] >> i & 1);
-
-			res = fprintf(
-				stream, "%d 0\n", atom
-			);
-			if (res < 0) {
-				return -1;
-			}
+	for (int i = 0; i < sizeof(uint32_t); i++) {
+		res = fwriteAtom(
+			stream, 
+			signAtom(lhs + i, bitVal32(rhs, i))
+		);
+		if (res < 0) {
+			return -1;
 		}
 	}
 
