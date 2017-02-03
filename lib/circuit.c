@@ -229,7 +229,7 @@ int fwriteSumClauses(
 			ante[1] = signAtom(b, comb[2]);
 
 			cons[0] = signAtom(sum, eval[0]);
-			ante[1] = signAtom(crr, eval[1]);
+			cons[1] = signAtom(crr, eval[1]);
 
 			res = fwriteClauses(
 				stream, ante, 2, cons, 2
