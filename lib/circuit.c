@@ -103,3 +103,69 @@ int fwriteAssignClauses(
 	
 	return 0;
 }
+
+//lhs = rhs >> shift
+int fwriteRshClauses(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		rhs,
+	index_t		lhs,
+	uint32_t	shift
+) {
+	int res = 0;
+
+	for (int i = 0; i < shift; i++) {
+		res = fwriteAtom(
+			stream, signAtom(rhs + i, 0)
+		);
+		if (res < 0) {
+			return -1;
+		}	
+	}
+
+	for (int i = shift; i < wsize; i++) {
+		res = fwriteAssignClauses(
+			stream, wsize, rhs + i, rhs + i - shift
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+//lhs = rhs << shift
+int fwriteLshClauses(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		rhs,
+	index_t		lhs,
+	uint32_t	shift
+) {
+	return 0;
+}
+
+//lhs = rhs rro rot
+int fwriteRroClauses(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		rhs,
+	index_t		lhs,
+	uint32_t	rot
+) {
+	return 0;
+}
+
+//lhs = rhs lro rot
+int fwriteLroClauses(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		rhs,
+	index_t		lhs,
+	uint32_t	rot
+) {
+	return 0;
+}
+
+
