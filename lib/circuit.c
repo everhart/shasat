@@ -26,23 +26,18 @@ int fwriteAtoms32(
 
 int fwriteAtoms64(
 	FILE *		stream,
-	const uint64_t	inp[],
-	const index_t	oup[],
-	size_t		leng
+	uint64_t	rhs,
+	index_t 	lhs
 ) {
-	int res = 0,
-	    atom = 0;
+	int res = 0;
 
-	for (int i = 0; i < leng; i++) {
-		for (int j = 0; j < sizeof(uint64_t); j++) {
-			atom = signAtom(oup[j], inp[j] >> i & 1);
-
-			res = fprintf(
-				stream, "%d 0\n", atom
-			);
-			if (res < 0) {
-				return -1;
-			}
+	for (int i = 0; i < sizeof(uint64_t); i++) {
+		res = fwriteAtom(
+			stream, 
+			signAtom(lhs + i, bitVal64(rhs, i))
+		);
+		if (res < 0) {
+			return -1;
 		}
 	}
 
