@@ -17,9 +17,8 @@ int fwriteAtoms32(
 
 int fwriteAtoms64(
 	FILE *		stream,
-	const uint64_t	rhs[],
-	const index_t 	lhs[],
-	size_t		leng
+	uint64_t	rhs[],
+	index_t 	lhs[]
 );
 
 int fwriteClauses(
