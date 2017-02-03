@@ -120,7 +120,7 @@ int fwriteRshClauses(
 
 	for (int i = 0; i < shift; i++) {
 		res = fwriteAtom(
-			stream, signAtom(rhs + i, 0)
+			stream, signAtom(lhs + i, 0)
 		);
 		if (res < 0) {
 			return -1;
@@ -129,7 +129,7 @@ int fwriteRshClauses(
 
 	for (int i = shift; i < wsize; i++) {
 		res = fwriteAssignClauses(
-			stream, wsize, rhs + i, rhs + i - shift
+			stream, wsize, rhs + i, lhs + i - shift
 		);
 		if (res < 0) {
 			return -1;
