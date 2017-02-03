@@ -14,7 +14,8 @@ typedef struct SHA1SAT {
 		c,
 		d,
 		e,
-		f,
+		sig,
+		ch,
 		temp,
 		h0,
 		h1,
@@ -233,6 +234,12 @@ static int fwriteFClauses(SHA1SAT sha1sat) {
 
 		}
 	}
+
+	return 0;
+}
+
+static int fwriteTempClauses(SHA1SAT sha1sat) {
+	int res = 0;
 
 	return 0;
 }
