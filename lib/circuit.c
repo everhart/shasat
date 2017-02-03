@@ -79,12 +79,15 @@ int fwriteAssignClauses(
 	int res = 0;
 	bool perm = 0;
 
+	atom_t ante = 0,
+	       cons = 0;
+
 	for (int i = 0; i < 2; i++) {
 		perm = !perm;
 
 		for (int j = 0; j < 32; j++) {
-			int ante = signAtom(rhs + j, perm);
-			int cons = signAtom(lhs + j, perm);
+			ante = signAtom(rhs + j, perm);
+			cons = signAtom(lhs + j, perm);
 
 			res = fwriteClauses(
 				stream, &ante, 1, &cons, 1
@@ -214,8 +217,8 @@ int fwriteSumClauses(
 	bool comb[3] = { 0 },
 	     eval[2] = { 0 };
 
-	int ante[3] = { 0 },
-	    cons[2] = { 0 };
+	atom_t ante[3] = { 0 },
+	       cons[2] = { 0 };
 
 	for (int i = 0; i < (1 << 3); i++) {
 		*comb = nextCombination(comb, 3);
