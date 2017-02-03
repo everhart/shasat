@@ -6,15 +6,15 @@
 
 int fwriteAtoms32(
 	FILE *		stream,
-	const uint32_t	inp[],
-	const index_t 	oup[],
+	const uint32_t	rhs[],
+	const index_t 	lhs[],
 	size_t		leng
 );
 
 int fwriteAtoms64(
 	FILE *		stream,
-	const uint64_t	inp[],
-	const index_t 	oup[],
+	const uint64_t	rhs[],
+	const index_t 	lhs[],
 	size_t		leng
 );
 
@@ -36,24 +36,24 @@ int fwriteAssignClauses(
 int fwriteRshClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		inp,
-	index_t		oup,
-	uint32_t	rsh
+	index_t		rhs,
+	index_t		lhs,
+	uint32_t	shift
 );
 
 int fwriteLroClauses(
 	FILE *		stream,
 	size_t 		wsize,
-	index_t		inp,
-	index_t		oup,
-	uint32_t	lro
+	index_t		rhs,
+	index_t		lhs,
+	uint32_t	rot
 );
 
 int fwriteSumClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		inp1,
-	index_t		inp2,
+	index_t		a,
+	index_t		b,
 	index_t		sum,
 	index_t		crr
 );
