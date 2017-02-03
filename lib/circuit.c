@@ -147,6 +147,24 @@ int fwriteLshClauses(
 	index_t		lhs,
 	uint32_t	shift
 ) {
+	int res = 0;
+
+	for (int i = 0; i < wsize - shift; i++) {
+		res = fwriteAtom(
+			stream, signAtom(lhs + i, 0)
+		);
+		if (res < 0) {
+			return -1;
+		}
+
+		res = fwriteAssignClauses(
+			stream, wsize, rhs + i, lhs + i + shift
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
 	return 0;
 }
 
