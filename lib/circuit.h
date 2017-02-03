@@ -4,6 +4,11 @@
 #include "./atom.h"
 #include "./bitops.h"
 
+int fwriteAtom(
+	FILE *		stream,
+	atom_t		atom
+);
+
 int fwriteAtoms32(
 	FILE *		stream,
 	const uint32_t	rhs[],
