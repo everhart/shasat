@@ -194,7 +194,7 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
-static int fwriteFClauses(SHA1SAT sha1sat) {
+static int fwriteSigClauses(SHA1SAT sha1sat) {
 	int res = 0;
 	bool comb[3] = { 0 },
 	     eval = 0;
@@ -223,7 +223,7 @@ static int fwriteFClauses(SHA1SAT sha1sat) {
 			ante[1] = signAtom(sha1sat.c + j, comb[1]);
 			ante[2] = signAtom(sha1sat.d + j, comb[2]);
 
-			cons = signAtom(sha1sat.f + j, eval);
+			cons = signAtom(sha1sat.sig + j, eval);
 
 			res = fwriteClauses(
 				sha1sat.stream, ante, 3, &cons, 1
