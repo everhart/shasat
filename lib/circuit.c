@@ -118,16 +118,14 @@ int fwriteRshClauses(
 ) {
 	int res = 0;
 
-	for (int i = 0; i < shift; i++) {
+	for (int i = shift; i < wsize; i++) {
 		res = fwriteAtom(
 			stream, signAtom(lhs + i, 0)
 		);
 		if (res < 0) {
 			return -1;
-		}	
-	}
+		}
 
-	for (int i = shift; i < wsize; i++) {
 		res = fwriteAssignClauses(
 			stream, wsize, rhs + i, lhs + i - shift
 		);
