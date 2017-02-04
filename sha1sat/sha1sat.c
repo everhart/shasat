@@ -33,6 +33,7 @@ static index_t indexC(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexD(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexE(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexSIG(uint32_t chunk, uint32_t idx, uint32_t bit);
+static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexH0(uint32_t chunk, uint32_t bit);
 static index_t indexH1(uint32_t chunk, uint32_t bit);
