@@ -272,36 +272,38 @@ int fwriteSumsClauses(
 	...
 ) {
 	int res = 0;
-	
-	bool comb[3] = { 0 },
+
+	bool comb[3] = { 0 }, 
 	     eval[2] = { 0 };
 
-	atom_t ante[3] = { 0 },
+	atom_t ante[3] = { 0 }, 
 	       cons[2] = { 0 };
 
-	index_t a = 0,
-	       	b = 0, 
-		sum = 0, 
-		crr = 0;
-	
 	va_list args;
 	va_start(args, count);
 
+	index_t a = 0, 
+		b = 0, 
+		sum = va_arg(args, index_t), 
+		crr = 0;
+
 	//foreach combination of three unique atomic states
 	for (int i = 0; i < (1 << 3); i++) {
-		*comb = nextCombination(comb, 3);
-		eval[0] = comb[0] ^ comb[1] ^ comb[2];
-		eval[1] = comb[0] + comb[1] + comb[2] > 1;
+		*comb = nextCombination(comb, 3);	
+		eval[0] = comb[0] ^ comb[1] ^ comb[2];		//sum
+		eval[1] = comb[0] + comb[1] + comb[2] > 1;	//carry
 
 		//foreach '+' operator
 		for (int j = 0; j < count; j++) {
 			a = sum;
 			b = va_arg(args, index_t);			
-			sum = ++gen;
+
+			//if this is the final '+' operator, use lhs
+			sum = (j < count - 1) ? ++gen : lhs;
 			crr = ++gen;
 
 			//foreach bit
-			for (int k = 0; k < 32; k++) {
+			for (int k = 0; k < wsize; k++) {	
 				ante[0] = signAtom(a + k, comb[1]);
 				ante[1] = signAtom(a + k, comb[2]);
 				cons[0] = signAtom(sum + k, eval[0]);
