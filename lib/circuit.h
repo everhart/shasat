@@ -1,6 +1,7 @@
 #ifndef CIRCUIT_H
 #define CIRCUIT_H
 
+#include <stdarg.h>
 #include "./atom.h"
 #include "./bitops.h"
 
@@ -59,6 +60,15 @@ int fwriteSumClauses(
 	index_t		b,
 	index_t		sum,
 	index_t		crr
+);
+
+int fwriteSumsClauses(
+	FILE *		stream,
+	size_t		wsize,
+	uint32_t	sum,
+	atom_t		gen,
+	uint32_t	count,
+	...
 );
 
 #endif
