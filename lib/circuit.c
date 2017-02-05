@@ -231,7 +231,7 @@ int fwriteSumClauses(
 			ante[0] = signAtom(a, comb[1]);
 			ante[1] = signAtom(b, comb[2]);
 
-			cons[0] = signAtom(sum, eval[0]);
+			cons[0] = signAtom(sum, eval[0]),
 			cons[1] = signAtom(crr, eval[1]);
 
 			res = fwriteClauses(
@@ -244,11 +244,11 @@ int fwriteSumClauses(
 
 		//inner add
 		for (int j = 1; j < wsize; j++) {
-			ante[0] = signAtom(a + j, comb[0]);
-			ante[1] = signAtom(b + j, comb[1]);
+			ante[0] = signAtom(a + j, comb[0]),
+			ante[1] = signAtom(b + j, comb[1]),
 			ante[2] = signAtom(crr + j - 1, comb[2]);
-		      	
-			cons[0] = signAtom(sum + j, eval[0]);
+
+			cons[0] = signAtom(sum + j, eval[0]),
 			cons[1] = signAtom(crr + j, eval[1]);
 
 			res = fwriteClauses(
@@ -260,5 +260,77 @@ int fwriteSumClauses(
 		}
 	}
 
+	return 0;
+}
+
+int fwriteSumsClauses(
+	FILE *		stream,
+	size_t		wsize,
+	uint32_t	lhs,
+	atom_t		gen,
+	uint32_t	count,
+	...
+) {
+	int res = 0;
+	
+	bool comb[3] = { 0 },
+	     eval[2] = { 0 };
+
+	atom_t ante[3] = { 0 },
+	       cons[2] = { 0 };
+
+	index_t a = 0,
+	       	b = 0, 
+		sum = 0, 
+		crr = 0;
+	
+	va_list args;
+	va_start(args, count);
+
+	//foreach combination of three unique atomic states
+	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+		eval[0] = comb[0] ^ comb[1] ^ comb[2];
+		eval[1] = comb[0] + comb[1] + comb[2] > 1;
+
+		//foreach '+' operator
+		for (int j = 0; j < count; j++) {
+			a = sum;
+			b = va_arg(args, index_t);			
+			sum = ++gen;
+			crr = ++gen;
+
+			//foreach bit
+			for (int k = 0; k < 32; k++) {
+				ante[0] = signAtom(a + k, comb[1]);
+				ante[1] = signAtom(a + k, comb[2]);
+				cons[0] = signAtom(sum + k, eval[0]);
+				cons[1] = signAtom(crr + k, eval[1]);
+
+				//outer add
+				if (k == 0 && i < (1 << 2)) {
+					res = fwriteClauses(
+						stream, ante, 2, cons, 2
+					);
+				}
+				//inner add
+				else {
+					ante[2] = signAtom(
+						crr + k - 1, comb[0]
+					);
+
+					res = fwriteClauses(
+						stream, ante, 3, cons, 2
+					);
+					
+				}
+				
+				if (res < 0) {
+					return -1;
+				}
+			}
+		}
+	}
+	
 	return 0;
 }
