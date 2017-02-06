@@ -239,18 +239,23 @@ static int fwriteSigClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
-static int fwriteTempClauses(SHA1SAT sha1sat) {
-	return fwriteSumClauses(
-		sha1sat.stream,
+static int fwriteTempClauses(SHA1SAT * sha1sat) {
+	int res = fwriteSumClauses(
+		sha1sat->stream,
 		32,
-		sha1sat.generic,
+		sha1sat->generic,
 		5,
-		sha1sat.e,
-		sha1sat.sig,
-		sha1sat.ch,
-		sha1sat.k[sha1sat.loop / 20],
-		sha1sat.w[sha1sat.loop]
+		sha1sat->e,
+		sha1sat->sig,
+		sha1sat->ch,
+		sha1sat->k[sha1sat->loop / 20],
+		sha1sat->w[sha1sat->loop]
 	);
+	if (res < 0) {
+		return -1;
+	} 
+
+	return (sha1sat->generic = res);
 }
 
 static int fwriteEClauses(SHA1SAT * sha1sat) { 
