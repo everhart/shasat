@@ -203,7 +203,7 @@ int fwriteLroClauses(
 	return 0;
 }
 
-//x1 + x2 + x3 ... + xn  = lhs
+//x1 + x2 + x3 ... + xn = lhs
 int fwriteSumClauses(
 	FILE *		stream,
 	size_t		wsize,
@@ -275,5 +275,5 @@ int fwriteSumClauses(
 		}
 	}
 	
-	return 0;
+	return gen;
 }
