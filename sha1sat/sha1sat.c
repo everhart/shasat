@@ -424,6 +424,26 @@ static int fwriteH3Clauses(SHA1SAT * sha1sat) {
 	return sha1sat->generic = res;
 }
 
+static int fwriteH4Clauses(SHA1SAT * sha1sat) {
+	int h4 = sha1sat->h4; 				
+	sha1sat->h4 = indexH0(sha1sat->chunk, 0);
+
+	int res = fwriteSumClauses(
+		sha1sat->stream,
+		32,
+		sha1sat->h4,
+		sha1sat->generic,
+		2,
+		h4,
+		sha1sat->e
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	return sha1sat->generic = res;
+}
+
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	return 0;
 }
