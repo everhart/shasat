@@ -44,6 +44,7 @@ static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit);
 
 static int fwriteWClauses(SHA1SAT sha1sat);
 static int fwriteSigClauses(SHA1SAT sha1sat);
+static int fwriteChClauses(SHA1SAT sha1sat);
 static int fwriteTempClauses(SHA1SAT * sha1sat);
 static int fwriteAClauses(SHA1SAT * sha1sat);
 static int fwriteBClauses(SHA1SAT * sha1sat);
