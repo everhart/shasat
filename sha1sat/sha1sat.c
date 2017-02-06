@@ -240,6 +240,16 @@ static int fwriteSigClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
+static int fwriteChClauses(SHA1SAT sha1sat) {
+	return fwriteLroClauses(
+		sha1sat.stream,
+		32,
+		sha1sat.a,
+		sha1sat.ch,
+		5
+	);
+}
+
 static int fwriteTempClauses(SHA1SAT * sha1sat) {
 	int res = fwriteSumClauses(
 		sha1sat->stream,
@@ -254,9 +264,9 @@ static int fwriteTempClauses(SHA1SAT * sha1sat) {
 	);
 	if (res < 0) {
 		return -1;
-	} 
+	}
 
-	return (sha1sat->generic = res);
+	return sha1sat->generic = res;
 }
 
 static int fwriteEClauses(SHA1SAT * sha1sat) { 
