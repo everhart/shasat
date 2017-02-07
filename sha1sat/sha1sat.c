@@ -95,7 +95,7 @@ static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//18080 generic indices
 
-static int fwriteWClauses(SHA1SAT sha1sat) {
+static int fwriteWClauses(SHA1SAT shs) {
 	int res = 0;
 	bool comb[4] = { 0 },
 	     eval = 0;
@@ -109,29 +109,29 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 
 		for (int j = 0; j < 32; j++) {
 			ante[0] = signAtom(
-				sha1sat.w[sha1sat.loop - 3] + j, 
+				shs.w[shs.loop - 3] + j, 
 				comb[0]
 			);
 			ante[1] = signAtom(
-				sha1sat.w[sha1sat.loop - 8] + j, 
+				shs.w[shs.loop - 8] + j, 
 				comb[1]
 			);
 			ante[2] = signAtom(
-				sha1sat.w[sha1sat.loop - 14] + j, 
+				shs.w[shs.loop - 14] + j, 
 				comb[2]
 			);
 			ante[3] = signAtom(
-				sha1sat.w[sha1sat.loop - 16] + j, 
+				shs.w[shs.loop - 16] + j, 
 				comb[3]
 			);
 
 			cons = signAtom(
-				sha1sat.w[sha1sat.loop] + bitPosLro(32, j, 1),
+				shs.w[shs.loop] + bitPosLro(32, j, 1),
 				eval
 			);
 
 			res = fwriteClauses(
-				sha1sat.stream, ante, 3, &cons, 1
+				shs.stream, ante, 3, &cons, 1
 			);
 			if (res < 0) {
 				return -1;
