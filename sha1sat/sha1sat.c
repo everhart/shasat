@@ -3,25 +3,17 @@
 static const uint32_t INDICES_PER_CHUNK = 38733;
 
 typedef struct SHA1SAT {
-	FILE *	stream;
-	index_t	chunk,
-		loop,
-		generic,
-		k[4],
-		w[80],
-		a,
-		b,
-		c,
-		d,
-		e,
-		sig,
-		ch,
-		temp,
-		h0,
-		h1,
-		h2,
-		h3,
-		h4;
+	FILE *		stream;
+	uint32_t	chunk;
+	uint32_t	loop;
+	index_t		generic;
+	index_t		k[4];		//round constants
+	index_t 	w[80];		//message schedule array
+	index_t		sig;
+	index_t		ch;
+	index_t		temp;	
+	index_t		cc[5];		//compressed chunk
+	index_t		hh[5];		//hash
 } SHA1SAT;
 
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit);
@@ -442,6 +434,37 @@ static int fwriteH4Clauses(SHA1SAT * sha1sat) {
 	}
 
 	return sha1sat->generic = res;
+}
+
+static int fwriteHHClauses(SHA1SAT * sha1sat) {
+	int wv[5] = {
+		sha1sat->a,
+		sha1sat->b,
+		sha1sat->c,
+		sha1sat->d,
+		sha1sat->e
+	}
+
+	int hh[5] = *sha1sat->hh;
+
+	for (int i = 0; i < 5; i++) {
+		sha1sat->hh[i] = indexHh(sha1sat->chunk, i, 0);
+
+		res = fwriteSumClauses(
+			sha1sat->stream,
+			32,
+			sha1sat->hh[i],
+			sha1sat->generic,
+			2,
+			hh[i],
+			wv[i]
+		);
+		if (res < 0) {
+			return -1;
+		}
+
+		sha1sat->generic = res;
+	}
 }
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
