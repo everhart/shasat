@@ -254,6 +254,27 @@ static int fwriteHhClauses(SHA1SAT * shs) {
 	return 0;
 }
 
+static int fwriteKAtoms(SHA1SAT shs) {
+	int res = 0;
+
+	int k[4] = {
+		0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6
+	};
+
+	for (int i = 0; i < 4; i++) {
+		res = fwriteAtoms32(
+			shs.stream,
+			k[i],
+			shs.k[i]
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	return 0;
 }
