@@ -263,9 +263,25 @@ static int fwriteKAtoms(SHA1SAT shs) {
 
 	for (int i = 0; i < 4; i++) {
 		res = fwriteAtoms32(
-			shs.stream,
-			k[i],
-			shs.k[i]
+			shs.stream, k[i], shs.k[i]
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+static int fwriteHhAtoms(SHA1SAT shs) {
+	int res = 0;
+	int hh[5] = {
+		0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476,	0xC3D2E1F0
+	};
+
+	for (int i = 0; i < 4; i++) {
+		res = fwriteAtoms32(
+			shs.stream, hh[i], shs.hh[i]
 		);
 		if (res < 0) {
 			return -1;
