@@ -16,15 +16,27 @@ typedef struct SHA1SAT {
 	index_t		hh[5];		//hash
 } SHA1SAT;
 
-static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit);
-static index_t indexMessage(uint32_t ccount, uint32_t idx, uint32_t bit);
-static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexCc(
+static index_t indexK(
+	uint32_t ccount, uint32_t idx, uint32_t bit
+);
+static index_t indexMessage(
+	uint32_t ccount, uint32_t idx, uint32_t bit
+);
+static index_t indexW(
+	uint32_t chunk, uint32_t idx, uint32_t bit
+);
+static index_t indexCc( 
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
 );
-static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit);
+static index_t indexSig(
+	uint32_t chunk, uint32_t idx, uint32_t bit
+);
+static index_t indexCh(
+	uint32_t chunk, uint32_t idx, uint32_t bit
+);
+static index_t indexTemp(
+	uint32_t chunk, uint32_t idx, uint32_t bit
+);
 static index_t indexHh(
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
 );
@@ -201,9 +213,9 @@ static int fwriteSigClauses(SHA1SAT sha1sat) {
 		}
 
 		for (int j = 0; j < 32; j++) {
-			ante[0] = signAtom(sha1sat.b + j, comb[0]);
-			ante[1] = signAtom(sha1sat.c + j, comb[1]);
-			ante[2] = signAtom(sha1sat.d + j, comb[2]);
+			ante[0] = signAtom(sha1sat.cc[1] + j, comb[0]);
+			ante[1] = signAtom(sha1sat.cc[2] + j, comb[1]);
+			ante[2] = signAtom(sha1sat.cc[3] + j, comb[2]);
 
 			cons = signAtom(sha1sat.sig + j, eval);
 
@@ -224,7 +236,7 @@ static int fwriteChClauses(SHA1SAT sha1sat) {
 	return fwriteLroClauses(
 		sha1sat.stream,
 		32,
-		sha1sat.a,
+		sha1sat.cc[0],
 		sha1sat.ch,
 		5
 	);
@@ -236,7 +248,7 @@ static int fwriteTempClauses(SHA1SAT * sha1sat) {
 		32,
 		sha1sat->generic,
 		5,
-		sha1sat->e,
+		sha1sat->cc[4],
 		sha1sat->sig,
 		sha1sat->ch,
 		sha1sat->k[sha1sat->loop / 20],
@@ -249,10 +261,37 @@ static int fwriteTempClauses(SHA1SAT * sha1sat) {
 	return sha1sat->generic = res;
 }
 
+static int fwriteCcClauses(SHA1SAT * shs) {
+	int res = 0;
+
+	for (int i = 4; i >= 0; i--) {
+		shs->cc[4] = indexCc(shs->chunk, i, shs->loop + 1, 0);
+
+		if (i == 2) {
+			res = fwriteLroClauses(
+				shs->stream,
+				32,
+				shs->cc[i - 1],
+				shs->cc[i],
+				30
+			);
+		}
+		else {
+			res = fwriteAssignClauses(
+				shs->stream, 32,  shs->cc[i - 1], shs->cc[i]
+			);
+		}
+
+		if (res < 0) {
+			return -1;
+		}
+	}
+}
+
 static int fwriteEClauses(SHA1SAT * sha1sat) { 
 	int res = 0;
 
-	sha1sat->e = indexE(sha1sat->chunk, sha1sat->loop, 0);
+	sha1sat->cc[4] = indexE(sha1sat->chunk, sha1sat->loop, 0);
 	
 	res = fwriteAssignClauses(
 		sha1sat->stream, 32, sha1sat->d, sha1sat->e
@@ -424,28 +463,20 @@ static int fwriteH4Clauses(SHA1SAT * sha1sat) {
 	return sha1sat->generic = res;
 }
 
-static int fwriteHHClauses(SHA1SAT * sha1sat) {
-	int wv[5] = {
-		sha1sat->a,
-		sha1sat->b,
-		sha1sat->c,
-		sha1sat->d,
-		sha1sat->e
-	}
-
-	int hh[5] = *sha1sat->hh;
+static int fwriteHhClauses(SHA1SAT * shs) {
+	int hh[5] = *shs->hh;
 
 	for (int i = 0; i < 5; i++) {
-		sha1sat->hh[i] = indexHh(sha1sat->chunk, i, 0);
+		shs->hh[i] = indexHh(shs->chunk, i, 0);
 
 		res = fwriteSumClauses(
-			sha1sat->stream,
+			shs->stream,
 			32,
-			sha1sat->hh[i],
-			sha1sat->generic,
+			shs->hh[i],
+			shs->generic,
 			2,
 			hh[i],
-			wv[i]
+			shs->cc[i]
 		);
 		if (res < 0) {
 			return -1;
