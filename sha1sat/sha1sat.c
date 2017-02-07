@@ -67,35 +67,11 @@ static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//2560 w indices
 
-static index_t indexA(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 2561 +
-	       idx * 32 +
-	       bit;
-}	//2560 a indices
-
-static index_t indexB(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 5122 +
-	       idx * 32 +
-	       bit;
-}	//2560 b indices
-
-static index_t indexC(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 7683 +
-	       idx * 32 +
-	       bit;
-}	//2560 c indices
-
-static index_t indexD(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 10244 +
-	       idx * 32 +
-	       bit;
-}	//2560 d indices
-
-static index_t indexE(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 12805 +
-	       idx * 32 +
-	       bit;
-}	//2560 e indices
+static index_t indexCc(
+	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
+) {
+	return 0;
+}
 
 static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 15366 +
