@@ -85,30 +85,9 @@ static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//2560 temp indices
 
-static index_t indexH0(uint32_t chunk, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20488 +
-	       bit;
-}	//32 h0 indices
-
-static index_t indexH1(uint32_t chunk, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20521 +
-	       bit;
-}	//32 h1 indices
-
-static index_t indexH2(uint32_t chunk, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20554 +
-	       bit;	
-}	//32 h2 indices
-
-static index_t indexH3(uint32_t chunk, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20587 +
-	       bit;	
-}	//32 h3 indices
-
-static index_t indexH4(uint32_t chunk, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20620 +
-	       bit;	
-}	//32 h4 indices
+static index_t indexH0(uint32_t chunk, uint32_t kind, uint32_t bit) {
+	return 0;
+}
 
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) { 
 	return INDICES_PER_CHUNK * chunk + 20653 + 
