@@ -9,29 +9,25 @@ typedef struct SHA1SAT {
 	index_t		generic;
 	index_t		k[4];		//round constants
 	index_t 	w[80];		//message schedule array
+	index_t		cc[5];		//compressed chunk
 	index_t		sig;
 	index_t		ch;
 	index_t		temp;	
-	index_t		cc[5];		//compressed chunk
 	index_t		hh[5];		//hash
 } SHA1SAT;
 
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit);
 static index_t indexMessage(uint32_t ccount, uint32_t idx, uint32_t bit);
 static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexA(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexB(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexC(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexD(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexE(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexH0(uint32_t chunk, uint32_t bit);
-static index_t indexH1(uint32_t chunk, uint32_t bit);
-static index_t indexH2(uint32_t chunk, uint32_t bit);
-static index_t indexH3(uint32_t chunk, uint32_t bit);
-static index_t indexH4(uint32_t chunk, uint32_t bit);
+static index_t indexCc(
+	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
+);
+static index_t indexHh(
+	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
+);
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit);
 
 static int fwriteWClauses(SHA1SAT sha1sat);
