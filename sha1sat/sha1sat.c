@@ -19,12 +19,12 @@ typedef struct SHA1SAT {
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit);
 static index_t indexMessage(uint32_t ccount, uint32_t idx, uint32_t bit);
 static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit);
-static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexCc(
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
 );
+static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit);
+static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit);
+static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit);
 static index_t indexHh(
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
 );
@@ -34,11 +34,7 @@ static int fwriteWClauses(SHA1SAT sha1sat);
 static int fwriteSigClauses(SHA1SAT sha1sat);
 static int fwriteChClauses(SHA1SAT sha1sat);
 static int fwriteTempClauses(SHA1SAT * sha1sat);
-static int fwriteAClauses(SHA1SAT * sha1sat);
-static int fwriteBClauses(SHA1SAT * sha1sat);
-static int fwriteCClauses(SHA1SAT * sha1sat);
-static int fwriteDClauses(SHA1SAT * sha1sat);
-static int fwriteEClauses(SHA1SAT * sha1sat);
+static int fwriteCcClauses(SHA1SAT * sha1sat);
 static int fwriteH0Clauses(SHA1SAT * sha1sat);
 static int fwriteH1Clauses(SHA1SAT * sha1sat);
 static int fwriteH2Clauses(SHA1SAT * sha1sat);
