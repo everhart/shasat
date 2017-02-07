@@ -50,8 +50,14 @@ static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//2560 sig indices
 
+static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 18083 +
+	       idx * 32 +
+	       bit;
+}	//2560 ch indices
+
 static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 17927 +
+	return INDICES_PER_CHUNK * chunk + 20644 +
 	       idx * 32 +
 	       bit;
 }	//2560 temp indices
