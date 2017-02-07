@@ -35,11 +35,7 @@ static int fwriteSigClauses(SHA1SAT sha1sat);
 static int fwriteChClauses(SHA1SAT sha1sat);
 static int fwriteTempClauses(SHA1SAT * sha1sat);
 static int fwriteCcClauses(SHA1SAT * sha1sat);
-static int fwriteH0Clauses(SHA1SAT * sha1sat);
-static int fwriteH1Clauses(SHA1SAT * sha1sat);
-static int fwriteH2Clauses(SHA1SAT * sha1sat);
-static int fwriteH3Clauses(SHA1SAT * sha1sat);
-static int fwriteH4Clauses(SHA1SAT * sha1sat);
+static int fwriteHhClauses(SHA1SAT * sha1sat);
 
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * ccount + 	//amount of previous indices
