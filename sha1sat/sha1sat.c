@@ -143,7 +143,7 @@ static int fwriteWClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
-static int fwriteSigClauses(SHA1SAT sha1sat) {
+static int fwriteSigClauses(SHA1SAT shs) {
 	int res = 0;
 	bool comb[3] = { 0 },
 	     eval = 0;
@@ -154,11 +154,11 @@ static int fwriteSigClauses(SHA1SAT sha1sat) {
 	for (int i = 0; i < (1 << 3); i++) {
 		*comb = nextCombination(comb, 3);
 
-		if (sha1sat.loop > 0 && sha1sat.loop < 20) {
+		if (shs.loop > 0 && shs.loop < 20) {
 			eval = (comb[0] & comb[1]) | 
 			       (!comb[0] & comb[2]);
 		}
-		else if (sha1sat.loop > 40 && sha1sat.loop < 60) {
+		else if (shs.loop > 40 && shs.loop < 60) {
 			eval = (comb[0] & comb[1]) | 
 			       (comb[0] & comb[2]) | 
 			       (comb[1] & comb[2]);
@@ -168,14 +168,14 @@ static int fwriteSigClauses(SHA1SAT sha1sat) {
 		}
 
 		for (int j = 0; j < 32; j++) {
-			ante[0] = signAtom(sha1sat.cc[1] + j, comb[0]);
-			ante[1] = signAtom(sha1sat.cc[2] + j, comb[1]);
-			ante[2] = signAtom(sha1sat.cc[3] + j, comb[2]);
+			ante[0] = signAtom(shs.cc[1] + j, comb[0]);
+			ante[1] = signAtom(shs.cc[2] + j, comb[1]);
+			ante[2] = signAtom(shs.cc[3] + j, comb[2]);
 
-			cons = signAtom(sha1sat.sig + j, eval);
+			cons = signAtom(shs.sig + j, eval);
 
 			res = fwriteClauses(
-				sha1sat.stream, ante, 3, &cons, 1
+				shs.stream, ante, 3, &cons, 1
 			);
 			if (res < 0) {
 				return -1;
