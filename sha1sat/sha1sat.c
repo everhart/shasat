@@ -38,7 +38,7 @@ static index_t indexTemp(
 	uint32_t chunk, uint32_t idx, uint32_t bit
 );
 static index_t indexHh(
-	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
+	uint32_t chunk, uint32_t kind, uint32_t bit
 );
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit);
 
@@ -286,10 +286,14 @@ static int fwriteCcClauses(SHA1SAT * shs) {
 			return -1;
 		}
 	}
+
+	return 0;
 }
 
 static int fwriteHhClauses(SHA1SAT * shs) {
-	int hh[5] = *shs->hh;
+	int res = 0;
+	index_t hh[5] = { 0 };
+	memcpy(hh, shs->hh, sizeof(hh));
 
 	for (int i = 0; i < 5; i++) {
 		shs->hh[i] = indexHh(shs->chunk, i, 0);
