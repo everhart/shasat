@@ -187,12 +187,12 @@ static int fwriteSigClauses(SHA1SAT sha1sat) {
 	return 0;
 }
 
-static int fwriteChClauses(SHA1SAT sha1sat) {
+static int fwriteChClauses(SHA1SAT shs) {
 	return fwriteLroClauses(
-		sha1sat.stream,
+		shs.stream,
 		32,
-		sha1sat.cc[0],
-		sha1sat.ch,
+		shs.cc[0],
+		shs.ch,
 		5
 	);
 }
