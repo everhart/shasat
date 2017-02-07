@@ -85,7 +85,7 @@ static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//2560 temp indices
 
-static index_t indexH0(uint32_t chunk, uint32_t kind, uint32_t bit) {
+static index_t indexHh(uint32_t chunk, uint32_t kind, uint32_t bit) {
 	return 0;
 }
 
