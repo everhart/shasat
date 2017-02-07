@@ -1,6 +1,6 @@
 #include "./sha1sat.h"
 
-static const uint32_t INDICES_PER_CHUNK = 38733;
+static const uint32_t INDICES_PER_CHUNK = 41416;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct SHA1SAT {
@@ -66,10 +66,10 @@ static index_t indexHh(uint32_t chunk, uint32_t kind, uint32_t bit) {
 	return INDICES_PER_CHUNK + chunk + 23205 +
 	       kind * 32 +
 	       bit;
-}
+}	//160 hh indices
 
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) { 
-	return INDICES_PER_CHUNK * chunk + 20653 + 
+	return INDICES_PER_CHUNK * chunk + 23336 + 
 	       idx * 32 + 
 	       bit;
 }	//18080 generic indices
