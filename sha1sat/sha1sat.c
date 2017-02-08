@@ -5,10 +5,10 @@ static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct SHA1SAT {
 	FILE *		stream;
-	size_t		msize;
 	uint32_t	chunk;
 	uint32_t	loop;
 	index_t		generic;
+	index_t		message;
 	index_t		k[4];		//round constants
 	index_t 	w[80];		//message schedule array
 	index_t		cc[5];		//compressed chunk
@@ -24,8 +24,11 @@ static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
 	       bit;				//bit index
 }	//128 k indices
 
-static index_t indexMessage(uint32_t ccount, uint32_t idx, uint32_t bit) {
+static index_t indexMessage(
+	uint32_t ccount, uint32_t chunk, uint32_t idx, uint32_t bit
+) {
 	return INDICES_PER_CHUNK * ccount + 128 +  
+	       chunk * 512 +
 	       idx * 32 +
 	       bit;	
 }	//arbitrary amount of message indices
@@ -74,6 +77,15 @@ static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       idx * 32 + 
 	       bit;
 }	//18080 generic indices
+
+static int fwriteMessageClauses(SHA1SAT shs) {
+	return fwriteAssignClauses(
+		shs.stream,
+		32,
+		shs.w[shs.loop],
+		shs.message
+	);
+}
 
 static int fwriteWClauses(SHA1SAT shs) {
 	int res = 0;
@@ -365,6 +377,10 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 
 			//break chunk into sixteen 32-bit words
 			if (shs.loop < 16) {
+				shs.message = indexMessage(
+					ccount, shs.chunk, shs.loop, 0
+				);
+
 				if (fwriteMessageClauses(shs) < 0) {
 					return -1;
 				}	
@@ -387,6 +403,7 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 			}
 		}
 	
+		//update hash values
 		if (fwriteHhClauses(&shs) < 0) {
 			return -1;
 		}
