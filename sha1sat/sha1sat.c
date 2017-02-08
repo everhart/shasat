@@ -314,12 +314,12 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	int res = 0;
 	const uint32_t ccount = msize / 512;
 	SHA1SAT shs = {
-		stream,
+		stream,	
+		0,
+		0,
+		0,
 		msize,
-		0,
-		0,
-		0,
-		{ 0 },
+		{ 0 },		
 		{ 0 },
 		{ 0 },
 		0,
