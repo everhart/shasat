@@ -1,6 +1,6 @@
 #include "preprocess.h"
 
-int preprocessSHA(
+size_t preprocessSHA(
 	FILE *		stream,
 	size_t		msize,
 	size_t		csize
@@ -10,13 +10,18 @@ int preprocessSHA(
 
 	const uint64_t osize = msize;
 	
+	//do not proceed if msize is 0
+	if (msize == 0) {
+		return 0;
+	}
+
 	//append the bit '1' to the message
 	msize++;
 	res = fprintf(
 		stream, "%zd 0\n", msize
 	);
 	if (res < 0) {
-		return -1;
+		return 0;
 	}
 
 	//append '0' to the message until message length % csize is
@@ -41,7 +46,7 @@ int preprocessSHA(
 			stream, "%d 0\n", atom
 		);
 		if (res < 0) {
-			return -1;
+			return 0;
 		}
  	}
 
