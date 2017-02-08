@@ -293,6 +293,104 @@ static int fwriteHhAtoms(SHA1SAT shs) {
 }
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
-	//preprocess SHA	
+	//preprocess SHA
+	msize = preprocessSHA(stream, msize, 512);
+	if (msize == 0) {
+		return -1;
+	}
+
+	int res = 0;
+	const uint32_t ccount = msize / 512;
+	SHA1SAT shs = {
+		stream,
+		msize,
+		0,
+		0,
+		0,
+		{ 0 },
+		{ 0 },
+		{ 0 },
+		0,
+		0,
+		0,
+		{ 0 }
+	};
+	
+	//initialize k indices
+	for (int i = 0; i < 4; i++) {
+		shs.k[i] = indexK(ccount, i, 0);
+	}
+
+	//initialize hh indices
+	for (int i = 0; i < 4; i++) {
+		shs.hh[i] = indexHh(shs.chunk, i, 0);
+	}
+
+	//write the dimacs file header
+	res = fprintf(
+		stream, "p cnf %lu %lu \n",
+		INDICES_PER_CHUNK * ccount + 128 + msize,
+		CLAUSES_PER_CHUNK * ccount + 128 + msize
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	//write atoms representing round constant values
+	res = fwriteKAtoms(shs);
+	if (res < 0) {
+		return -1;
+	}
+
+	//write atoms representing initial hash values
+	res = fwriteHhAtoms(shs);
+	if (res < 0) {
+		return -1;
+	}
+
+	//write clauses representing each and every round of SHA-1
+	for (shs.chunk = 0; shs.chunk < ccount; shs.chunk++) {
+
+		//a = h0 ... e = h4
+		for (int i = 0; i < 5; i++) {
+			shs.cc[i] = shs.hh[i];
+		}
+
+		for (shs.loop = 0; shs.loop < 80; shs.loop++) {
+			//determine all loop based indices
+			shs.w[shs.loop] = indexW(shs.chunk, shs.loop, 0);
+			shs.sig = indexSig(shs.chunk, shs.loop, 0);
+			shs.ch = indexCh(shs.chunk, shs.loop, 0);
+			shs.temp = indexTemp(shs.chunk, shs.loop, 0);
+
+			//break chunk into sixteen 32-bit words
+			if (shs.loop < 16) {
+				if (fwriteMessageClauses(shs) < 0) {
+					return -1;
+				}	
+			}
+			//key extension	
+			else {
+				if (fwriteWClauses(shs) < 0) {
+					return -1;
+				}
+			}
+
+			//compression function
+			if (
+				(fwriteSigClauses(shs) < 0) ||
+				(fwriteChClauses(shs) < 0) ||
+				(fwriteTempClauses(&shs) < 0) ||
+				(fwriteCcClauses(&shs) < 0)
+			) {
+				return -1;
+			}
+		}
+	
+		if (fwriteHhClauses(&shs) < 0) {
+			return -1;
+		}
+	}
+
 	return 0;
 }
