@@ -5,6 +5,7 @@ static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct SHA1SAT {
 	FILE *		stream;
+	size_t		msize;
 	uint32_t	chunk;
 	uint32_t	loop;
 	index_t		generic;
@@ -292,9 +293,6 @@ static int fwriteHhAtoms(SHA1SAT shs) {
 }
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
-	int res = 0;
-	SHA1SAT shs;
-	shs.stream = stream;
-
+	//preprocess SHA	
 	return 0;
 }
