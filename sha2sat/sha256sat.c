@@ -65,4 +65,8 @@ static index_t indexCc(
 	       bit;
 }	//16384 cc indices
 
-
+static index_t indexEP0(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 20483 +
+	       idx * 32 +
+	       bit;
+}	//2048 EP0 indices
