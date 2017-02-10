@@ -24,4 +24,9 @@ typedef struct SHA256SAT {
 	index_t		hh[8];	
 } SHA256SAT;
 
+index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * ccount +
+	       idx * 32 +
+	       bit;
+}
 
