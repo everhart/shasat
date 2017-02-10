@@ -77,4 +77,10 @@ static index_t indexEP1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//2048 EP1 indices
 
+static index_t indexCH(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 24581 +
+	       idx * 32 +
+	       bit;
+}	//2048 CH indices
+
 
