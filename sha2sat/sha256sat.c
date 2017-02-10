@@ -24,8 +24,17 @@ typedef struct SHA256SAT {
 	index_t		hh[8];	
 } SHA256SAT;
 
-index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
+static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * ccount +
+	       idx * 32 +
+	       bit;
+}
+
+static index_t indexMessage(
+	uint32_t ccount, uint32_t chunk, uint32_t idx, uint32_t bit
+) {
+	return INDICES_PER_CHUNK * ccount + 2049 +
+	       chunk * 512 +
 	       idx * 32 +
 	       bit;
 }
