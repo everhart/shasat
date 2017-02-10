@@ -50,3 +50,9 @@ static index_t indexSIG0(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       idx * 32 + 
 	       bit;
 }	//2048 SIG0 indices
+
+static index_t indexSIG1(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 2049 +
+	       idx * 32 +
+	       bit;
+}
