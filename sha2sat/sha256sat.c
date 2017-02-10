@@ -93,4 +93,12 @@ static index_t indexTemp1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 28679 +
 	       idx * 32 +
 	       bit;
-}
+}	//2048 temp1 indices
+
+static index_t indexTemp2(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 30728 +
+	       idx * 32 +
+	       bit;
+}	//2048 temp2 indices
+
+
