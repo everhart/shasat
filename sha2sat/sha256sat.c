@@ -88,3 +88,9 @@ static index_t indexMAJ(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       idx * 32 + 
 	       bit;
 }	//2048 MAJ indices
+
+static index_t indexTemp1(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return INDICES_PER_CHUNK * chunk + 28679 +
+	       idx * 32 +
+	       bit;
+}
