@@ -10,6 +10,12 @@ int fwriteAtom(
 	atom_t		atom
 );
 
+int fwriteAtoms8(
+	FILE *		stream,
+	uint8_t		rhs,
+	index_t 	lhs
+);
+
 int fwriteAtoms32(
 	FILE *		stream,
 	uint32_t	rhs,
