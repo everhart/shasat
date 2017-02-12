@@ -31,7 +31,7 @@ int fwriteAtoms32(
 ) {
 	int res = 0;
 
-	for (int i = 0; i < sizeof(uint32_t); i++) {
+	for (int i = 0; i < 32; i++) {
 		res = fwriteAtom(
 			stream, 
 			signAtom(lhs + i, bitVal32(rhs, i))
