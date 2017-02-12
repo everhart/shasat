@@ -51,7 +51,7 @@ int fwriteAtoms64(
 ) {
 	int res = 0;
 
-	for (int i = 0; i < sizeof(uint64_t); i++) {
+	for (int i = 0; i < 64; i++) {
 		res = fwriteAtom(
 			stream, 
 			signAtom(lhs + i, bitVal64(rhs, i))
