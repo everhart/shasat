@@ -11,7 +11,7 @@ int fwriteAtoms8(
 ) {
 	int res = 0;
 
-	for (int i = 0; i < sizeof(uint8_t); i++) {
+	for (int i = 0; i < 8; i++) {
 		res = fwriteAtom(
 			stream, 
 			signAtom(lhs + i, bitVal32(rhs, i))
