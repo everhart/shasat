@@ -1,6 +1,6 @@
 #include "sha256sat.h"
 
-static const uint32_t INDICES_PER_CHUNK = 0;
+static const uint32_t INDICES_PER_CHUNK = 59499;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct SHA256SAT {
