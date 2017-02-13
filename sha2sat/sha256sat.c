@@ -121,10 +121,12 @@ static int fwriteSIG0Clauses(SHA256SAT * shs) {
 	atom_t ante[3] = { 0 },
 	       cons = 0;
 
+	const index_t w = shs->w[shs->loop - 15];
+
 	res = fwriteRshClauses(
 		shs->stream, 
 		32,
-		shs->w[shs->loop - 15],
+		w,
 		shs->generic,
 		3
 	);
@@ -137,16 +139,10 @@ static int fwriteSIG0Clauses(SHA256SAT * shs) {
 		eval = comb[0] ^ comb[1] ^ comb[2];
 
 		for (int j = 0; j < 32; j++) {
-			ante[0] = signAtom(
-				shs->w[shs->loop - 15] + bitPosRro(32, j, 7),
-				comb[0]
-			);
-			ante[1] = signAtom(
-				shs->w[shs->loop - 15] + bitPosRro(32, j, 18),
-				comb[1]
-			);
-
+			ante[0] = signAtom(w + bitPosRro(32, j, 7), comb[0]);
+			ante[1] = signAtom(w + bitPosRro(32, j, 18), comb[1]);
 			ante[2] = signAtom(shs->generic + j, comb[2]);
+			
 			cons = signAtom(shs->SIG0 + j, eval);
 
 			res = fwriteClauses(
@@ -157,6 +153,8 @@ static int fwriteSIG0Clauses(SHA256SAT * shs) {
 			}
 		}
 	}
+
+	shs->generic += 32;
 
 	return 0;
 }
