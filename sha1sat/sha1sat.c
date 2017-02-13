@@ -193,6 +193,7 @@ static int fwriteTempClauses(SHA1SAT * shs) {
 	int res = fwriteSumClauses(
 		shs->stream,
 		32,
+		shs->temp,
 		shs->generic,
 		5,
 		shs->cc[4],
