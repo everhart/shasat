@@ -46,63 +46,67 @@ static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit) {
 }	//2048 w indices
 
 static index_t indexSIG0(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 1 + 
+	return INDICES_PER_CHUNK * chunk + 2049 + 
 	       idx * 32 + 
 	       bit;
-}	//2048 SIG0 indices
+}	//1536 SIG0 indices
 
 static index_t indexSIG1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 2049 +
+	return INDICES_PER_CHUNK * chunk + 3586 +
 	       idx * 32 +
 	       bit;
-}	//2048 SIG1 indices
+}	//1536 SIG1 indices
 
 static index_t indexCc(
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
 ) {
-	return INDICES_PER_CHUNK * chunk + 4098 +
+	return INDICES_PER_CHUNK * chunk + 5123 +
 	       idx * 32 + 
 	       bit;
 }	//16384 cc indices
 
 static index_t indexEP0(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20483 +
+	return INDICES_PER_CHUNK * chunk + 21508 +
 	       idx * 32 +
 	       bit;
 }	//2048 EP0 indices
 
 static index_t indexEP1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 22532 +
+	return INDICES_PER_CHUNK * chunk + 23557 +
 	       idx * 32 + 
 	       bit;
 }	//2048 EP1 indices
 
 static index_t indexCH(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 24581 +
+	return INDICES_PER_CHUNK * chunk + 25606 +
 	       idx * 32 +
 	       bit;
 }	//2048 CH indices
 
 static index_t indexMAJ(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 26630 +
+	return INDICES_PER_CHUNK * chunk + 27655 +
 	       idx * 32 + 
 	       bit;
 }	//2048 MAJ indices
 
 static index_t indexTemp1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 28679 +
+	return INDICES_PER_CHUNK * chunk + 29704 +
 	       idx * 32 +
 	       bit;
 }	//2048 temp1 indices
 
 static index_t indexTemp2(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 30728 +
+	return INDICES_PER_CHUNK * chunk + 31753 +
 	       idx * 32 +
 	       bit;
 }	//2048 temp2 indices
 
 static index_t indexHh(uint32_t chunk, uint32_t type, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 32777 +
+	return INDICES_PER_CHUNK * chunk + 33802 +
 	       type * 32 +
        	       bit;	       
+}	//256 hh indices
+
+static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
+	return 0;
 }
