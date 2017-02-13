@@ -108,5 +108,7 @@ static index_t indexHh(uint32_t chunk, uint32_t type, uint32_t bit) {
 }	//256 hh indices
 
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return 0;
-}
+	return INDICES_PER_CHUNK * chunk + 34059 +
+	       idx * 32 + 
+	       bit;
+}	//25440 generic indices
