@@ -42,4 +42,13 @@ int fwriteChClausesSha(
 	index_t		z
 );
 
+int fwriteParClausesSha(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		par,
+	index_t		x,
+	index_t		y,
+	index_t		z
+);
+
 #endif

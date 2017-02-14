@@ -188,3 +188,42 @@ int fwriteChClausesSha(
 	return 0;
 }
 
+int fwriteParClausesSha(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		par,
+	index_t		x,
+	index_t		y,
+	index_t		z
+) {
+	int res = 0;
+	bool comb[3] = { 0 },
+	     eval = 0;
+
+	int ante[3] = { 0 },
+	    cons = 0;
+
+	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+		eval = comb[0] ^ comb[1] ^ comb[2];
+
+		for (int j = 0; j < 32; j++) {
+			ante[0] = signAtom(x + j, comb[0]);
+			ante[1] = signAtom(y + j, comb[1]);
+			ante[2] = signAtom(z + j, comb[2]);
+
+			cons = signAtom(par + j, eval);
+			
+			res = fwriteClauses(
+				stream, ante, 3, &cons, 1
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+
