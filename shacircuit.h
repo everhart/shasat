@@ -10,7 +10,7 @@
 #include "./lib/circuit.h"
 
 size_t fwritePreprocClausesSha(
-	FILE * stream, index_t M, size_t msize, size_t csize
+	FILE * stream, index_t message, size_t msize, size_t csize
 );
 int fwriteSigClausesSha(
 	FILE * 		stream,

@@ -2,7 +2,7 @@
 
 size_t fwritePreprocClausesSha(
 	FILE *		stream,
-	index_t		M,
+	index_t		message,
 	size_t		msize,
 	size_t		csize
 ) {
@@ -18,7 +18,7 @@ size_t fwritePreprocClausesSha(
 
 	//append the bit '1' to the message
 	msize++;
-	res = fwriteAtom(stream, msize + M);
+	res = fwriteAtom(stream, msize + message);
 	if (res < 0) {
 		return 0;
 	}
@@ -27,7 +27,7 @@ size_t fwritePreprocClausesSha(
 	//csize - 64
 	while (msize % csize != csize - 64) {
 		msize++;
-		res = fwriteAtom(stream, -(msize + M));
+		res = fwriteAtom(stream, -(msize + message));
 		if (res < 0) {
 			return -1;
 		}
@@ -40,7 +40,7 @@ size_t fwritePreprocClausesSha(
 		msize++;
 		res = fwriteAtom(
 			stream,
-			signAtom(msize + M, bitVal64(osize, i))
+			signAtom(msize + message, bitVal64(osize, i))
 		);
 		if (res < 0) {
 			return 0;
