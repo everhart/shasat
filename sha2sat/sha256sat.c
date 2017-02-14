@@ -214,6 +214,16 @@ static int fwriteTemp1ClausesSha256(Sha256Sat * shs) {
 	return 0;
 }
 
+static int fwriteEp1ClausesSha256(Sha256Sat shs) {
+	return fwriteEpClausesSha(
+		shs.stream,
+		32,
+		shs.ep1,
+		shs.cc[0],
+		2, 13, 22
+	);
+}
+
 static int fwriteMajClausesSha256(Sha256Sat shs) {
 	return fwriteMajClausesSha(
 		shs.stream,
