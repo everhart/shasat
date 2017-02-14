@@ -234,7 +234,7 @@ static int fwriteWClauses(SHA256SAT * shs) {
 	return 0;
 }
 
-static int fwriteChClauses(SHA256SAT shs) {
+static int fwriteCHClauses(SHA256SAT shs) {
 	int res = 0;
 	bool comb[3] = { 0 },
 	     eval = 0;
