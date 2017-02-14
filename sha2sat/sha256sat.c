@@ -150,7 +150,7 @@ static int fwriteSig1ClausesSha256(Sha256Sat * shs) {
 
 	return 0;
 }
-static int fwriteWClauses(SHA256SAT * shs) {
+static int fwriteWClausesSha256(Sha256Sat * shs) {
 	int res = fwriteSumClauses(
 		shs->stream,
 		32,
@@ -158,9 +158,9 @@ static int fwriteWClauses(SHA256SAT * shs) {
 		shs->generic,
 		4,
 		shs->w[shs->loop - 16],
-		shs->SIG0,
+		shs->sig0,
 		shs->w[shs->loop - 7],
-		shs->SIG1
+		shs->sig1
 	);
 	if (res < 0) {
 		return -1;
