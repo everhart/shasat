@@ -373,6 +373,26 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 	return 0;
 }
 
+static int fwriteDigestAtomsSha224(Sha256Sat shs) {
+	int res = 0;
+	uint32_t word = 0;
+
+	for (int i = 0; i < 24; i += 4) {
+		word = (shs.digest[i] << 24) + 
+		       (shs.digest[i + 1] << 16) + 
+		       (shs.digest[i + 2] << 8) + 
+		       (shs.digest[i + 3]);
+
+		res = fwriteAtoms32(
+			shs.stream, shs.hh[i / 4], word
+		);
+
+
+	}
+
+	return 0;
+}
+
 static int fwriteDigestAtomsSha256(Sha256Sat shs) {
 	int res = 0;
 	uint32_t word = 0;
