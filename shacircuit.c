@@ -102,5 +102,5 @@ int fwriteSigClausesSha(
 		}
 	}
 
-	return 0;
+	return gen + 32;
 }
