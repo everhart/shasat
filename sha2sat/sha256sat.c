@@ -5,6 +5,7 @@ static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha256Sat {
 	FILE *		stream;
+	const char *	digest;
 	uint32_t	chunk;
 	uint32_t	loop;
 	index_t		generic;
@@ -367,6 +368,10 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 	return 0;
 }
 
+static int fwriteMessageAtomsSha256(Sha256Sat shs) {
+	return 0;
+}
+
 static int fwriteHhAtomsSha224(Sha256Sat shs) {
 	int res = 0;
 	
@@ -411,6 +416,7 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 	int res = 0;
 	Sha256Sat shs = {
 		stream,
+		digest,
 		0,
 		0,
 		0,
@@ -465,6 +471,11 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 		return -1;
 	}
 
+	res = fwriteMessageAtomsSha256(shs);
+	if (res < 0) {
+		return -1;
+	}
+
 	//write atoms representing initial hash values
 	res = fwriteHhAtomsSha256(shs);
 	if (res < 0) {
@@ -489,6 +500,7 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 			shs.ep1 = indexEp1Sha256(shs.chunk, shs.loop, 0);
 			shs.maj = indexMajSha256(shs.chunk, shs.loop, 0);
 			shs.temp2 = indexTemp2Sha256(shs.chunk, shs.loop, 0);
+
 			shs.generic = indexGenericSha256(
 				shs.chunk, shs.loop, 0
 			);
