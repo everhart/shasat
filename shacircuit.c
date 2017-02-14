@@ -149,6 +149,9 @@ int fwriteEpClausesSha(
 
 	return 0;
 }
+
+//ch(x, y, z) = (x & y) ^ (!x & z)
+//ch is short for 'choose'
 int fwriteChClausesSha(
 	FILE *		stream,
 	size_t		wsize,
@@ -188,6 +191,8 @@ int fwriteChClausesSha(
 	return 0;
 }
 
+//par(x, y, z) = x ^ y ^ z 
+//par is short for 'parity'
 int fwriteParClausesSha(
 	FILE *		stream,
 	size_t		wsize,
@@ -226,6 +231,8 @@ int fwriteParClausesSha(
 	return 0;
 }
 
+//maj(x, y, z) = (x & y) ^ (x & z) ^ (y & z)
+//maj is short for 'majority'
 int fwriteMajClausesSha(
 	FILE *		stream,
 	size_t		wsize,
