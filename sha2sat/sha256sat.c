@@ -114,7 +114,12 @@ static index_t indexGenericSha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
 }	//25440 generic indices
 
 static int fwriteMessageClausesSha256(Sha256Sat shs) {
-	return 0;
+	return fwriteAssignClauses(
+		shs.stream,
+		32,
+		shs.w[shs.loop],
+		shs.message
+	);
 }
 
 static int fwriteSig0ClausesSha256(Sha256Sat * shs) {
