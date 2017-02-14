@@ -23,4 +23,14 @@ int fwriteSigClausesSha(
 	uint32_t	t
 );
 
+int fwriteEpClausesSha(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		ep,
+	index_t		x,
+	uint32_t	r,
+	uint32_t	s,
+	uint32_t	t
+);
+
 #endif
