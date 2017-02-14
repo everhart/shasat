@@ -3,7 +3,7 @@
 static const uint32_t INDICES_PER_CHUNK = 59499;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
-typedef struct SHA256SAT {
+typedef struct Sha256Sat {
 	FILE *		stream;
 	char *		digest;	
 	uint32_t	chunk;
@@ -12,17 +12,17 @@ typedef struct SHA256SAT {
 	index_t		message;
 	index_t		k[64];
 	index_t		w[64];
-	index_t		SIG0;
-	index_t		SIG1;
+	index_t		sig0;
+	index_t		sig1;
 	index_t		cc[8];
-	index_t		EP0;
-	index_t		EP1;
-	index_t		CH;
-	index_t		MAJ;
+	index_t		ep0;
+	index_t		e[1;
+	index_t		ch;
+	index_t		maj;
 	index_t		temp1;
 	index_t		temp2;
 	index_t		hh[8];	
-} SHA256SAT;
+} Sha256Sat;
 
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * ccount +
@@ -45,17 +45,17 @@ static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//2048 w indices
 
-static index_t indexSIG0(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexSig0(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 2049 + 
 	       idx * 32 + 
 	       bit;
-}	//1536 SIG0 indices
+}	//1536 sig0 indices
 
-static index_t indexSIG1(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexSig1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 3586 +
 	       idx * 32 +
 	       bit;
-}	//1536 SIG1 indices
+}	//1536 sig1 indices
 
 static index_t indexCc(
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
@@ -65,29 +65,29 @@ static index_t indexCc(
 	       bit;
 }	//16384 cc indices
 
-static index_t indexEP0(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexEp0(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 21508 +
 	       idx * 32 +
 	       bit;
-}	//2048 EP0 indices
+}	//2048 ep0 indices
 
-static index_t indexEP1(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexEp1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 23557 +
 	       idx * 32 + 
 	       bit;
-}	//2048 EP1 indices
+}	//2048 ep1 indices
 
-static index_t indexCH(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexCh(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 25606 +
 	       idx * 32 +
 	       bit;
-}	//2048 CH indices
+}	//2048 ch indices
 
-static index_t indexMAJ(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexMaj(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 27655 +
 	       idx * 32 + 
 	       bit;
-}	//2048 MAJ indices
+}	//2048 maj indices
 
 static index_t indexTemp1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 29704 +
