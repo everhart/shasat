@@ -33,4 +33,13 @@ int fwriteEpClausesSha(
 	uint32_t	t
 );
 
+int fwriteChClausesSha(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		ch,
+	index_t		x,
+	index_t		y,
+	index_t		z
+);
+
 #endif
