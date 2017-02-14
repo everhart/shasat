@@ -234,3 +234,22 @@ static int fwriteMajClausesSha256(Sha256Sat shs) {
 		shs.cc[2]
 	);
 }
+
+static int fwriteTemp2ClausesSha256(Sha256Sat * shs) {
+	int res = fwriteSumClauses(
+		shs->stream,
+		32,
+		shs->temp1,
+		shs->generic,
+		2,
+		shs->ep1,
+		shs->maj
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	shs->generic = res;
+
+	return 0;
+}
