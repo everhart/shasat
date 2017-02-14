@@ -5,7 +5,6 @@ static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha256Sat {
 	FILE *		stream;
-	char *		digest;	
 	uint32_t	chunk;
 	uint32_t	loop;
 	index_t		generic;
@@ -112,6 +111,10 @@ static index_t indexGenericSha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       idx * 32 + 
 	       bit;
 }	//25440 generic indices
+
+static int fwriteMessageClausesSha256(Sha256Sat shs) {
+	return 0;
+}
 
 static int fwriteSig0ClausesSha256(Sha256Sat * shs) {
 	int res = fwriteSigClausesSha(
@@ -401,5 +404,136 @@ static int fwriteHhAtomsSha256(Sha256Sat shs) {
 		}
 	}
 	
+	return 0;
+}
+
+int sha256sat(FILE *stream, size_t msize, const char *digest) {
+	int res = 0;
+	Sha256Sat shs = {
+		stream,
+		0,
+		0,
+		0,
+		0,	//message
+		{ 0 },
+		{ 0 },
+		0,
+		0,
+		{ 0 },
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		{ 0 },
+	};
+
+	//preprocess SHA-256
+	msize = fwritePreprocClausesSha(
+		stream, 0, msize, 512
+	);
+	if (msize == 0) {
+		return -1;
+	}
+
+	const uint32_t ccount = msize / 512;
+
+	//initialize k indices
+	for (int i = 0; i < 64; i++) {
+		shs.k[i] = indexKSha256(ccount, i, 0);
+	}
+
+	//initialize hh indicies
+	for (int i = 0; i < 8; i++) {
+		shs.hh[i] = indexHhSha256(shs.chunk, i, 0);
+	}
+
+	//write the dimacs file header
+	res = fprintf(
+		shs.stream, "p cnf %lu %lu",
+		INDICES_PER_CHUNK * ccount + msize + 2048,
+		CLAUSES_PER_CHUNK * ccount + msize + 2048
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	//write atoms representing round constant values
+	res = fwriteKAtomsSha256(shs);
+	if (res < 0) {
+		return -1;
+	}
+
+	//write atoms representing initial hash values
+	res = fwriteHhAtomsSha256(shs);
+	if (res < 0) {
+		return -1;
+	}
+
+	//write clauses representing each and every round of SHA-256
+	for (shs.chunk = 0; shs.chunk < ccount; shs.chunk++) {
+		//a = h0 ... h = h7
+		for (int i = 0; i < 8; i++) {
+			shs.cc[i] = shs.hh[i];
+		}
+
+		for (shs.loop = 0; shs.loop < 64; shs.loop++) {
+			//determine all loop based indices
+			shs.sig0 = indexSig0Sha256(shs.chunk, shs.loop, 0);
+			shs.sig1 = indexSig1Sha256(shs.chunk, shs.loop, 0);
+			shs.w[shs.loop] = indexWSha256(shs.chunk, shs.loop, 0);
+			shs.ep0 = indexEp0Sha256(shs.chunk, shs.loop, 0);
+			shs.ch 	= indexChSha256(shs.chunk, shs.loop, 0);
+			shs.temp1 = indexTemp1Sha256(shs.chunk, shs.loop, 0);
+			shs.ep1 = indexEp1Sha256(shs.chunk, shs.loop, 0);
+			shs.maj = indexMajSha256(shs.chunk, shs.loop, 0);
+			shs.temp2 = indexTemp2Sha256(shs.chunk, shs.loop, 0);
+			shs.generic = indexGenericSha256(
+				shs.chunk, shs.loop, 0
+			);
+
+			//break the chunk into 16 32 bit words
+			if (shs.loop < 16) {
+				//determine index of current message word
+				shs.message = indexMessageSha256(
+					ccount, shs.chunk, shs.loop, 0
+				);
+
+				if (fwriteMessageClausesSha256(shs) < 0) {
+				       return -1;	
+				}
+			}
+		       	//key extension	
+			else {
+				if (
+					(fwriteSig0ClausesSha256(&shs) < 0) ||
+					(fwriteSig1ClausesSha256(&shs) < 0) ||
+					(fwriteWClausesSha256(&shs) < 0)
+				) {
+					return -1;
+				}
+			}
+
+			//compression function
+			if (
+				(fwriteEp0ClausesSha256(shs) < 0) ||
+				(fwriteChClausesSha256(shs) < 0) ||
+				(fwriteTemp1ClausesSha256(&shs) < 0) ||
+				(fwriteEp1ClausesSha256(shs) < 0) ||
+				(fwriteMajClausesSha256(shs) < 0) ||
+				(fwriteTemp2ClausesSha256(&shs) < 0) ||
+				(fwriteCcClausesSha256(&shs) < 0)
+			) {
+				return -1;
+			}
+		}
+
+		//update hash values
+		if (fwriteHhClausesSha256(&shs) < 0) {
+			return -1;
+		}
+	}
+
 	return 0;
 }
