@@ -4,26 +4,6 @@ int fwriteAtom(FILE * stream, atom_t atom) {
 	return fprintf(stream, "%d 0\n", atom) < 0 ? -1 : 0;
 }
 
-int fwriteAtoms8(
-	FILE *		stream,
-	index_t		lhs,
-	uint8_t 	rhs
-) {
-	int res = 0;
-
-	for (int i = 0; i < 8; i++) {
-		res = fwriteAtom(
-			stream, 
-			signAtom(lhs + i, bitVal32(rhs, i))
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
-
-	return 0;
-}
-
 int fwriteAtoms32(
 	FILE *		stream,
 	index_t		lhs,
