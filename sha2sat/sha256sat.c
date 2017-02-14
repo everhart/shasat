@@ -213,6 +213,46 @@ static int fwriteSIG1Clauses(SHA256SAT * shs) {
 	return 0;
 }
 
+static int fwriteEP0Clauses(SHA256SAT shs) {
+	int res = 0;
+	bool comb[3] = { 0 },
+	     eval = 0;
+
+	atom_t ante[3] = { 0 },
+	       cons = 0;
+
+	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+		eval = (comb[0] ^ comb[1] ^ comb[2]);
+
+		for (int j = 0; j < 32; j++) {
+			ante[0] = signAtom(
+				shs.cc[4] + bitPosRro(32, j, 6), 
+				comb[0]
+			);
+			ante[1] = signAtom(
+				shs.cc[4] + bitPosRro(32, j, 11), 
+				comb[1]
+			);
+			ante[2] = signAtom(
+				shs.cc[4] + bitPosRro(32, j, 25), 
+				comb[1]
+			);
+
+			cons = signAtom(shs.EP0 + j, eval);
+
+			res = fwriteClauses(
+				shs.stream, ante, 3, &cons, 1
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}	
+	}
+
+	return 0;
+}
+
 static int fwriteWClauses(SHA256SAT * shs) {
 	int res = fwriteSumClauses(
 		shs->stream,
