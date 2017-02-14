@@ -51,4 +51,13 @@ int fwriteParClausesSha(
 	index_t		z
 );
 
+int fwriteMajClausesSha(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		maj,
+	index_t		x,
+	index_t		y,
+	index_t		z
+);
+
 #endif
