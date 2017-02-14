@@ -375,19 +375,19 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 
 static int fwriteDigestAtomsSha256(Sha256Sat shs) {
 	int res = 0;
+	uint32_t word = 0;
 
-	for (int i = 0; i < 8; i++) {
-		//using a second loop instead of casting avoids 
-		//issues regarding endianness
-		for (int j = 0; j < 4; j++) {
-			shs.hh[i] = indexHhSha256(shs.chunk, i, j * 8);
-			res = fwriteAtoms8(
-				shs.stream, shs.hh[i], shs.digest[i * 4 + j]
-			);
-			if (res < 0) {
-				return -1;
-			}
-		}
+	for (int i = 0; i < 32; i += 4) {
+		word = (shs.digest[i] << 24) + 
+		       (shs.digest[i + 1] << 16) + 
+		       (shs.digest[i + 2] << 8) + 
+		       (shs.digest[i + 3]);
+
+		res = fwriteAtoms32(
+			shs.stream, shs.hh[i / 4], word
+		);
+
+
 	}
 
 	return 0;
@@ -464,6 +464,7 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 		return -1;
 	}
 
+	//determine how many chunks there are
 	const uint32_t ccount = msize / 512;
 
 	//initialize k indices
