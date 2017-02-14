@@ -363,3 +363,23 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 
 	return 0;
 }
+
+static int fwriteHhAtomsSha224(Sha256Sat shs) {
+	int res = 0;
+	
+	int hh[8] = {
+		0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 
+		0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4
+	};
+
+	for (int i = 0; i < 8; i++) {
+		res = fwriteAtoms32(
+			shs.stream, shs.hh[i], hh[i]
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+	
+	return 0;
+}
