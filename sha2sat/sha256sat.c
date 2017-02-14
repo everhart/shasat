@@ -253,3 +253,51 @@ static int fwriteTemp2ClausesSha256(Sha256Sat * shs) {
 
 	return 0;
 }
+
+static int fwriteCcClausesSha256(Sha256Sat * shs) {
+	int res = 0;
+
+	for (int i = 7; i >= 0; i--) {
+		shs->cc[i] = indexCcSha256(shs->chunk, shs->loop + 1, 0);
+
+		//e = d + temp1
+		if (i == 4) {
+			res = fwriteSumClauses(
+				shs->stream, 
+				32,
+				shs->cc[i], 
+				shs->generic,
+				2, 
+				shs->cc[i - 1], 
+				shs->temp1
+			);
+
+			shs->generic = res;
+		}
+		//a = temp1 + temp2
+		else if (i == 0) {
+			res = fwriteSumClauses(
+				shs->stream, 
+				32,
+				shs->cc[i], 
+				shs->generic,
+				2, 
+				shs->temp1, 
+				shs->temp2
+			);
+		
+			shs->generic = res;
+		}
+		else {
+			res = fwriteAssignClauses(
+				shs->stream, 32, shs->cc[i], shs->cc[i - 1]
+			);
+		}
+
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
