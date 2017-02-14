@@ -301,3 +301,29 @@ static int fwriteCcClausesSha256(Sha256Sat * shs) {
 
 	return 0;
 }
+
+static int fwriteHhClausesSha256(Sha256Sat * shs) {
+	int res = 0;
+	index_t hh[8] = { 0 };
+
+	memcpy(hh, shs->hh, sizeof(hh));
+
+	for (int i = 0; i < 8; i++) {
+		shs->hh[i] = indexHhSha256(shs->chunk, i, 0);
+		
+		res = fwriteSumClauses(
+			shs->stream,
+			32,
+			shs->hh[i],
+			shs->generic,
+			2,
+			hh[i],
+			shs->cc[i]
+		);
+		if (res < 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
