@@ -368,7 +368,23 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 	return 0;
 }
 
-static int fwriteMessageAtomsSha256(Sha256Sat shs) {
+static int fwriteDigestAtomsSha256(Sha256Sat shs) {
+	int res = 0;
+
+	for (int i = 0; i < 8; i++) {
+		//using a second loop instead of casting avoids 
+		//issues regarding endianness
+		for (int j = 0; j < 4; j++) {
+			shs.hh[i] = indexHhSha256(shs.chunk, i, j * 8);
+			res = fwriteAtoms8(
+				shs.stream, shs.hh[i], shs.digest[i * 4 + j]
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
 	return 0;
 }
 
@@ -471,11 +487,6 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 		return -1;
 	}
 
-	res = fwriteMessageAtomsSha256(shs);
-	if (res < 0) {
-		return -1;
-	}
-
 	//write atoms representing initial hash values
 	res = fwriteHhAtomsSha256(shs);
 	if (res < 0) {
@@ -545,6 +556,12 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 		if (fwriteHhClausesSha256(&shs) < 0) {
 			return -1;
 		}
+	}
+
+	//write atoms representing the final digest value
+	res = fwriteDigestAtomsSha256(shs);
+	if (res < 0) {
+		return -1;
 	}
 
 	return 0;
