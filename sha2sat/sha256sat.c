@@ -252,7 +252,40 @@ static int fwriteCHClauses(SHA256SAT shs) {
 			ante[1] = signAtom(shs.cc[5] + j, comb[1]);
 			ante[2] = signAtom(shs.cc[6] + j, comb[2]);
 
-			cons = shs.CH;
+			cons = signAtom(shs.CH + j, eval);
+
+			res = fwriteClauses(
+				shs.stream, ante, 3, &cons, 1
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}	
+	}
+
+	return 0;
+}
+
+static int fwriteMAJClauses(SHA256SAT shs) {
+	int res = 0;
+	bool comb[3] = { 0 },
+	     eval = 0;
+
+	atom_t ante[3] = { 0 },
+	       cons = 0;
+
+	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+		eval = (comb[0] & comb[1]) ^
+		       (comb[0] & comb[2]) ^
+		       (comb[1] & comb[2]);
+
+		for (int j = 0; j < 32; j++) {
+			ante[0] = signAtom(shs.cc[0] + j, comb[0]);
+			ante[1] = signAtom(shs.cc[1] + j, comb[1]);
+			ante[2] = signAtom(shs.cc[2] + j, comb[2]);
+
+			cons = signAtom(shs.MAJ + j, eval);
 
 			res = fwriteClauses(
 				shs.stream, ante, 3, &cons, 1
