@@ -12,5 +12,15 @@
 size_t fwritePreprocClausesSha(
 	FILE * stream, index_t M, size_t msize, size_t csize
 );
+int fwriteSigClausesSha(
+	FILE * 		stream,
+	size_t		wsize,
+	index_t		sig,
+	index_t		gen,
+	index_t		x,
+	uint32_t	r,
+	uint32_t	s,
+	uint32_t	t
+);
 
 #endif

@@ -49,3 +49,58 @@ size_t fwritePreprocClausesSha(
 
 	return msize;
 }
+
+int fwriteSigClausesSha(
+	FILE * 		stream,
+	size_t		wsize,
+	index_t		sig,
+	index_t		gen,
+	index_t		x,
+	uint32_t	r,
+	uint32_t	s,
+	uint32_t	t
+) {
+	int res = 0;
+	bool comb[3] = { 0 },
+	     eval = 0;
+
+	atom_t ante[3] = { 0 },
+	       cons = 0;
+
+	res = fwriteRshClauses(
+		stream,
+		32,
+		x,
+		gen,
+		t
+	);
+	if (res < 0) {
+		return -1;
+	}
+
+	for (int i = 0; i < (1 << 3); i++) {
+		*comb = nextCombination(comb, 3);
+		eval = (comb[0] ^ comb[1] ^ comb[2]);
+
+		for (int j = 0; j < wsize; j++) {
+			ante[0] = signAtom(
+				x + bitPosRro(32, j, r), comb[0]
+			);
+			ante[1] = signAtom(
+				x + bitPosRro(32, j, s), comb[1]
+			);
+			ante[2] = signAtom(gen + j, comb[2]);
+
+			cons = signAtom(sig + j, eval);
+
+			res = fwriteClauses(
+				stream, ante, 3, &cons, 1
+			);
+			if (res < 0) {
+				return -1;
+			}
+		}
+	}
+
+	return 0;
+}
