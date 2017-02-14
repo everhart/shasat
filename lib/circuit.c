@@ -6,8 +6,8 @@ int fwriteAtom(FILE * stream, atom_t atom) {
 
 int fwriteAtoms8(
 	FILE *		stream,
-	uint8_t		rhs,
-	index_t 	lhs
+	index_t		lhs,
+	uint8_t 	rhs
 ) {
 	int res = 0;
 
@@ -26,8 +26,8 @@ int fwriteAtoms8(
 
 int fwriteAtoms32(
 	FILE *		stream,
-	uint32_t	rhs,
-	index_t 	lhs
+	index_t		lhs,
+	uint32_t 	rhs
 ) {
 	int res = 0;
 
@@ -46,8 +46,8 @@ int fwriteAtoms32(
 
 int fwriteAtoms64(
 	FILE *		stream,
-	uint64_t	rhs,
-	index_t 	lhs
+	index_t		lhs,
+	uint64_t 	rhs
 ) {
 	int res = 0;
 
@@ -93,8 +93,8 @@ int fwriteClauses(
 int fwriteAssignClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		rhs,
-	index_t		lhs
+	index_t		lhs,
+	index_t		rhs
 ) {
 	int res = 0;
 	bool perm = 0;
@@ -125,8 +125,8 @@ int fwriteAssignClauses(
 int fwriteRshClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		rhs,
 	index_t		lhs,
+	index_t		rhs,
 	uint32_t	shift
 ) {
 	int res = 0;
@@ -154,8 +154,8 @@ int fwriteRshClauses(
 int fwriteLshClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		rhs,
 	index_t		lhs,
+	index_t		rhs,
 	uint32_t	shift
 ) {
 	int res = 0;
@@ -183,8 +183,8 @@ int fwriteLshClauses(
 int fwriteRroClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		rhs,
 	index_t		lhs,
+	index_t		rhs,
 	uint32_t	rot
 ) {
 	int res = 0;
@@ -205,8 +205,8 @@ int fwriteRroClauses(
 int fwriteLroClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		rhs,
 	index_t		lhs,
+	index_t		rhs,
 	uint32_t	rot
 ) {
 	int res = 0;

@@ -12,20 +12,20 @@ int fwriteAtom(
 
 int fwriteAtoms8(
 	FILE *		stream,
-	uint8_t		rhs,
-	index_t 	lhs
+	index_t		lhs,
+	uint8_t 	rhs
 );
 
 int fwriteAtoms32(
 	FILE *		stream,
-	uint32_t	rhs,
-	index_t 	lhs
+	index_t		lhs,
+	uint32_t 	rhs
 );
 
 int fwriteAtoms64(
 	FILE *		stream,
-	uint64_t	rhs,
-	index_t 	lhs
+	index_t		lhs,
+	uint64_t 	rhs
 );
 
 int fwriteClauses(
@@ -39,23 +39,23 @@ int fwriteClauses(
 int fwriteAssignClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		inp,
-	index_t		oup	
+	index_t		lhs,
+	index_t		rhs	
 );
 
 int fwriteRshClauses(
 	FILE *		stream,
 	size_t		wsize,
-	index_t		rhs,
 	index_t		lhs,
+	index_t		rhs,
 	uint32_t	shift
 );
 
 int fwriteLroClauses(
 	FILE *		stream,
 	size_t 		wsize,
-	index_t		rhs,
 	index_t		lhs,
+	index_t		rhs,
 	uint32_t	rot
 );
 
