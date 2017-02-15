@@ -19,10 +19,7 @@ int fwriteDigestAtomsSha(
 }
 
 size_t fwritePreprocClausesSha(
-	FILE *		stream,
-	index_t		message,
-	size_t		msize,
-	size_t		csize
+	FILE *	stream, index_t	message, size_t msize, size_t csize
 ) {
 	int res = 0,
 	    atom = 0;
