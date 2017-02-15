@@ -454,7 +454,7 @@ static int fwriteHhAtomsSha256(Sha256Sat shs) {
 }
 
 //carries out a SHA-256 or SHA-224 reduction, depending on 'dsize' parameter
-int _sha256sat(
+static int _sha256sat(
 	FILE *stream, size_t msize, const char *digest, size_t dsize
 ) {
 	int res = 0;
@@ -599,4 +599,12 @@ int _sha256sat(
 	}
 
 	return 0;
+}
+
+int sha224sat(FILE * stream, size_t msize, const char * digest) {
+	return _sha256sat(stream, msize, digest, 224);
+}
+
+int sha256sat(FILE * stream, size_t msize, const char * digest) {
+	return _sha256sat(stream, msize, digest, 256);
 }
