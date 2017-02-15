@@ -6,7 +6,7 @@ int fwriteDigestAtomsSha(
 	int res = 0;
 	uint32_t word = 0;
 
-	for (int i = 0; i < dsize / 8; i += 4) {
+	for (int i = 0; i < dsize / sizeof(char); i += 4) {
 		//convert four 8-bit words to one 32 bit word
 		//this method accounts for different endianness
 		word = (digest[i] << 24) +
