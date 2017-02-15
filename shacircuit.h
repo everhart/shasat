@@ -9,9 +9,14 @@
 #include "./lib/bitops.h"
 #include "./lib/circuit.h"
 
+int fwriteDigestAtomsSha(
+	FILE * stream, const index_t * hh, size_t leng
+);
+
 size_t fwritePreprocClausesSha(
 	FILE * stream, index_t message, size_t msize, size_t csize
 );
+
 int fwriteSigClausesSha(
 	FILE * 		stream,
 	size_t		wsize,
