@@ -6,6 +6,7 @@ static const uint32_t CLAUSES_PER_CHUNK = 0;
 typedef struct Sha256Sat {
 	FILE *		stream;
 	const char *	digest;
+	size_t		dsize;
 	uint32_t	chunk;
 	uint32_t	loop;
 	index_t		generic;
@@ -373,86 +374,6 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 	return 0;
 }
 
-static int fwriteDigestAtomsSha224(Sha256Sat shs) {
-	int res = 0;
-	uint32_t word = 0;
-
-	for (int i = 0; i < 24; i += 4) {
-		word = (shs.digest[i] << 24) + 
-		       (shs.digest[i + 1] << 16) + 
-		       (shs.digest[i + 2] << 8) + 
-		       (shs.digest[i + 3]);
-
-		res = fwriteAtoms32(
-			shs.stream, shs.hh[i / 4], word
-		);
-
-
-	}
-
-	return 0;
-}
-
-static int fwriteDigestAtomsSha256(Sha256Sat shs) {
-	int res = 0;
-	uint32_t word = 0;
-
-	for (int i = 0; i < 32; i += 4) {
-		word = (shs.digest[i] << 24) + 
-		       (shs.digest[i + 1] << 16) + 
-		       (shs.digest[i + 2] << 8) + 
-		       (shs.digest[i + 3]);
-
-		res = fwriteAtoms32(
-			shs.stream, shs.hh[i / 4], word
-		);
-
-
-	}
-
-	return 0;
-}
-
-static int fwriteHhAtomsSha224(Sha256Sat shs) {
-	int res = 0;
-	
-	int hh[8] = {
-		0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 
-		0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4
-	};
-
-	for (int i = 0; i < 8; i++) {
-		res = fwriteAtoms32(
-			shs.stream, shs.hh[i], hh[i]
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
-	
-	return 0;
-}
-
-static int fwriteHhAtomsSha256(Sha256Sat shs) {
-	int res = 0;
-	
-	int hh[8] = {
-		0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-		0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
-	};
-
-	for (int i = 0; i < 8; i++) {
-		res = fwriteAtoms32(
-			shs.stream, shs.hh[i], hh[i]
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
-	
-	return 0;
-}
-
 //carries out a SHA-256 or SHA-224 reduction, depending on 'dsize' parameter
 static int _sha256sat(
 	FILE *stream, size_t msize, const char *digest, size_t dsize
@@ -461,6 +382,7 @@ static int _sha256sat(
 	Sha256Sat shs = {
 		stream,
 		digest,
+		dsize,
 		0,
 		0,
 		0,
