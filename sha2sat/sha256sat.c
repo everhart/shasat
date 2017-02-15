@@ -453,7 +453,10 @@ static int fwriteHhAtomsSha256(Sha256Sat shs) {
 	return 0;
 }
 
-int sha256sat(FILE *stream, size_t msize, const char *digest) {
+//carries out a SHA-256 or SHA-224 reduction, depending on 'dsize' parameter
+int _sha256sat(
+	FILE *stream, size_t msize, const char *digest, size_t dsize
+) {
 	int res = 0;
 	Sha256Sat shs = {
 		stream,
@@ -461,7 +464,7 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 		0,
 		0,
 		0,
-		0,	//message
+		0,
 		{ 0 },
 		{ 0 },
 		0,
@@ -475,6 +478,11 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 		0,
 		{ 0 },
 	};
+
+	//function is a specific implementation for SHA-256 and SHA-224
+	if (dsize != 256 && dsize != 224) {
+		return -1;
+	}
 
 	//preprocess SHA-256
 	msize = fwritePreprocClausesSha(
@@ -542,7 +550,7 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 				shs.chunk, shs.loop, 0
 			);
 
-			//break the chunk into 16 32 bit words
+			//break the chunk into sixteen 32 bit words
 			if (shs.loop < 16) {
 				//determine index of current message word
 				shs.message = indexMessageSha256(
@@ -585,7 +593,7 @@ int sha256sat(FILE *stream, size_t msize, const char *digest) {
 	}
 
 	//write atoms representing the final digest value
-	res = fwriteDigestAtomsSha256(shs);
+	res = fwriteDigestAtomsSha(shs.stream, shs.hh, digest, dsize);
 	if (res < 0) {
 		return -1;
 	}
