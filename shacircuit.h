@@ -10,7 +10,7 @@
 #include "./lib/circuit.h"
 
 int fwriteDigestAtomsSha(
-	FILE * stream, const index_t * hh, size_t leng
+	FILE * stream, const index_t * hh, const char * digest, size_t dleng
 );
 
 size_t fwritePreprocClausesSha(

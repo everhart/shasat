@@ -1,5 +1,23 @@
 #include "shacircuit.h"
 
+int fwriteDigestAtomsSha(
+	FILE * stream, const index_t * hh, const char * digest, size_t dsize
+) {
+	int res = 0;
+	uint32_t word = 0;
+
+	for (int i = 0; i < dsize / 8; i += 4) {
+		word = (digest[i] << 24) +
+		       (digest[i + 1] << 16) +
+		       (digest[i + 2] << 8) +
+		       (digest[i + 3]);
+
+		res = fwriteAtoms32(stream, hh[i / 4], word);
+	}
+
+	return 0;
+}
+
 size_t fwritePreprocClausesSha(
 	FILE *		stream,
 	index_t		message,
