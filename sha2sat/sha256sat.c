@@ -449,11 +449,8 @@ static int _sha256sat(
 	}
 
 	//initialize message indices
-	res = indexMessageSha256(ccount, 0, 0, 0);
-	if (res < 0) {
-		return -1;
-	}
-
+	shs.message = indexMessageSha256(ccount, 0, 0, 0);
+	
 	//initialize k indices
 	for (int i = 0; i < 64; i++) {
 		shs.k[i] = indexKSha256(ccount, i, 0);
