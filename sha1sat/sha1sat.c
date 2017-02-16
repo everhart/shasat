@@ -300,14 +300,8 @@ static int fwriteHhAtomsSha1(Sha1Sat shs) {
 }
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
-	//preprocess SHA
-	msize = preprocessSHA(stream, msize, 512);
-	if (msize == 0) {
-		return -1;
-	}
-
 	int res = 0;
-	const uint32_t ccount = msize / 512;
+	const uint32_t ccount = (msize + 576) / 512;
 	Sha1Sat shs = {
 		stream,	
 		digest,
@@ -323,7 +317,15 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 		0,
 		{ 0 }
 	};
-	
+
+	//preprocess SHA
+	msize = fwritePreprocClausesSha(
+		stream, ccount, msize, 512
+	);
+	if (msize == 0) {
+		return -1;
+	}
+
 	//initialize k indices
 	for (int i = 0; i < 4; i++) {
 		shs.k[i] = indexKSha1(ccount, i, 0);
