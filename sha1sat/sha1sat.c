@@ -3,7 +3,7 @@
 static const uint32_t INDICES_PER_CHUNK = 41416;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
-typedef struct SHA1SAT {
+typedef struct Sha1Sat {
 	FILE *		stream;
 	uint32_t	chunk;
 	uint32_t	loop;
@@ -16,7 +16,7 @@ typedef struct SHA1SAT {
 	index_t		ch;
 	index_t		temp;	
 	index_t		hh[5];		//hash
-} SHA1SAT;
+} Sha1Sat;
 
 static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * ccount + 	//amount of previous indices
@@ -215,7 +215,7 @@ static int fwriteCcClauses(SHA1SAT * shs) {
 	int res = 0;
 
 	for (int i = 4; i >= 0; i--) {
-		shs->cc[4] = indexCc(shs->chunk, i, shs->loop + 1, 0);
+		shs->cc[i] = indexCc(shs->chunk, i, shs->loop + 1, 0);
 
 		if (i == 2) {
 			res = fwriteLroClauses(
