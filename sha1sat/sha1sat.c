@@ -12,8 +12,8 @@ typedef struct Sha1Sat {
 	index_t		k[4];		//round constants
 	index_t 	w[80];		//message schedule array
 	index_t		cc[5];		//compressed chunk
-	index_t		sig;
-	index_t		ch;
+	index_t		f;
+	index_t		g;
 	index_t		temp;	
 	index_t		hh[5];		//hash
 } Sha1Sat;
