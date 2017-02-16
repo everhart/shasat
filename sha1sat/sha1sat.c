@@ -1,6 +1,6 @@
 #include "./sha1sat.h"
 
-static const uint32_t INDICES_PER_CHUNK = 41416;
+static const uint32_t INDICES_PER_CHUNK = 41286;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha1Sat {
@@ -46,34 +46,34 @@ static index_t indexCc(
 	       kind * 2592 + 
 	       idx * 32 +
 	       bit;
-} //12960 cc indices
+} //12800 cc indices
 
 static index_t indexF(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 15522 +
+	return INDICES_PER_CHUNK * chunk + 15362 +
 	       idx * 32 +
 	       bit;
 }	//2560 sig indices
 
 static index_t indexG(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 18083 +
+	return INDICES_PER_CHUNK * chunk + 17923 +
 	       idx * 32 +
 	       bit;
 }	//2560 ch indices
 
 static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20644 +
+	return INDICES_PER_CHUNK * chunk + 20484 +
 	       idx * 32 +
 	       bit;
 }	//2560 temp indices
 
 static index_t indexHh(uint32_t chunk, uint32_t kind, uint32_t bit) {
-	return INDICES_PER_CHUNK + chunk + 23205 +
+	return INDICES_PER_CHUNK + chunk + 23045 +
 	       kind * 32 +
 	       bit;
 }	//160 hh indices
 
 static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) { 
-	return INDICES_PER_CHUNK * chunk + 23336 + 
+	return INDICES_PER_CHUNK * chunk + 23206 + 
 	       idx * 32 + 
 	       bit;
 }	//18080 generic indices
