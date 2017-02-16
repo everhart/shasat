@@ -48,7 +48,7 @@ static index_t indexCc(
 	       bit;
 } //12960 cc indices
 
-static index_t indexSig(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexF(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 15522 +
 	       idx * 32 +
 	       bit;
