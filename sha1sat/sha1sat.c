@@ -301,7 +301,10 @@ static int fwriteHhAtomsSha1(Sha1Sat shs) {
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	int res = 0;
+
+	//determine how many chunks there are
 	const uint32_t ccount = (msize + 576) / 512;
+
 	Sha1Sat shs = {
 		stream,	
 		digest,
@@ -318,16 +321,8 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 		{ 0 }
 	};
 
-	//preprocess SHA
-	msize = fwritePreprocClausesSha(
-		stream, 
-		indexMessageSha1(ccount, 0, 0, 0), 
-		msize, 
-		512
-	);
-	if (msize == 0) {
-		return -1;
-	}
+	//initialize message index
+	shs.message = indexMessageSha1(ccount, 0, 0, 0);
 
 	//initialize k indices
 	for (int i = 0; i < 4; i++) {
@@ -346,6 +341,14 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 		CLAUSES_PER_CHUNK * ccount + 128 + msize
 	);
 	if (res < 0) {
+		return -1;
+	}
+
+	//preprocess SHA
+	msize = fwritePreprocClausesSha(
+		stream, shs.message, msize, 512
+	);
+	if (msize == 0) {
 		return -1;
 	}
 
