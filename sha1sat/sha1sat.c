@@ -140,20 +140,32 @@ static int fwriteFClauses(Sha1Sat shs) {
 	
 	if (shs.loop > 0 && shs.loop < 20) {
 		res = fwriteChClausesSha(
-			shs.stream, 32,shs.f,
-			shs.cc[1], shs.cc[2], shs.cc[3]
+			shs.stream, 
+			32, 
+			shs.f,
+			shs.cc[1], 
+			shs.cc[2], 
+			shs.cc[3]
 		);
 	}
 	else if (shs.loop > 40 && shs.loop < 60) {
 		res = fwriteMajClausesSha(
-			shs.stream, 32,shs.f,
-			shs.cc[1], shs.cc[2], shs.cc[3]
+			shs.stream, 
+			32, 
+			shs.f,
+			shs.cc[1], 
+			shs.cc[2], 
+			shs.cc[3]
 		);
 	}
 	else {
 		res = fwriteParClausesSha(
-			shs.stream, 32,shs.f,
-			shs.cc[1], shs.cc[2], shs.cc[3]
+			shs.stream, 
+			32,
+			shs.f,
+			shs.cc[1], 
+			shs.cc[2], 
+			shs.cc[3]
 		);
 	}
 
