@@ -18,13 +18,13 @@ typedef struct Sha1Sat {
 	index_t		hh[5];		//hash
 } Sha1Sat;
 
-static index_t indexK(uint32_t ccount, uint32_t idx, uint32_t bit) {
+static index_t indexKSha1(uint32_t ccount, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * ccount + 	//amount of previous indices
 	       idx * 32 + 			//word index
 	       bit;				//bit index
 }	//128 k indices
 
-static index_t indexMessage(
+static index_t indexMessageSha1(
 	uint32_t ccount, uint32_t chunk, uint32_t idx, uint32_t bit
 ) {
 	return INDICES_PER_CHUNK * ccount + 129 + 
@@ -33,13 +33,13 @@ static index_t indexMessage(
 	       bit;	
 }	//arbitrary amount of message indices
 
-static index_t indexW(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexWSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 1 +
 	       idx * 32 +
 	       bit;
 }	//2560 w indices
 
-static index_t indexCc(
+static index_t indexCcSha1(
 	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
 ) {
 	return INDICES_PER_CHUNK * chunk + 2561 + 
@@ -48,37 +48,37 @@ static index_t indexCc(
 	       bit;
 } //12800 cc indices
 
-static index_t indexF(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexFSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 15362 +
 	       idx * 32 +
 	       bit;
 }	//2560 sig indices
 
-static index_t indexG(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexGSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 17923 +
 	       idx * 32 +
 	       bit;
 }	//2560 ch indices
 
-static index_t indexTemp(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t indexTempSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	return INDICES_PER_CHUNK * chunk + 20484 +
 	       idx * 32 +
 	       bit;
 }	//2560 temp indices
 
-static index_t indexHh(uint32_t chunk, uint32_t kind, uint32_t bit) {
+static index_t indexHhSha1(uint32_t chunk, uint32_t kind, uint32_t bit) {
 	return INDICES_PER_CHUNK + chunk + 23045 +
 	       kind * 32 +
 	       bit;
 }	//160 hh indices
 
-static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) { 
+static index_t indexGenericSha1(uint32_t chunk, uint32_t idx, uint32_t bit) { 
 	return INDICES_PER_CHUNK * chunk + 23206 + 
 	       idx * 32 + 
 	       bit;
 }	//18080 generic indices
 
-static int fwriteMessageClauses(Sha1Sat shs) {
+static int fwriteMessageClausesSha1(Sha1Sat shs) {
 	return fwriteAssignClauses(
 		shs.stream,
 		32,
@@ -87,7 +87,7 @@ static int fwriteMessageClauses(Sha1Sat shs) {
 	);
 }
 
-static int fwriteWClauses(Sha1Sat shs) {
+static int fwriteWClausesSha1(Sha1Sat shs) {
 	int res = 0;
 	bool comb[4] = { 0 },
 	     eval = 0;
@@ -135,7 +135,7 @@ static int fwriteWClauses(Sha1Sat shs) {
 	return 0;
 }
 
-static int fwriteFClauses(Sha1Sat shs) {
+static int fwriteFClausesSha1(Sha1Sat shs) {
 	int res = 0;
 	
 	if (shs.loop > 0 && shs.loop < 20) {
@@ -172,7 +172,7 @@ static int fwriteFClauses(Sha1Sat shs) {
 	return 0;
 }
 
-static int fwriteGClauses(Sha1Sat shs) {
+static int fwriteGClausesSha1(Sha1Sat shs) {
 	return fwriteLroClauses(
 		shs.stream,
 		32,
@@ -182,7 +182,7 @@ static int fwriteGClauses(Sha1Sat shs) {
 	);
 }
 
-static int fwriteTempClauses(Sha1Sat * shs) {
+static int fwriteTempClausesSha1(Sha1Sat * shs) {
 	int res = fwriteSumClauses(
 		shs->stream,
 		32,
@@ -204,7 +204,7 @@ static int fwriteTempClauses(Sha1Sat * shs) {
 	return 0;
 }
 
-static int fwriteCcClauses(Sha1Sat * shs) {
+static int fwriteCcClausesSha1(Sha1Sat * shs) {
 	int res = 0;
 
 	for (int i = 4; i >= 0; i--) {
@@ -233,7 +233,7 @@ static int fwriteCcClauses(Sha1Sat * shs) {
 	return 0;
 }
 
-static int fwriteHhClauses(Sha1Sat * shs) {
+static int fwriteHhClausesSha1(Sha1Sat * shs) {
 	int res = 0;
 	index_t hh[5] = { 0 };
 
@@ -261,7 +261,7 @@ static int fwriteHhClauses(Sha1Sat * shs) {
 	return 0;
 }
 
-static int fwriteKAtoms(Sha1Sat shs) {
+static int fwriteKAtomsSha1(Sha1Sat shs) {
 	int res = 0;
 
 	int k[4] = {
@@ -280,7 +280,7 @@ static int fwriteKAtoms(Sha1Sat shs) {
 	return 0;
 }
 
-static int fwriteHhAtoms(Sha1Sat shs) {
+static int fwriteHhAtomsSha1(Sha1Sat shs) {
 	int res = 0;
 	int hh[5] = {
 		0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476,	0xC3D2E1F0
