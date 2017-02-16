@@ -320,7 +320,10 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 
 	//preprocess SHA
 	msize = fwritePreprocClausesSha(
-		stream, ccount, msize, 512
+		stream, 
+		indexMessageSha1(ccount, 0, 0, 0), 
+		msize, 
+		512
 	);
 	if (msize == 0) {
 		return -1;
@@ -405,6 +408,13 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 		if (fwriteHhClausesSha1(&shs) < 0) {
 			return -1;
 		}
+	}
+	
+	res = fwriteDigestAtomsSha(
+		shs.stream, shs.hh, shs.digest, 160 
+	);
+	if (res < 0) {
+		return -1;
 	}
 
 	return 0;
