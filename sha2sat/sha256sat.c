@@ -417,6 +417,10 @@ static int _sha256sat(
 	FILE *stream, size_t msize, const char *digest, size_t dsize
 ) {
 	int res = 0;
+
+	//determine how many chunks there are
+	const uint32_t ccount = (msize + 576) / 512;
+
 	Sha256Sat shs = {
 		stream,
 		digest,
@@ -444,16 +448,11 @@ static int _sha256sat(
 		return -1;
 	}
 
-	//preprocess SHA-256
-	msize = fwritePreprocClausesSha(
-		stream, 0, msize, 512
-	);
-	if (msize == 0) {
+	//initialize message indices
+	res = indexMessageSha256(ccount, 0, 0, 0);
+	if (res < 0) {
 		return -1;
 	}
-
-	//determine how many chunks there are
-	const uint32_t ccount = msize / 512;
 
 	//initialize k indices
 	for (int i = 0; i < 64; i++) {
@@ -472,6 +471,14 @@ static int _sha256sat(
 		CLAUSES_PER_CHUNK * ccount + msize + 2048
 	);
 	if (res < 0) {
+		return -1;
+	}
+
+	//preprocess SHA-256/224
+	msize = fwritePreprocClausesSha(
+		stream, shs.message, msize, 512
+	);
+	if (msize == 0) {
 		return -1;
 	}
 
@@ -553,7 +560,9 @@ static int _sha256sat(
 	}
 
 	//write atoms representing the final digest value
-	res = fwriteDigestAtomsSha(shs.stream, shs.hh, digest, dsize);
+	res = fwriteDigestAtomsSha(
+		shs.stream, shs.hh, shs.digest, shs.dsize
+	);
 	if (res < 0) {
 		return -1;
 	}
