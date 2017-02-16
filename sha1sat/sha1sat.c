@@ -5,6 +5,7 @@ static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha1Sat {
 	FILE *		stream;
+	const char *	digest;
 	uint32_t	chunk;
 	uint32_t	loop;
 	index_t		generic;
@@ -208,7 +209,7 @@ static int fwriteCcClausesSha1(Sha1Sat * shs) {
 	int res = 0;
 
 	for (int i = 4; i >= 0; i--) {
-		shs->cc[i] = indexCc(shs->chunk, i, shs->loop + 1, 0);
+		shs->cc[i] = indexCcSha1(shs->chunk, i, shs->loop + 1, 0);
 
 		if (i == 2) {
 			res = fwriteLroClauses(
@@ -240,7 +241,7 @@ static int fwriteHhClausesSha1(Sha1Sat * shs) {
 	memcpy(hh, shs->hh, sizeof(hh));
 
 	for (int i = 0; i < 5; i++) {
-		shs->hh[i] = indexHh(shs->chunk, i, 0);
+		shs->hh[i] = indexHhSha1(shs->chunk, i, 0);
 
 		res = fwriteSumClauses(
 			shs->stream,
@@ -309,6 +310,7 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	const uint32_t ccount = msize / 512;
 	Sha1Sat shs = {
 		stream,	
+		digest,
 		0,
 		0,
 		0,
@@ -324,12 +326,12 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	
 	//initialize k indices
 	for (int i = 0; i < 4; i++) {
-		shs.k[i] = indexK(ccount, i, 0);
+		shs.k[i] = indexKSha1(ccount, i, 0);
 	}
 
 	//initialize hh indices
 	for (int i = 0; i < 4; i++) {
-		shs.hh[i] = indexHh(shs.chunk, i, 0);
+		shs.hh[i] = indexHhSha1(shs.chunk, i, 0);
 	}
 
 	//write the dimacs file header
@@ -343,13 +345,13 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	}
 
 	//write atoms representing round constant values
-	res = fwriteKAtoms(shs);
+	res = fwriteKAtomsSha1(shs);
 	if (res < 0) {
 		return -1;
 	}
 
 	//write atoms representing initial hash values
-	res = fwriteHhAtoms(shs);
+	res = fwriteHhAtomsSha1(shs);
 	if (res < 0) {
 		return -1;
 	}
@@ -364,41 +366,41 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 
 		for (shs.loop = 0; shs.loop < 80; shs.loop++) {
 			//determine all loop based indices
-			shs.w[shs.loop] = indexW(shs.chunk, shs.loop, 0);
-			shs.f = indexF(shs.chunk, shs.loop, 0);
-			shs.g = indexG(shs.chunk, shs.loop, 0);
-			shs.temp = indexTemp(shs.chunk, shs.loop, 0);
+			shs.w[shs.loop] = indexWSha1(shs.chunk, shs.loop, 0);
+			shs.f = indexFSha1(shs.chunk, shs.loop, 0);
+			shs.g = indexGSha1(shs.chunk, shs.loop, 0);
+			shs.temp = indexTempSha1(shs.chunk, shs.loop, 0);
 
 			//break chunk into sixteen 32-bit words
 			if (shs.loop < 16) {
-				shs.message = indexMessage(
+				shs.message = indexMessageSha1(
 					ccount, shs.chunk, shs.loop, 0
 				);
 
-				if (fwriteMessageClauses(shs) < 0) {
+				if (fwriteMessageClausesSha1(shs) < 0) {
 					return -1;
 				}	
 			}
 			//key extension	
 			else {
-				if (fwriteWClauses(shs) < 0) {
+				if (fwriteWClausesSha1(shs) < 0) {
 					return -1;
 				}
 			}
 
 			//compression function
 			if (
-				(fwriteSigClauses(shs) < 0) ||
-				(fwriteChClauses(shs) < 0) ||
-				(fwriteTempClauses(&shs) < 0) ||
-				(fwriteCcClauses(&shs) < 0)
+				(fwriteFClausesSha1(shs) < 0) ||
+				(fwriteGClausesSha1(shs) < 0) ||
+				(fwriteTempClausesSha1(&shs) < 0) ||
+				(fwriteCcClausesSha1(&shs) < 0)
 			) {
 				return -1;
 			}
 		}
 	
 		//update hash values
-		if (fwriteHhClauses(&shs) < 0) {
+		if (fwriteHhClausesSha1(&shs) < 0) {
 			return -1;
 		}
 	}
