@@ -158,12 +158,12 @@ static int fwriteFClauses(Sha1Sat shs) {
 	}
 }
 
-static int fwriteChClauses(Sha1Sat shs) {
+static int fwriteGClauses(Sha1Sat shs) {
 	return fwriteLroClauses(
 		shs.stream,
 		32,
 		shs.cc[0],
-		shs.ch,
+		shs.g,
 		5
 	);
 }
