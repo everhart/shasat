@@ -78,7 +78,7 @@ static index_t indexGeneric(uint32_t chunk, uint32_t idx, uint32_t bit) {
 	       bit;
 }	//18080 generic indices
 
-static int fwriteMessageClauses(SHA1SAT shs) {
+static int fwriteMessageClauses(Sha1Sat shs) {
 	return fwriteAssignClauses(
 		shs.stream,
 		32,
@@ -87,7 +87,7 @@ static int fwriteMessageClauses(SHA1SAT shs) {
 	);
 }
 
-static int fwriteWClauses(SHA1SAT shs) {
+static int fwriteWClauses(Sha1Sat shs) {
 	int res = 0;
 	bool comb[4] = { 0 },
 	     eval = 0;
@@ -135,7 +135,7 @@ static int fwriteWClauses(SHA1SAT shs) {
 	return 0;
 }
 
-static int fwriteSigClauses(SHA1SAT shs) {
+static int fwriteSigClauses(Sha1Sat shs) {
 	int res = 0;
 	bool comb[3] = { 0 },
 	     eval = 0;
@@ -179,7 +179,7 @@ static int fwriteSigClauses(SHA1SAT shs) {
 	return 0;
 }
 
-static int fwriteChClauses(SHA1SAT shs) {
+static int fwriteChClauses(Sha1Sat shs) {
 	return fwriteLroClauses(
 		shs.stream,
 		32,
@@ -189,7 +189,7 @@ static int fwriteChClauses(SHA1SAT shs) {
 	);
 }
 
-static int fwriteTempClauses(SHA1SAT * shs) {
+static int fwriteTempClauses(Sha1Sat * shs) {
 	int res = fwriteSumClauses(
 		shs->stream,
 		32,
@@ -211,7 +211,7 @@ static int fwriteTempClauses(SHA1SAT * shs) {
 	return 0;
 }
 
-static int fwriteCcClauses(SHA1SAT * shs) {
+static int fwriteCcClauses(Sha1Sat * shs) {
 	int res = 0;
 
 	for (int i = 4; i >= 0; i--) {
@@ -240,7 +240,7 @@ static int fwriteCcClauses(SHA1SAT * shs) {
 	return 0;
 }
 
-static int fwriteHhClauses(SHA1SAT * shs) {
+static int fwriteHhClauses(Sha1Sat * shs) {
 	int res = 0;
 	index_t hh[5] = { 0 };
 
@@ -268,7 +268,7 @@ static int fwriteHhClauses(SHA1SAT * shs) {
 	return 0;
 }
 
-static int fwriteKAtoms(SHA1SAT shs) {
+static int fwriteKAtoms(Sha1Sat shs) {
 	int res = 0;
 
 	int k[4] = {
@@ -287,7 +287,7 @@ static int fwriteKAtoms(SHA1SAT shs) {
 	return 0;
 }
 
-static int fwriteHhAtoms(SHA1SAT shs) {
+static int fwriteHhAtoms(Sha1Sat shs) {
 	int res = 0;
 	int hh[5] = {
 		0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476,	0xC3D2E1F0
@@ -314,7 +314,7 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 
 	int res = 0;
 	const uint32_t ccount = msize / 512;
-	SHA1SAT shs = {
+	Sha1Sat shs = {
 		stream,	
 		0,
 		0,
