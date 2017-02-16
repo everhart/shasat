@@ -156,6 +156,8 @@ static int fwriteFClauses(Sha1Sat shs) {
 			shs.cc[1], shs.cc[2], shs.cc[3]
 		);
 	}
+
+	return 0;
 }
 
 static int fwriteGClauses(Sha1Sat shs) {
@@ -176,8 +178,8 @@ static int fwriteTempClauses(Sha1Sat * shs) {
 		shs->generic,
 		5,
 		shs->cc[4],
-		shs->sig,
-		shs->ch,
+		shs->f,
+		shs->g,
 		shs->k[shs->loop / 20],
 		shs->w[shs->loop]
 	);
@@ -351,8 +353,8 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 		for (shs.loop = 0; shs.loop < 80; shs.loop++) {
 			//determine all loop based indices
 			shs.w[shs.loop] = indexW(shs.chunk, shs.loop, 0);
-			shs.sig = indexSig(shs.chunk, shs.loop, 0);
-			shs.ch = indexCh(shs.chunk, shs.loop, 0);
+			shs.f = indexF(shs.chunk, shs.loop, 0);
+			shs.g = indexG(shs.chunk, shs.loop, 0);
 			shs.temp = indexTemp(shs.chunk, shs.loop, 0);
 
 			//break chunk into sixteen 32-bit words
