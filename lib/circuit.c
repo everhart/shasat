@@ -1,7 +1,7 @@
 #include "./circuit.h"
 
-int fwriteAtom(FILE * stream, atom_t atom) {
-	return fprintf(stream, "%d 0\n", atom) < 0 ? -1 : 0;
+int fwrite_atom(FILE * stream, atom_t atom) {
+	return fprintf(stream, "%d 0\n", atom);
 }
 
 int fwriteAtoms32(
