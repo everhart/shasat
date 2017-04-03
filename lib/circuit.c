@@ -258,7 +258,6 @@ int fwrite_xor_clauses(
             va_start(args, count);
             for (int k = 0; k < count; k++) {
                 ante[k] = sign_atom(va_arg(args, index_t) + j, comb[k]);
-
             }
             va_end(args);
 
@@ -267,6 +266,47 @@ int fwrite_xor_clauses(
             if (res < 0) {
                 return res;
             }
+        }
+    }
+
+    return 0;
+}
+
+int fwrite_or_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    size_t      count,
+    ...
+) {
+    int res = 0;
+    atom_t * ante = (atom_t *)malloc(count * sizeof(atom_t)), cons = 0;
+    va_list args;
+
+    for (int i = 0; i < wsize; i++) {
+        cons = lhs + i;
+
+        va_start(args, count);
+        for (int j = 0; j < count; j++) {
+            ante[0] = va_arg(args, index_t) + i;
+
+            res = fwrite_clauses(stream, ante, 1, &cons, 1);
+            if (res < 0) {
+                return res;
+            }
+        }
+        va_end(args);
+
+        va_start(args, count);
+        for (int j = 0; j < count; j++) {
+            ante[j] = -(va_arg(args, index_t) + i);
+        }
+        va_end(args);
+
+        cons = -cons;
+        res = fwrite_clauses(stream, ante, count, &cons, 1);
+        if (res < 0) {
+            return res;
         }
     }
 
