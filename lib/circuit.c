@@ -193,6 +193,47 @@ int fwrite_lro_clauses(
 	return 0;
 }
 
+int fwrite_and_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    size_t      count,
+    ...
+) {
+    int res = 0;
+    atom_t * ante = (atom_t *)malloc(count * sizeof(atom_t)), cons = 0;
+    va_list args;
+
+    for (int i = 0; i < wsize; i++) {
+        cons = (-lhs + i);
+        
+        va_start(args, count);
+        for (int j = 0; j < count; j++) {
+            ante[0] = (-va_arg(args, index_t) + i);
+
+            res = fwrite_clauses(stream, ante, 1, &cons, 1);
+            if (res < 0) {
+                return res;
+            }
+        }
+        va_end(args);
+
+        va_start(args, count);
+        for(int j = 0; j < count; j++) {
+            ante[j] = va_arg(args, index_t);
+        }
+        va_end(args);
+
+        cons = -cons;
+        res = fwrite_clauses(stream, ante, count, &cons, 1);
+        if (res < 0) {
+            return res;
+        }
+    }
+
+    return 0;
+}
+
 //x1 + x2 + x3 ... + xn = lhs
 int fwriteSumClauses(
 	FILE *		stream,

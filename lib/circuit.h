@@ -2,6 +2,7 @@
 #define CIRCUIT_H
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include "./types.h"
 #include "./bitops.h"
 
@@ -45,12 +46,36 @@ int fwrite_rsh_clauses(
 	uint32_t	shift
 );
 
+int fwrite_lsh_clauses(
+	FILE *		stream,
+	size_t		wsize,
+	index_t		lhs,
+	index_t		rhs,
+	uint32_t	shift
+);
+
+int fwrite_rro_clauses(
+	FILE *		stream,
+	size_t 		wsize,
+	index_t		lhs,
+	index_t		rhs,
+	uint32_t	rot
+);
+
 int fwrite_lro_clauses(
 	FILE *		stream,
 	size_t 		wsize,
 	index_t		lhs,
 	index_t		rhs,
 	uint32_t	rot
+);
+
+int fwrite_and_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    size_t      count,
+    ...
 );
 
 int fwrite_sum_clauses(
