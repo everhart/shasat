@@ -68,7 +68,7 @@ int fwrite_clauses(
 	return 0;
 }
 
-int fwriteAssignClauses(
+int fwrite_iff_clauses(
 	FILE *		stream,
 	size_t		wsize,
 	index_t		lhs,
@@ -84,10 +84,10 @@ int fwriteAssignClauses(
 		perm = !perm;
 
 		for (int j = 0; j < 32; j++) {
-			ante = signAtom(rhs + j, perm);
-			cons = signAtom(lhs + j, perm);
+			ante = sign_atom(rhs + j, perm);
+			cons = sign_atom(lhs + j, perm);
 
-			res = fwriteClauses(
+			res = fwrite_clauses(
 				stream, &ante, 1, &cons, 1
 			);
 			if (res < 0) {
