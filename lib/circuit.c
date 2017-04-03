@@ -150,7 +150,7 @@ int fwrite_lsh_clauses(
 }
 
 //lhs = rhs rro rot
-int fwriteRroClauses(
+int fwrite_rro_clauses(
 	FILE *		stream,
 	size_t		wsize,
 	index_t		lhs,
@@ -160,8 +160,8 @@ int fwriteRroClauses(
 	int res = 0;
 
 	for (int i = 0; i < wsize; i++) {
-		res = fwriteAssignClauses(
-			stream, wsize, rhs + i, lhs + bitPosRro(wsize, i, rot)
+		res = fwrite_iff_clauses(
+			stream, wsize, rhs + i, lhs + bit_position_rro(wsize, i, rot)
 		);
 		if (res < 0) {
 			return -1;
