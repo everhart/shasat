@@ -23,17 +23,16 @@ int fwrite_word32_atoms(
 	return 0;
 }
 
-int fwriteAtoms64(
+int fwrite_word64_atoms(
 	FILE *		stream,
 	index_t		lhs,
-	uint64_t 	rhs
+	uint64_t 	word
 ) {
 	int res = 0;
 
 	for (int i = 0; i < 64; i++) {
-		res = fwriteAtom(
-			stream, 
-			signAtom(lhs + i, bitVal64(rhs, i))
+		res = fwrite_atom(
+			stream, sign_atom(lhs + i, word64_bit(word, i))
 		);
 		if (res < 0) {
 			return -1;
