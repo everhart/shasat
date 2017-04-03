@@ -4,12 +4,8 @@ int word32_bit(uint32_t word, size_t n) {
 	return (n < 32) ? (word >> n) & 1 : -1;
 }
 
-int bitVal64(uint64_t word, uint32_t pos) {
-	if (pos >= 64) {
-		return -1;
-	}
-
-	return (word >> pos) & 1;
+int word64_bit(uint64_t word, size_t n) {
+	return (n < 64) ? (word >> n) & 1 : -1;
 }
 
 int bitPosRro(size_t wsize, uint32_t pos, uint32_t rro) {
