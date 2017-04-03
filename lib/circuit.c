@@ -42,17 +42,17 @@ int fwrite_word64_atoms(
 	return 0;
 }
 
-int fwriteClauses(
-	FILE * 		stream, 
-	const atom_t	ante[], 
-	size_t 		aleng, 
-	const atom_t 	cons[], 
-	size_t 		cleng
+int fwrite_clauses(
+	FILE * 		    stream, 
+	const atom_t *  ante, 
+	size_t 		    asize, 
+	const atom_t *  cons, 
+	size_t 		    csize
 ) {
 	int res = 0; 
 
-	for (int i = 0; i < cleng; i++) {
-		for (int j = 0; j < aleng; j++) {
+	for (int i = 0; i < csize; i++) {
+		for (int j = 0; j < asize; j++) {
 			res = fprintf(stream, "%d ", -ante[j]);
 			if (res < 0) {
 				return -1;
