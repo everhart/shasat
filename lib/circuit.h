@@ -94,12 +94,12 @@ int fwrite_or_clauses(
     ...
 );
 
-int fwrite_sum_clauses(
+atom_t fwrite_sum_clauses(
 	FILE *		stream,
 	size_t		wsize,
-	uint32_t	sum,
-	atom_t		gen,
-	uint32_t	count,
+	index_t	    lhs,
+	index_t		gen,
+	size_t	    count,
 	...
 );
 

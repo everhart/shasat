@@ -313,77 +313,86 @@ int fwrite_or_clauses(
     return 0;
 }
 
-//x1 + x2 + x3 ... + xn = lhs
-int fwriteSumClauses(
-	FILE *		stream,
-	size_t		wsize,
-	uint32_t	lhs,
-	atom_t		gen,
-	uint32_t	count,
-	...
+static int fwrite_sum_clauses_non_va(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs1,
+    index_t     lhs2,
+    index_t     rhs1,
+    index_t     rhs2
 ) {
-	int res = 0;
+    int res = 0;
+    bool comb[3] = { 0 }, eval[2] = { 0 };
+    atom_t ante[3] = { 0 }, cons[2] = { 0 };
 
-	bool comb[3] = { 0 }, 
-	     eval[2] = { 0 };
+    for (int i = 0; i < (1 << 3); i++) {
+        *comb = next_combination(comb, 3);
+        eval[0] = comb[0] ^ comb[1] ^ comb[2];
+        eval[1] = (comb[0] & comb[1]) | 
+                  (comb[0] & comb[2]) |
+                  (comb[1] & comb[2]);
 
-	atom_t ante[3] = { 0 }, 
-	       cons[2] = { 0 };
+        for (int j = 0; j < wsize; j++) {
+            ante[0] = sign_atom(rhs1 + j, comb[0]);
+            ante[1] = sign_atom(rhs2 + j, comb[1]);
+            ante[2] = sign_atom(lhs2 + j - 1, comb[2]);
+            cons[0] = sign_atom(lhs1 + j, eval[0]);
+            cons[1] = sign_atom(lhs2 + j, eval[1]);
 
-	va_list args;
-	va_start(args, count);
+            if (i < (1 << 2) && j == 0) {
+                res = fwrite_clauses(stream, ante, 2, cons, 2);
+            }
+            else {
+                res = fwrite_clauses(stream, ante, 3, cons, 2);
+            }
 
-	index_t a = 0, 
-		b = 0, 
-		sum = va_arg(args, index_t), 
-		crr = 0;
+            if (res < 0) {
+                return -1;
+            }
+        }
+    }
 
-	//foreach combination of three unique atomic states
-	for (int i = 0; i < (1 << 3); i++) {
-		*comb = nextCombination(comb, 3);	
-		eval[0] = comb[0] ^ comb[1] ^ comb[2];		//sum
-		eval[1] = comb[0] + comb[1] + comb[2] > 1;	//carry
+    return 0;
+}
 
-		//foreach '+' operator
-		for (int j = 0; j < count; j++) {
-			a = sum;
-			b = va_arg(args, index_t);			
+//x1 + x2 + x3 ... + xn = lhs
+atom_t fwrite_sum_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     gen,
+    size_t      count,
+    ...
+) {
+    int res = 0;
+    index_t rhs1 = 0, rhs2 = 0, lhs1 = 0, lhs2 = 0;
+    va_list args;
+    
+    va_start(args, count);
+    lhs1 = va_arg(args, index_t);
+    
+    for (int i = 0; i < (count - 1); i++) {
+        rhs1 = lhs1;
+        rhs2 = va_arg(args, index_t);
+        lhs1 = gen;
+        lhs2 = gen + wsize;
 
-			//if this is the final '+' operator, use lhs
-			sum = (j < count - 1) ? ++gen : lhs;
-			crr = ++gen;
+        gen += wsize * 2;
 
-			//foreach bit
-			for (int k = 0; k < wsize; k++) {	
-				ante[0] = signAtom(a + k, comb[1]);
-				ante[1] = signAtom(a + k, comb[2]);
-				cons[0] = signAtom(sum + k, eval[0]);
-				cons[1] = signAtom(crr + k, eval[1]);
+        res = fwrite_sum_clauses(stream, wsize, rhs1, rhs2, lhs1, lhs2);
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-				//outer add
-				if (k == 0 && i < (1 << 2)) {
-					res = fwriteClauses(
-						stream, ante, 2, cons, 2
-					);
-				}
-				//inner add
-				else {
-					ante[2] = signAtom(
-						crr + k - 1, comb[0]
-					);
+    rhs1 = lhs1;
+    rhs2 = va_arg(args, index_t);
+    
+    res = fwrite_sum_clauses_non_va(stream, wsize, rhs1, rhs2, lhs, gen);
+    if (res < 0) {
+        return -1;
+    }
 
-					res = fwriteClauses(
-						stream, ante, 3, cons, 2
-					);
-					
-				}
-				
-				if (res < 0) {
-					return -1;
-				}
-			}
-		}
-	}
-	
-	return gen;
+    va_end(args);
+    return gen;
 }
