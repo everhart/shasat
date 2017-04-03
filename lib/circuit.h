@@ -78,6 +78,14 @@ int fwrite_and_clauses(
     ...
 );
 
+int fwrite_xor_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    size_t      count,
+    ...
+);
+
 int fwrite_sum_clauses(
 	FILE *		stream,
 	size_t		wsize,

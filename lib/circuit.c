@@ -234,6 +234,45 @@ int fwrite_and_clauses(
     return 0;
 }
 
+int fwrite_xor_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    size_t      count,
+    ...
+) {
+    int res = 0;
+    bool * comb = (bool *)malloc(count * sizeof(bool)), eval = 0;
+    atom_t * ante = (atom_t *)malloc(count * sizeof(atom_t)), cons = 0;
+    va_list args;
+
+    for (int i = 0; i < (1 << count); i++) {
+        *comb = next_combination(comb, count);
+
+        eval = comb[0];
+        for (int j = 1; j < count; j++) {
+            eval ^= comb[j];
+        }
+
+        for (int j = 0; j < wsize; j++) {
+            va_start(args, count);
+            for (int k = 0; k < count; k++) {
+                ante[k] = sign_atom(va_arg(args, index_t) + j, comb[k]);
+
+            }
+            va_end(args);
+
+            cons = sign_atom(lhs + j, eval);
+            res = fwrite_clauses(stream, ante, count, &cons, 1);
+            if (res < 0) {
+                return res;
+            }
+        }
+    }
+
+    return 0;
+}
+
 //x1 + x2 + x3 ... + xn = lhs
 int fwriteSumClauses(
 	FILE *		stream,
