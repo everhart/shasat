@@ -4,17 +4,16 @@ int fwrite_atom(FILE * stream, atom_t atom) {
 	return fprintf(stream, "%d 0\n", atom);
 }
 
-int fwriteAtoms32(
+int fwrite_word32_atoms(
 	FILE *		stream,
 	index_t		lhs,
-	uint32_t 	rhs
+	uint32_t 	word
 ) {
 	int res = 0;
 
 	for (int i = 0; i < 32; i++) {
-		res = fwriteAtom(
-			stream, 
-			signAtom(lhs + i, bitVal32(rhs, i))
+		res = fwrite_atom(
+			stream, sign_atom(lhs + i, word32_bit(word, i))
 		);
 		if (res < 0) {
 			return -1;
