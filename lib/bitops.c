@@ -8,17 +8,16 @@ int word64_bit(uint64_t word, size_t n) {
 	return (n < 64) ? (word >> n) & 1 : -1;
 }
 
-int bitPosRro(size_t wsize, uint32_t pos, uint32_t rro) {
-	if (pos >= wsize) {
-		return -1;
-	}
-	
-	if (rro > wsize) {
-		rro -= wsize;
-	}
+ssize_t bit_position_rro(size_t wsize, size_t n, size_t rot) {
+    if (n >= wsize) {
+        return -1;
+    }
 
-	return (pos >= rro) ? 
-		pos - rro : wsize - rro + pos;
+    if (rot >= wsize) {
+        rot %= wsize; 
+    }
+
+    return (n >= rot) ? n - rot : wsize - rot + n;
 }
 
 int bitPosLro(size_t wsize, uint32_t pos, uint32_t lro) {
