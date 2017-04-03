@@ -20,17 +20,16 @@ ssize_t bit_position_rro(size_t wsize, size_t n, size_t rot) {
     return (n >= rot) ? n - rot : wsize - rot + n;
 }
 
-int bitPosLro(size_t wsize, uint32_t pos, uint32_t lro) {
-	if (pos >= wsize) {
-		return -1;
-	}
+ssize_t bit_position_lro(size_t wsize, size_t n, size_t rot) {
+    if (n >= wsize) {
+        return -1;
+    }
 
-	if (lro > wsize) {
-		lro -= wsize;
-	}
+    if (rot >= wsize) {
+        rot %= wsize;
+    }
 
-	return ((wsize - pos) >= lro) ? 
-		pos + lro : pos - (wsize - lro);
+    return (wsize - n >= rot) ? n + rot : n - (wsize - rot);
 }
 
 bool * nextCombination(bool * arr, size_t leng) {
