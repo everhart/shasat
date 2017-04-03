@@ -32,15 +32,14 @@ ssize_t bit_position_lro(size_t wsize, size_t n, size_t rot) {
     return (wsize - n >= rot) ? n + rot : n - (wsize - rot);
 }
 
-bool * nextCombination(bool * arr, size_t leng) {
-	bool tmp = 0, 
-	     crr = 0;	
+bool * next_combination(bool * comb, size_t size) {
+    bool tmp = 0, crr = 0;
 
-	for (int i = leng - 1; i >= 0 && crr > 0; i--) {
-		tmp = arr[i] + crr;
-		crr = tmp >> 1;
-		arr[i] = tmp & 1;
-	}	
+    for (int i = size - 1; i >= 0 && crr > 0; i--) {
+        tmp = comb[i] + crr;
+        crr = tmp >> 1;
+        comb[i] = tmp & 1;
+    }
 
-	return arr;
+    return comb;
 }
