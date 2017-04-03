@@ -125,7 +125,7 @@ int fwrite_rsh_clauses(
 }
 
 //lhs = rhs << shift
-int fwriteLshClauses(
+int fwrite_lsh_clauses(
 	FILE *		stream,
 	size_t		wsize,
 	index_t		lhs,
@@ -135,16 +135,12 @@ int fwriteLshClauses(
 	int res = 0;
 
 	for (int i = 0; i < wsize - shift; i++) {
-		res = fwriteAtom(
-			stream, signAtom(lhs + i, 0)
-		);
+		res = fwrite_atom(stream, sign_atom(lhs + i, 0));
 		if (res < 0) {
 			return -1;
 		}
 
-		res = fwriteAssignClauses(
-			stream, wsize, rhs + i, lhs + i + shift
-		);
+		res = fwrite_iff_clauses(stream, wsize, rhs + i, lhs + i + shift);
 		if (res < 0) {
 			return -1;
 		}
