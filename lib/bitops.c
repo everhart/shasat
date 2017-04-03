@@ -18,6 +18,16 @@ int word32_assign_bit(uint32_t * word, size_t n, bool val) {
     return 0;
 }
 
+int word64_assign_bit(uint32_t * word, size_t n, bool val) {
+    if (n >= 64) {
+        return -1;
+    }
+
+    *word = (*word & ~(1 << n)) | (val << n);
+
+    return 0;
+}
+
 ssize_t bit_position_rro(size_t wsize, size_t n, size_t rot) {
     if (n >= wsize) {
         return -1;
