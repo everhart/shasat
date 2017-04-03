@@ -100,7 +100,7 @@ int fwrite_iff_clauses(
 }
 
 //lhs = rhs >> shift
-int fwriteRshClauses(
+int fwrite_rsh_clauses(
 	FILE *		stream,
 	size_t		wsize,
 	index_t		lhs,
@@ -109,23 +109,19 @@ int fwriteRshClauses(
 ) {
 	int res = 0;
 
-	for (int i = shift; i < wsize; i++) {
-		res = fwriteAtom(
-			stream, signAtom(lhs + i, 0)
-		);
-		if (res < 0) {
-			return -1;
-		}
+    for (int i = shift; i < wsize; i++) {
+        res = fwrite_atom(stream, sign_atom(lhs + i, 0));
+        if (res < 0) {
+            return res;
+        }
 
-		res = fwriteAssignClauses(
-			stream, wsize, rhs + i, lhs + i - shift
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
+        res = fwrite_iff_clauses(stream, wsize, rhs + i, lhs + i - shift);
+        if (res < 0) {
+            return res;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 //lhs = rhs << shift
