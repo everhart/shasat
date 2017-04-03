@@ -5,11 +5,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-int bitVal32(uint32_t word, uint32_t pos);
-int bitVal64(uint64_t word, uint32_t pos);
-int bitPosRro(size_t wsize, uint32_t pos, uint32_t rro);
-int bitPosLro(size_t wsize, uint32_t pos, uint32_t lro);
+int word32_bit(uint32_t word, size_t n);
+int word64_bit(uint64_t word, size_t n);
+int bit_position_rro(size_t wsize, size_t n, size_t rot);
+int bit_position_lro(size_t wsize, size_t n, size_t rot);
 
-bool * nextCombination(bool *arr, size_t leng);
+bool * next_combination(bool *comb, size_t size);
 
 #endif
