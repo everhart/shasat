@@ -82,12 +82,12 @@ static inline index_t index_generic(size_t chunk, size_t word, size_t bit) {
            bit;
 }   //18080 generic indices
 
-static int fwriteMessageClausesSha1(Sha1Sat shs) {
-	return fwriteAssignClauses(
-		shs.stream,
+static int fwrite_sha1_message_clauses(FILE * stream, Sha1Sat ctx) {
+	return fwrite_iff_clauses(
+		stream,
 		32,
-		shs.w[shs.loop],
-		shs.message
+		ctx.w[ctx.i],
+		ctx.msg
 	);
 }
 
