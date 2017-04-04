@@ -523,3 +523,42 @@ int fwrite_sig_clauses(
 
     return gen + wsize + 1;
 }
+
+int fwrite_ep_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs,    
+    size_t      rot1,
+    size_t      rot2,
+    size_t      rot3
+) {
+    int res = 0;
+    bool comb[3] = { 0 }, eval = 0;
+    atom_t ante[3] = { 0 }, cons = 0;
+
+    for (int i = 0; i < (1 << 3); i++) {
+        *comb = next_combination(comb, 3);
+        eval = comb[0] ^ comb[1] ^ comb[2];
+
+        for (int j = 0; j < wsize; j++) {
+            ante[0] = sign_atom(
+                rhs + bit_position_rro(32, j, rot1), comb[0]
+            );
+            ante[1] = sign_atom(
+                rhs + bit_position_rro(32, j, rot2), comb[1]
+            );
+            ante[2] = sign_atom(
+                rhs + bit_position_rro(32, j, rot1), comb[2]
+            );
+            cons = sign_atom(lhs + j, eval);
+
+            res = fwrite_clauses(stream, ante, 3, &cons, 1);
+            if (res < 0) {
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}

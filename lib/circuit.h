@@ -127,4 +127,14 @@ int fwrite_sig_clauses(
     size_t      shift
 );
 
+int fwrite_ep_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs,    
+    size_t      rot1,
+    size_t      rot2,
+    size_t      rot3
+);
+
 #endif
