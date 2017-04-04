@@ -86,42 +86,42 @@ static inline index_t index_sha1_gen(
 }   //18080 generic indices
 
 static int fwrite_sha1_msg_clauses(FILE * stream, Sha1Sat ctx) {
-	return fwrite_iff_clauses(
-		stream,
-		32,
-		ctx.w[ctx.j],
-		ctx.msg
-	);
+    return fwrite_iff_clauses(
+        stream,
+        32,
+        ctx.w[ctx.j],
+        ctx.msg
+    );
 }
 
 static int fwrite_sha1_w_clauses(FILE * stream, Sha1Sat ctx) {
-	int res = 0;
-	bool comb[4] = { 0 }, eval = 0;
-	atom_t ante[4] = { 0 }, cons = 0;
+    int res = 0;
+    bool comb[4] = { 0 }, eval = 0;
+    atom_t ante[4] = { 0 }, cons = 0;
 
-	for (int i = 0; i < (1 << 4); i++) {
-		*comb = next_combination(comb, 4);
-		eval = comb[0] ^ comb[1] ^ comb[2] ^ comb[3];
+    for (int i = 0; i < (1 << 4); i++) {
+        *comb = next_combination(comb, 4);
+        eval = comb[0] ^ comb[1] ^ comb[2] ^ comb[3];
 
-		for (int j = 0; j < 32; j++) {
-			ante[0] = sign_atom(ctx.w[ctx.j - 3] + j, comb[0]);
-			ante[1] = sign_atom(ctx.w[ctx.j - 8] + j, comb[1]);
-			ante[2] = sign_atom(ctx.w[ctx.j - 14] + j, comb[2]);
-			ante[3] = sign_atom(ctx.w[ctx.j - 16] + j, comb[3]);
-			cons = sign_atom(
+        for (int j = 0; j < 32; j++) {
+            ante[0] = sign_atom(ctx.w[ctx.j - 3] + j, comb[0]);
+            ante[1] = sign_atom(ctx.w[ctx.j - 8] + j, comb[1]);
+            ante[2] = sign_atom(ctx.w[ctx.j - 14] + j, comb[2]);
+            ante[3] = sign_atom(ctx.w[ctx.j - 16] + j, comb[3]);
+            cons = sign_atom(
                 ctx.w[ctx.j] + bit_position_lro(32, j, 1), eval
-			);
+            );
 
-			res = fwrite_clauses(
-				stream, ante, 3, &cons, 1
-			);
-			if (res < 0) {
-				return -1;
-			}
-		}
-	}
+            res = fwrite_clauses(
+                stream, ante, 3, &cons, 1
+            );
+            if (res < 0) {
+                return -1;
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 static int fwrite_sha1_f_clauses(FILE * stream, Sha1Sat ctx) {
@@ -143,11 +143,11 @@ static int fwrite_sha1_f_clauses(FILE * stream, Sha1Sat ctx) {
 		);
 	}
 
-	return res;
+    return res;
 }
 
 static int fwrite_sha1_g_clauses(FILE * stream, Sha1Sat ctx) {
-	return fwrite_lro_clauses(stream, 32, ctx.cc[0], ctx.g, 5);
+    return fwrite_lro_clauses(stream, 32, ctx.cc[0], ctx.g, 5);
 }
 
 static int fwrite_sha1_temp_clauses(FILE * stream, Sha1Sat * ctx) {
@@ -172,7 +172,7 @@ static int fwrite_sha1_temp_clauses(FILE * stream, Sha1Sat * ctx) {
 }
 
 static int fwrite_sha1_cc_clauses(FILE * stream, Sha1Sat * ctx) {
-	int res = 0;
+    int res = 0;
 
     for (int i = 4; i >= 0; i--) {
         ctx->cc[i] = index_sha1_cc(ctx->i, i, ctx->j + 1, 0);
