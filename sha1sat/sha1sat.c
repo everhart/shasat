@@ -195,29 +195,23 @@ static int fwrite_sha1_cc_clauses(FILE * stream, Sha1Sat * ctx) {
 	return 0;
 }
 
-static int fwriteHhClausesSha1(Sha1Sat * shs) {
+static int fwrite_sha1_hh_clauses(FILE * stream, Sha1Sat * ctx) {
 	int res = 0;
 	index_t hh[5] = { 0 };
 
-	memcpy(hh, shs->hh, sizeof(hh));
+	memcpy(hh, ctx->hh, sizeof(hh));
 
 	for (int i = 0; i < 5; i++) {
-		shs->hh[i] = indexHhSha1(shs->chunk, i, 0);
+		ctx->hh[i] = index_hh(ctx->chunk, i, 0);
 
-		res = fwriteSumClauses(
-			shs->stream,
-			32,
-			shs->hh[i],
-			shs->generic,
-			2,
-			hh[i],
-			shs->cc[i]
+		res = fwrite_sum_clauses(
+			stream, 32, ctx->hh[i], ctx->gen, 2, hh[i], ctx->cc[i]
 		);
 		if (res < 0) {
 			return -1;
 		}
 
-		shs->generic = res;
+		ctx->gen = res;
 	}
 
 	return 0;
