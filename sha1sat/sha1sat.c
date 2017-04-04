@@ -4,8 +4,8 @@ static const uint32_t INDICES_PER_CHUNK = 41286;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha1Sat {
-    size_t      chunk;
     size_t      i;
+    size_t      j;
     index_t     gen;
     index_t     msg;
     index_t     k[4];
@@ -17,19 +17,19 @@ typedef struct Sha1Sat {
     index_t     hh[5];
 } Sha1Sat;
 
-static inline index_t index_k(size_t ccount, size_t word, size_t bit) {
+static inline index_t index_sha1_k(size_t ccount, size_t word, size_t bit) {
     return INDICES_PER_CHUNK * ccount +     //amount of previous indices
 	       word * 32 +                      //word index
            bit;	                            //bit index
 }   //128 k indices
 
-static inline index_t index_init(size_t ccount, size_t word, size_t bit) {
+static inline index_t index_sha1_init(size_t ccount, size_t word, size_t bit) {
     return INDICES_PER_CHUNK * ccount + 129 + 
            word + 32 + 
            bit;
 }   //160 init indices
 
-static inline index_t index_message(
+static inline index_t index_sha1_message(
 	size_t ccount, size_t chunk, size_t word, size_t bit
 ) {
     return INDICES_PER_CHUNK * ccount + 290 + 
@@ -38,13 +38,13 @@ static inline index_t index_message(
            bit;	
 }   //arbitrary amount of message indices
 
-static inline index_t index_w(size_t chunk, size_t word, size_t bit) {
+static inline index_t index_sha1_w(size_t chunk, size_t word, size_t bit) {
     return INDICES_PER_CHUNK * chunk + 1 +
            word * 32 +
            bit;
 }   //2560 w indices
 
-static inline index_t index_cc(
+static inline index_t index_sha1_cc(
     size_t chunk, size_t kind, size_t word, size_t bit
 ) {
     return INDICES_PER_CHUNK * chunk + 2561 + 
@@ -53,31 +53,33 @@ static inline index_t index_cc(
            bit;
 }   //12800 cc indices
 
-static inline index_t index_f(size_t chunk, size_t word, size_t bit) {
+static inline index_t index_sha1_f(size_t chunk, size_t word, size_t bit) {
     return INDICES_PER_CHUNK * chunk + 15362 +
            word * 32 +
            bit;
 }	//2560 f indices
 
-static inline index_t index_g(size_t chunk, size_t word, size_t bit) {
+static inline index_t index_sha1_g(size_t chunk, size_t word, size_t bit) {
     return INDICES_PER_CHUNK * chunk + 17923 +
            word * 32 +
            bit;
 }   //2560 g indices
 
-static inline index_t index_temp(size_t chunk, size_t word, size_t bit) {
+static inline index_t index_sha1_temp(size_t chunk, size_t word, size_t bit) {
     return INDICES_PER_CHUNK * chunk + 20484 +
            word * 32 +
            bit;
 }   //2560 temp indices
 
-static index_t index_hh(size_t chunk, size_t kind, size_t bit) {
+static index_t index_sha1_hh(size_t chunk, size_t kind, size_t bit) {
     return INDICES_PER_CHUNK + chunk + 23045 +
            kind * 32 +
            bit;
 }   //160 hh indices
 
-static inline index_t index_generic(size_t chunk, size_t word, size_t bit) {
+static inline index_t index_sha1_generic(
+    size_t chunk, size_t word, size_t bit
+) {
     return INDICES_PER_CHUNK * chunk + 23206 + 
            word * 32 + 
            bit;
@@ -87,7 +89,7 @@ static int fwrite_sha1_message_clauses(FILE * stream, Sha1Sat ctx) {
 	return fwrite_iff_clauses(
 		stream,
 		32,
-		ctx.w[ctx.i],
+		ctx.w[ctx.j],
 		ctx.msg
 	);
 }
@@ -102,12 +104,12 @@ static int fwrite_sha1_w_clauses(FILE * stream, Sha1Sat ctx) {
 		eval = comb[0] ^ comb[1] ^ comb[2] ^ comb[3];
 
 		for (int j = 0; j < 32; j++) {
-			ante[0] = sign_atom(ctx.w[ctx.i - 3] + j, comb[0]);
-			ante[1] = sign_atom(ctx.w[ctx.i - 8] + j, comb[1]);
-			ante[2] = sign_atom(ctx.w[ctx.i - 14] + j, comb[2]);
-			ante[3] = sign_atom(ctx.w[ctx.i - 16] + j, comb[3]);
+			ante[0] = sign_atom(ctx.w[ctx.j - 3] + j, comb[0]);
+			ante[1] = sign_atom(ctx.w[ctx.j - 8] + j, comb[1]);
+			ante[2] = sign_atom(ctx.w[ctx.j - 14] + j, comb[2]);
+			ante[3] = sign_atom(ctx.w[ctx.j - 16] + j, comb[3]);
 			cons = sign_atom(
-                ctx.w[ctx.i] + bit_position_lro(32, j, 1), eval
+                ctx.w[ctx.j] + bit_position_lro(32, j, 1), eval
 			);
 
 			res = fwrite_clauses(
@@ -125,12 +127,12 @@ static int fwrite_sha1_w_clauses(FILE * stream, Sha1Sat ctx) {
 static int fwrite_sha1_f_clauses(FILE * stream, Sha1Sat ctx) {
     int res = 0;
 
-    if (ctx.i < 20) {
+    if (ctx.j < 20) {
         res = fwrite_sha_ch_clauses(
             stream, 32, ctx.f, ctx.cc[1], ctx.cc[2], ctx.cc[3]
         );
     }
-    else if (ctx.i >= 40 && ctx.i < 60) {
+    else if (ctx.j >= 40 && ctx.j < 60) {
         res = fwrite_sha_maj_clauses(
             stream, 32, ctx.f, ctx.cc[1], ctx.cc[2], ctx.cc[3]
         );
@@ -158,8 +160,8 @@ static int fwrite_sha1_temp_clauses(FILE * stream, Sha1Sat * ctx) {
 		ctx->cc[4],
 		ctx->f,
 		ctx->g,
-		ctx->k[ctx->i / 20],
-		ctx->w[ctx->i]
+		ctx->k[ctx->j / 20],
+		ctx->w[ctx->j]
 	);
 	if (res < 0) {
 		return -1;
@@ -174,7 +176,7 @@ static int fwrite_sha1_cc_clauses(FILE * stream, Sha1Sat * ctx) {
 	int res = 0;
 
 	for (int i = 4; i >= 0; i--) {
-		ctx->cc[i] = index_cc(ctx->chunk, i, ctx->i + 1, 0);
+		ctx->cc[i] = index_sha1_cc(ctx->i, i, ctx->j + 1, 0);
 
 		if (i == 2) {
 			res = fwrite_lro_clauses(
@@ -202,7 +204,7 @@ static int fwrite_sha1_hh_clauses(FILE * stream, Sha1Sat * ctx) {
 	memcpy(hh, ctx->hh, sizeof(hh));
 
 	for (int i = 0; i < 5; i++) {
-		ctx->hh[i] = index_hh(ctx->chunk, i, 0);
+		ctx->hh[i] = index_sha1_hh(ctx->i, i, 0);
 
 		res = fwrite_sum_clauses(
 			stream, 32, ctx->hh[i], ctx->gen, 2, hh[i], ctx->cc[i]
@@ -233,7 +235,7 @@ static int fwrite_sha1_k_atoms(FILE * stream, Sha1Sat ctx) {
 	return 0;
 }
 
-static int fwrite_sha1_hh_init_atoms(FILE * stream, Sha1Sat ctx) {
+static int fwrite_sha1_init_atoms(FILE * stream, Sha1Sat ctx) {
 	int res = 0;
 	int hh[5] = {
 		0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476,	0xC3D2E1F0
@@ -251,17 +253,11 @@ static int fwrite_sha1_hh_init_atoms(FILE * stream, Sha1Sat ctx) {
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
 	int res = 0;
-
-	//determine how many chunks there are
-	const uint32_t ccount = (msize + 576) / 512;
-
-	Sha1Sat shs = {
-		stream,	
-		digest,
+    Sha1Sat ctx = {
 		0,
 		0,
 		0,
-		msize,
+		0,
 		{ 0 },		
 		{ 0 },
 		{ 0 },
@@ -271,104 +267,116 @@ int sha1sat(FILE * stream, size_t msize, const char * digest) {
 		{ 0 }
 	};
 
-	//initialize message index
-	shs.message = indexMessageSha1(ccount, 0, 0, 0);
+	//determine how many chunks there are
+	const uint32_t ccount = (msize + 576) / 512;
 
-	//initialize k indices
-	for (int i = 0; i < 4; i++) {
-		shs.k[i] = indexKSha1(ccount, i, 0);
-	}
-
-	//initialize hh indices
-	for (int i = 0; i < 4; i++) {
-		shs.hh[i] = indexHhSha1(shs.chunk, i, 0);
-	}
-
-	//write the dimacs file header
+    //write the dimacs file header
 	res = fprintf(
 		stream, "p cnf %lu %lu \n",
 		INDICES_PER_CHUNK * ccount + 128 + msize,
 		CLAUSES_PER_CHUNK * ccount + 128 + msize
 	);
-	if (res < 0) {
+    if (res < 0) {
 		return -1;
 	}
 
-	//preprocess SHA
-	msize = fwritePreprocClausesSha(
-		stream, shs.message, msize, 512
-	);
-	if (msize == 0) {
-		return -1;
-	}
+    //preprocessing
+    res = fwrite_sha_preprocessing_atoms(
+        stream, index_sha1_message(ccount, 0, 0, 0), msize, 512
+    );
+    if (res < 0) {
+        return -1;
+    }
 
-	//write atoms representing round constant values
-	res = fwriteKAtomsSha1(shs);
-	if (res < 0) {
-		return -1;
-	}
+    //determine round constant indices
+    for (int i = 0; i < 4; i++) {
+        ctx.k[i] = index_sha1_k(ccount, i, 0);
+    }
 
-	//write atoms representing initial hash values
-	res = fwriteHhAtomsSha1(shs);
-	if (res < 0) {
-		return -1;
-	}
+    //determine initial hash indices
+    for (int i = 0; i < 5; i++) {
+        ctx.hh[i] = index_sha1_init(ccount, i, 0);
+    }
 
-	//write clauses representing each and every round of SHA-1
-	for (shs.chunk = 0; shs.chunk < ccount; shs.chunk++) {
+    //assign round constant atoms
+    res = fwrite_sha1_k_atoms(stream, ctx);
+    if (res < 0) {
+        return -1;
+    }
 
-		//a = h0 ... e = h4
-		for (int i = 0; i < 5; i++) {
-			shs.cc[i] = shs.hh[i];
-		}
+    //assign initial hash atoms
+    res = fwrite_sha1_init_atoms(stream, ctx);
+    if (res < 0) {
+        return -1;
+    }
 
-		for (shs.loop = 0; shs.loop < 80; shs.loop++) {
-			//determine all loop based indices
-			shs.w[shs.loop] = indexWSha1(shs.chunk, shs.loop, 0);
-			shs.f = indexFSha1(shs.chunk, shs.loop, 0);
-			shs.g = indexGSha1(shs.chunk, shs.loop, 0);
-			shs.temp = indexTempSha1(shs.chunk, shs.loop, 0);
+    //for each chunk
+    for (ctx.i = 0; ctx.i < ccount; ctx.i++) {
+        //a = h0 .. e = h4
+        for (int j = 0; j < 5; j++) {
+            ctx.cc[j] = ctx.hh[j];
+        }
 
-			//break chunk into sixteen 32-bit words
-			if (shs.loop < 16) {
-				shs.message = indexMessageSha1(
-					ccount, shs.chunk, shs.loop, 0
-				);
+        for (ctx.j = 0; ctx.j < 80; ctx.j++) {
+            //determine all loop based indices
+            ctx.w[ctx.j] = index_sha1_w(ctx.i, ctx.j, 0);
+            ctx.f = index_sha1_f(ctx.i, ctx.j, 0);
+            ctx.g = index_sha1_g(ctx.i, ctx.j, 0);
+            ctx.temp = index_sha1_temp(ctx.i, ctx.j, 0);
+            ctx.gen = index_sha1_generic(ctx.i, ctx.j, 0);
 
-				if (fwriteMessageClausesSha1(shs) < 0) {
-					return -1;
-				}	
-			}
-			//key extension	
-			else {
-				if (fwriteWClausesSha1(shs) < 0) {
-					return -1;
-				}
-			}
+            //break the chunk into sixteen 32 bit words
+            if (ctx.j < 16) {
+                //determine message index
+                ctx.msg = index_sha1_message(ccount, ctx.i, ctx.j, 0);
 
-			//compression function
-			if (
-				(fwriteFClausesSha1(shs) < 0) ||
-				(fwriteGClausesSha1(shs) < 0) ||
-				(fwriteTempClausesSha1(&shs) < 0) ||
-				(fwriteCcClausesSha1(&shs) < 0)
-			) {
-				return -1;
-			}
-		}
-	
-		//update hash values
-		if (fwriteHhClausesSha1(&shs) < 0) {
-			return -1;
-		}
-	}
-	
-	res = fwriteDigestAtomsSha(
-		shs.stream, shs.hh, shs.digest, 160 
-	);
-	if (res < 0) {
-		return -1;
-	}
+                res = fwrite_sha1_message_clauses(stream, ctx);
+                if (res < 0) {
+                    return -1;
+                }
+            }
+            //key extension
+            else {
+                res = fwrite_sha1_w_clauses(stream, ctx);
+                if (res < 0) {
+                    return -1;
+                }
+            }
 
-	return 0;
+            //compression function
+            res = fwrite_sha1_f_clauses(stream, ctx);
+            if (res < 0) {
+                return -1;
+            }
+
+            res = fwrite_sha1_g_clauses(stream, ctx);
+            if (res < 0) {
+                return -1;
+            }
+
+            res = fwrite_sha1_temp_clauses(stream, &ctx);
+            if (res < 0) {
+                return -1;
+            }
+
+            res = fwrite_sha1_cc_clauses(stream, &ctx);
+            if (res < 0) {
+                return -1;
+            }
+        }
+
+        //update hash values
+        res = fwrite_sha1_hh_clauses(stream, &ctx);
+        if (res < 0) {
+            return res;
+        }
+    }
+
+    //assign atoms representing the resultant digest
+    res = fwrite_sha_digest_word32_atoms(stream, ctx.hh, digest, 160);
+    if (res < 0) {
+        return 0;
+    }
+
+    return 0;
 }
