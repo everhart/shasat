@@ -4,80 +4,83 @@ static const uint32_t INDICES_PER_CHUNK = 41286;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha1Sat {
-	FILE *		stream;
-	const char *	digest;
-	uint32_t	chunk;
-	uint32_t	loop;
-	index_t		generic;
-	index_t		message;
-	index_t		k[4];		//round constants
-	index_t 	w[80];		//message schedule array
-	index_t		cc[5];		//compressed chunk
-	index_t		f;
-	index_t		g;
-	index_t		temp;	
-	index_t		hh[5];		//hash
+    size_t      i;
+    index_t     gen;
+    index_t     msg;
+    index_t     k[4];
+    index_t     w[80];
+    index_t     cc[5];
+    index_t     f;
+    index_t     g;
+    index_t     temp;
+    index_t     hh[5];
 } Sha1Sat;
 
-static index_t indexKSha1(uint32_t ccount, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * ccount + 	//amount of previous indices
-	       idx * 32 + 			//word index
-	       bit;				//bit index
-}	//128 k indices
+static inline index_t index_k(size_t ccount, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * ccount +     //amount of previous indices
+	       word * 32 +                      //word index
+           bit;	                            //bit index
+}   //128 k indices
 
-static index_t indexMessageSha1(
-	uint32_t ccount, uint32_t chunk, uint32_t idx, uint32_t bit
+static inline index_t index_init(size_t ccount, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * ccount + 129 + 
+           word + 32 + 
+           bit;
+}   //160 init indices
+
+static inline index_t index_message(
+	size_t ccount, size_t chunk, size_t word, size_t bit
 ) {
-	return INDICES_PER_CHUNK * ccount + 129 + 
-	       chunk * 512 +
-	       idx * 32 +
-	       bit;	
-}	//arbitrary amount of message indices
+    return INDICES_PER_CHUNK * ccount + 290 + 
+           chunk * 512 +
+           word * 32 +
+           bit;	
+}   //arbitrary amount of message indices
 
-static index_t indexWSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 1 +
-	       idx * 32 +
-	       bit;
-}	//2560 w indices
+static inline index_t index_w(size_t chunk, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * chunk + 1 +
+           word * 32 +
+           bit;
+}   //2560 w indices
 
-static index_t indexCcSha1(
-	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
+static inline index_t index_cc(
+    size_t chunk, size_t kind, size_t word, size_t bit
 ) {
-	return INDICES_PER_CHUNK * chunk + 2561 + 
-	       kind * 2592 + 
-	       idx * 32 +
-	       bit;
-} //12800 cc indices
+    return INDICES_PER_CHUNK * chunk + 2561 + 
+           kind * 2592 + 
+           word * 32 +
+           bit;
+}   //12800 cc indices
 
-static index_t indexFSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 15362 +
-	       idx * 32 +
-	       bit;
-}	//2560 sig indices
+static inline index_t index_f(size_t chunk, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * chunk + 15362 +
+           word * 32 +
+           bit;
+}	//2560 f indices
 
-static index_t indexGSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 17923 +
-	       idx * 32 +
-	       bit;
-}	//2560 ch indices
+static inline index_t index_g(size_t chunk, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * chunk + 17923 +
+           word * 32 +
+           bit;
+}   //2560 g indices
 
-static index_t indexTempSha1(uint32_t chunk, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * chunk + 20484 +
-	       idx * 32 +
-	       bit;
-}	//2560 temp indices
+static inline index_t index_temp(size_t chunk, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * chunk + 20484 +
+           word * 32 +
+           bit;
+}   //2560 temp indices
 
-static index_t indexHhSha1(uint32_t chunk, uint32_t kind, uint32_t bit) {
-	return INDICES_PER_CHUNK + chunk + 23045 +
-	       kind * 32 +
-	       bit;
-}	//160 hh indices
+static index_t index_hh(size_t chunk, size_t kind, size_t bit) {
+    return INDICES_PER_CHUNK + chunk + 23045 +
+           kind * 32 +
+           bit;
+}   //160 hh indices
 
-static index_t indexGenericSha1(uint32_t chunk, uint32_t idx, uint32_t bit) { 
-	return INDICES_PER_CHUNK * chunk + 23206 + 
-	       idx * 32 + 
-	       bit;
-}	//18080 generic indices
+static inline index_t index_generic(size_t chunk, size_t word, size_t bit) {
+    return INDICES_PER_CHUNK * chunk + 23206 + 
+           word * 32 + 
+           bit;
+}   //18080 generic indices
 
 static int fwriteMessageClausesSha1(Sha1Sat shs) {
 	return fwriteAssignClauses(
@@ -139,7 +142,7 @@ static int fwriteWClausesSha1(Sha1Sat shs) {
 static int fwriteFClausesSha1(Sha1Sat shs) {
 	int res = 0;
 	
-	if (shs.loop > 0 && shs.loop < 20) {
+	if (shs.loop < 20) {
 		res = fwriteChClausesSha(
 			shs.stream, 
 			32, 
@@ -149,7 +152,7 @@ static int fwriteFClausesSha1(Sha1Sat shs) {
 			shs.cc[3]
 		);
 	}
-	else if (shs.loop > 40 && shs.loop < 60) {
+	else if (shs.loop >= 40 && shs.loop < 60) {
 		res = fwriteMajClausesSha(
 			shs.stream, 
 			32, 
