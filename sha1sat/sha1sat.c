@@ -147,24 +147,24 @@ static int fwrite_sha1_g_clauses(FILE * stream, Sha1Sat ctx) {
 	return fwrite_lro_clauses(stream, 32, ctx.cc[0], ctx.g, 5);
 }
 
-static int fwriteTempClausesSha1(Sha1Sat * shs) {
-	int res = fwriteSumClauses(
-		shs->stream,
+static int fwrite_sha1_temp_clauses(FILE * stream, Sha1Sat * ctx) {
+	int res = fwrite_sum_clauses(
+		stream,
 		32,
-		shs->temp,
-		shs->generic,
+		ctx->temp,
+		ctx->gen,
 		5,
-		shs->cc[4],
-		shs->f,
-		shs->g,
-		shs->k[shs->loop / 20],
-		shs->w[shs->loop]
+		ctx->cc[4],
+		ctx->f,
+		ctx->g,
+		ctx->k[ctx->i / 20],
+		ctx->w[ctx->i]
 	);
 	if (res < 0) {
 		return -1;
 	}
 
-	shs->generic = res;
+	ctx->gen = res;
 
 	return 0;
 }
