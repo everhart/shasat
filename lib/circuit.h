@@ -137,4 +137,13 @@ int fwrite_ep_clauses(
     size_t      rot3
 );
 
+int fwrite_ch_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs1,
+    index_t     rhs2,
+    index_t     rhs3
+);
+
 #endif
