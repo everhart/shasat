@@ -155,4 +155,13 @@ int fwrite_par_clauses(
     index_t     rhs3
 );
 
+int fwrite_maj_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs1,
+    index_t     rhs2,
+    index_t     rhs3
+);
+
 #endif
