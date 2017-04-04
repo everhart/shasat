@@ -252,29 +252,27 @@ static int fwrite_sha1_init_atoms(FILE * stream, Sha1Sat ctx) {
 }
 
 int sha1sat(FILE * stream, size_t msize, const char * digest) {
-	int res = 0;
+    int res = 0;
+    const uint32_t ccount = (msize + 576) / 512;
     Sha1Sat ctx = {
-		0,
-		0,
-		0,
-		0,
-		{ 0 },		
-		{ 0 },
-		{ 0 },
-		0,
-		0,
-		0,
-		{ 0 }
-	};
-
-	//determine how many chunks there are
-	const uint32_t ccount = (msize + 576) / 512;
+        0,
+        0,
+        0,
+        0,
+        { 0 },		
+        { 0 },
+        { 0 },
+        0,
+        0,
+        0,
+        { 0 }
+    };
 
     //write the dimacs file header
 	res = fprintf(
 		stream, "p cnf %lu %lu \n",
-		INDICES_PER_CHUNK * ccount + 128 + msize,
-		CLAUSES_PER_CHUNK * ccount + 128 + msize
+		INDICES_PER_CHUNK * ccount + 290 + msize,
+		CLAUSES_PER_CHUNK * ccount + 290 + msize
 	);
     if (res < 0) {
 		return -1;
