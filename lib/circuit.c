@@ -427,8 +427,8 @@ int fwrite_sha_digest_word64_atoms(
     char * slice = NULL;
     uint64_t * buffer = (uint64_t *)malloc(size / 16);
 
-    for (int i = 0; i < size; i += 8) {
-        memcpy(slice, digest + i, 8);
+    for (int i = 0; i < size; i += 16) {
+        memcpy(slice, digest + i, 16);
         buffer = (uint64_t *)strtol(slice, NULL, 16);
     }
 
