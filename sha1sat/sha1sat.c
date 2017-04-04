@@ -4,6 +4,7 @@ static const uint32_t INDICES_PER_CHUNK = 41286;
 static const uint32_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha1Sat {
+    size_t      chunk;
     size_t      i;
     index_t     gen;
     index_t     msg;
@@ -169,24 +170,20 @@ static int fwrite_sha1_temp_clauses(FILE * stream, Sha1Sat * ctx) {
 	return 0;
 }
 
-static int fwriteCcClausesSha1(Sha1Sat * shs) {
+static int fwrite_sha1_cc_clauses(FILE * stream, Sha1Sat * ctx) {
 	int res = 0;
 
 	for (int i = 4; i >= 0; i--) {
-		shs->cc[i] = indexCcSha1(shs->chunk, i, shs->loop + 1, 0);
+		ctx->cc[i] = index_cc(ctx->chunk, i, ctx->i + 1, 0);
 
 		if (i == 2) {
-			res = fwriteLroClauses(
-				shs->stream,
-				32,
-				shs->cc[i - 1],
-				shs->cc[i],
-				30
+			res = fwrite_lro_clauses(
+				stream, 32, ctx->cc[i - 1], ctx->cc[i], 30
 			);
 		} 
 		else {
-			res = fwriteAssignClauses(
-				shs->stream, 32,  shs->cc[i - 1], shs->cc[i]
+			res = fwrite_iff_clauses(
+				stream, 32, ctx->cc[i - 1], ctx->cc[i]
 			);
 		}
 
