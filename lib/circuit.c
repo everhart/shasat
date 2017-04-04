@@ -442,3 +442,41 @@ int fwrite_sha_digest_word64_atoms(
 
     return 0;
 }
+
+int fwrite_sha_preprocessing_atoms(
+    FILE * stream, index_t msg, size_t msize, size_t csize
+) {
+    int res = 0;
+    const size_t osize = msize;
+
+    //append the bit '1' to the message
+    msize++;
+    res = fwrite_atom(stream, msize + msg);
+    if (res < 0) {
+        return -1;
+    }
+
+    //append '0' to the message until message length % csize is csize - 64
+    while (msize % csize != csize - 64) {
+        msize++;
+        res = fwrite_atom(stream, -(atom_t)(msize + msg));
+        if (res < 0) {
+            return -1;
+        }
+    }
+
+    //append the original message length to the message as a 64 bit big-endian
+    //integer
+    //NOTE: cannot use fwrite_word64_atoms() for this
+    for (int i = 63; i >= 0; i--) {
+        msize++;
+        res = fwrite_atom(
+            stream, sign_atom(msize + msg, word64_bit(osize, i))
+        );
+        if (res < 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
