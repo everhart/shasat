@@ -121,37 +121,22 @@ static int fwrite_sha1_w_clauses(FILE * stream, Sha1Sat ctx) {
 	return 0;
 }
 
-static int fwriteFClausesSha1(Sha1Sat shs) {
-	int res = 0;
-	
-	if (shs.loop < 20) {
-		res = fwriteChClausesSha(
-			shs.stream, 
-			32, 
-			shs.f,
-			shs.cc[1], 
-			shs.cc[2], 
-			shs.cc[3]
-		);
+static int fwrite_sha1_f_clauses(FILE * stream, Sha1Sat ctx) {
+    int res = 0;
+
+    if (ctx.i < 20) {
+        res = fwrite_sha_ch_clauses(
+            stream, 32, ctx.f, ctx.cc[1], ctx.cc[2], ctx.cc[3]
+        );
+    }
+    else if (ctx.i >= 40 && ctx.i < 60) {
+        res = fwrite_sha_maj_clauses(
+            stream, 32, ctx.f, ctx.cc[1], ctx.cc[2], ctx.cc[3]
+        );
 	}
-	else if (shs.loop >= 40 && shs.loop < 60) {
-		res = fwriteMajClausesSha(
-			shs.stream, 
-			32, 
-			shs.f,
-			shs.cc[1], 
-			shs.cc[2], 
-			shs.cc[3]
-		);
-	}
-	else {
-		res = fwriteParClausesSha(
-			shs.stream, 
-			32,
-			shs.f,
-			shs.cc[1], 
-			shs.cc[2], 
-			shs.cc[3]
+    else {
+        res = fwrite_sha_par_clauses(
+            stream, 32, ctx.f, ctx.cc[1], ctx.cc[2], ctx.cc[3]
 		);
 	}
 
