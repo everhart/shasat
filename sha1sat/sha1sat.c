@@ -91,48 +91,30 @@ static int fwrite_sha1_message_clauses(FILE * stream, Sha1Sat ctx) {
 	);
 }
 
-static int fwriteWClausesSha1(Sha1Sat shs) {
+static int fwrite_sha1_w_clauses(FILE * stream, Sha1Sat ctx) {
 	int res = 0;
-	bool comb[4] = { 0 },
-	     eval = 0;
-
-	atom_t ante[4] = { 0 },
-	       cons = 0;
+	bool comb[4] = { 0 }, eval = 0;
+	atom_t ante[4] = { 0 }, cons = 0;
 
 	for (int i = 0; i < (1 << 4); i++) {
-		*comb = nextCombination(comb, 4);
+		*comb = next_combination(comb, 4);
 		eval = comb[0] ^ comb[1] ^ comb[2] ^ comb[3];
 
 		for (int j = 0; j < 32; j++) {
-			ante[0] = signAtom(
-				shs.w[shs.loop - 3] + j, 
-				comb[0]
-			);
-			ante[1] = signAtom(
-				shs.w[shs.loop - 8] + j, 
-				comb[1]
-			);
-			ante[2] = signAtom(
-				shs.w[shs.loop - 14] + j, 
-				comb[2]
-			);
-			ante[3] = signAtom(
-				shs.w[shs.loop - 16] + j, 
-				comb[3]
+			ante[0] = sign_atom(ctx.w[ctx.i - 3] + j, comb[0]);
+			ante[1] = sign_atom(ctx.w[ctx.i - 8] + j, comb[1]);
+			ante[2] = sign_atom(ctx.w[ctx.i - 14] + j, comb[2]);
+			ante[3] = sign_atom(ctx.w[ctx.i - 16] + j, comb[3]);
+			cons = sign_atom(
+                ctx.w[ctx.i] + bit_position_lro(32, j, 1), eval
 			);
 
-			cons = signAtom(
-				shs.w[shs.loop] + bitPosLro(32, j, 1),
-				eval
-			);
-
-			res = fwriteClauses(
-				shs.stream, ante, 3, &cons, 1
+			res = fwrite_clauses(
+				stream, ante, 3, &cons, 1
 			);
 			if (res < 0) {
 				return -1;
 			}
-
 		}
 	}
 
