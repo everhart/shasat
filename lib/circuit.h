@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 #include "./types.h"
 #include "./bitops.h"
 
@@ -101,6 +102,10 @@ atom_t fwrite_sum_clauses(
 	index_t		gen,
 	size_t	    count,
 	...
+);
+
+int fwrite_sha_digest_word32_atoms(
+    FILE * stream, const index_t * hh, const char * digest, size_t size
 );
 
 #endif
