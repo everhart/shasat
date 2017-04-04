@@ -405,11 +405,34 @@ int fwrite_sha_digest_word32_atoms(
     uint32_t * buffer = (uint32_t *)malloc(size / 8);
 
     for (int i = 0; i < size; i += 8) {
-        memcpy(slice, digest + i, 2);
+        memcpy(slice, digest + i, 8);
         buffer = (uint32_t *)strtol(slice, NULL, 16);
     }
 
     size /= 8;
+    for (int i = 0; i < size; i++) {
+        res = fwrite_word32_atoms(stream, hh[i], buffer[i]);
+        if (res < 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int fwrite_sha_digest_word64_atoms(
+    FILE * stream, const index_t * hh, const char * digest, size_t size
+) {
+    int res = 0;
+    char * slice = NULL;
+    uint64_t * buffer = (uint64_t *)malloc(size / 16);
+
+    for (int i = 0; i < size; i += 8) {
+        memcpy(slice, digest + i, 8);
+        buffer = (uint64_t *)strtol(slice, NULL, 16);
+    }
+
+    size /= 16;
     for (int i = 0; i < size; i++) {
         res = fwrite_word32_atoms(stream, hh[i], buffer[i]);
         if (res < 0) {

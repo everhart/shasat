@@ -108,4 +108,8 @@ int fwrite_sha_digest_word32_atoms(
     FILE * stream, const index_t * hh, const char * digest, size_t size
 );
 
+int fwrite_sha_digest_word64_atoms(
+    FILE * stream, const index_t * hh, const char * digest, size_t size
+);
+
 #endif
