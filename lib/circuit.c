@@ -481,7 +481,7 @@ int fwrite_sha_preprocessing_atoms(
     return 0;
 }
 
-int fwrite_sig_clauses(
+int fwrite_sha_sig_clauses(
     FILE *      stream,
     size_t      wsize,
     index_t     lhs,
@@ -524,7 +524,7 @@ int fwrite_sig_clauses(
     return gen + wsize + 1;
 }
 
-int fwrite_ep_clauses(
+int fwrite_sha_ep_clauses(
     FILE *      stream,
     size_t      wsize,
     index_t     lhs,
@@ -563,7 +563,7 @@ int fwrite_ep_clauses(
     return 0;
 }
 
-int fwrite_ch_clauses(
+int fwrite_sha_ch_clauses(
     FILE *      stream,
     size_t      wsize,
     index_t     lhs,
@@ -595,7 +595,7 @@ int fwrite_ch_clauses(
     return 0;
 }
 
-int fwrite_par_clauses(
+int fwrite_sha_par_clauses(
     FILE *      stream,
     size_t      wsize,
     index_t     lhs,
@@ -627,7 +627,7 @@ int fwrite_par_clauses(
     return 0;
 }
 
-int fwrite_maj_clauses(
+int fwrite_sha_maj_clauses(
     FILE *      stream,
     size_t      wsize,
     index_t     lhs,
