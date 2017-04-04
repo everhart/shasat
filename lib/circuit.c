@@ -356,7 +356,7 @@ static int fwrite_sum_clauses_non_va(
 }
 
 //x1 + x2 + x3 ... + xn = lhs
-atom_t fwrite_sum_clauses(
+int fwrite_sum_clauses(
     FILE *      stream,
     size_t      wsize,
     index_t     lhs,

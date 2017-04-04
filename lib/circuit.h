@@ -95,7 +95,7 @@ int fwrite_or_clauses(
     ...
 );
 
-atom_t fwrite_sum_clauses(
+int fwrite_sum_clauses(
 	FILE *		stream,
 	size_t		wsize,
 	index_t	    lhs,
