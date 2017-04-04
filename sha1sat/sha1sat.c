@@ -140,17 +140,11 @@ static int fwrite_sha1_f_clauses(FILE * stream, Sha1Sat ctx) {
 		);
 	}
 
-	return 0;
+	return res;
 }
 
-static int fwriteGClausesSha1(Sha1Sat shs) {
-	return fwriteLroClauses(
-		shs.stream,
-		32,
-		shs.cc[0],
-		shs.g,
-		5
-	);
+static int fwrite_sha1_g_clauses(FILE * stream, Sha1Sat ctx) {
+	return fwrite_lro_clauses(stream, 32, ctx.cc[0], ctx.g, 5);
 }
 
 static int fwriteTempClausesSha1(Sha1Sat * shs) {
