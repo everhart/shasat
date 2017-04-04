@@ -233,16 +233,14 @@ static int fwrite_sha1_k_atoms(FILE * stream, Sha1Sat ctx) {
 	return 0;
 }
 
-static int fwriteHhAtomsSha1(Sha1Sat shs) {
+static int fwrite_sha1_hh_init_atoms(FILE * stream, Sha1Sat ctx) {
 	int res = 0;
 	int hh[5] = {
 		0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476,	0xC3D2E1F0
 	};
 
 	for (int i = 0; i < 4; i++) {
-		res = fwriteAtoms32(
-			shs.stream, hh[i], shs.hh[i]
-		);
+		res = fwrite_word32_atoms(stream, hh[i], ctx.hh[i]);
 		if (res < 0) {
 			return -1;
 		}
