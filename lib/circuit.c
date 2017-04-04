@@ -480,3 +480,46 @@ int fwrite_sha_preprocessing_atoms(
 
     return 0;
 }
+
+int fwrite_sig_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     gen,
+    index_t     rhs,
+    size_t      rot1,
+    size_t      rot2,
+    size_t      shift
+) {
+    int res = 0;
+    bool comb[3] = { 0 }, eval = 0;
+    atom_t ante[3] = { 0 }, cons = 0;
+
+    res = fwrite_rsh_clauses(stream, 32, rhs, gen, shift);
+    if (res < 0) {
+        return res;
+    }
+
+    for (int i = 0; i < (1 << 3); i++) {
+        *comb = next_combination(comb, 3);
+        eval = comb[0] ^ comb[1] ^ comb[2];
+
+        for (int j = 0; j < wsize; j++) {
+            ante[0] = sign_atom(
+                rhs + bit_position_rro(wsize, j, rot1), comb[0]
+            );
+            ante[1] = sign_atom(
+                rhs + bit_position_rro(wsize, j, rot2), comb[1]
+            );
+            ante[2] = sign_atom(gen + j, comb[2]);
+            eval = sign_atom(lhs + j, eval);
+
+            res = fwrite_clauses(stream, ante, 3, &cons, 1);
+            if (res < 0) {
+                return -1;
+            }
+        }
+    }
+
+    return gen + wsize + 1;
+}

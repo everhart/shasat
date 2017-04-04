@@ -116,4 +116,15 @@ int fwrite_sha_preprocessing_atoms(
     FILE * stream, index_t msg, size_t msize, size_t csize
 );
 
+int fwrite_sig_clauses(
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     gen,
+    index_t     rhs,
+    size_t      rot1,
+    size_t      rot2,
+    size_t      shift
+);
+
 #endif
