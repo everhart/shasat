@@ -118,12 +118,12 @@ static index_t index_sha256_gen(size_t chunk, size_t word, size_t bit) {
 	       bit;
 }	//25440 gen indices
 
-static int fwriteMessageClausesSha256(Sha256Sat shs) {
-	return fwriteAssignClauses(
-		shs.stream,
+static int fwrite_sha256_msg_clauses(FILE * stream, Sha256Sat ctx) {
+	return fwrite_iff_clauses(
+		stream,
 		32,
-		shs.w[shs.loop],
-		shs.message
+		ctx.w[ctx.j],
+		ctx.msg
 	);
 }
 
