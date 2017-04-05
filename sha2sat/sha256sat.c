@@ -222,12 +222,12 @@ static int fwrite_sha256_temp1_clauses(FILE * stream, Sha256Sat * ctx) {
 	return 0;
 }
 
-static int fwriteEp1ClausesSha256(Sha256Sat shs) {
-	return fwriteEpClausesSha(
-		shs.stream,
+static int fwrite_sha256_ep1_clauses(FILE * stream, Sha256Sat ctx) {
+	return fwrite_sha_ep_clauses(
+		stream,
 		32,
-		shs.ep1,
-		shs.cc[0],
+		ctx.ep1,
+		ctx.cc[0],
 		2, 13, 22
 	);
 }
