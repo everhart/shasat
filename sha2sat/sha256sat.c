@@ -366,7 +366,7 @@ static int fwrite_sha256_k_atoms(FILE * stream, Sha256Sat ctx) {
 	return 0;
 }
 
-static int fwrite_sha256_hh_atoms(FILE * stream, Sha256Sat ctx, size_t dsize) {
+static int fwrite_sha256_init_atoms(FILE * stream, Sha256Sat ctx, size_t dsize) {
 	int res = 0;
 	int hh[8] = { 0 };
 
