@@ -28,17 +28,17 @@ static index_t index_sha256_k(size_t ccount, size_t word, size_t bit) {
            bit;
 }   //2048 k indices
 
-static index_t index_init_sha256(size_t ccount, size_t kind, size_t bit) {
+static index_t index_sha256_init(size_t ccount, size_t kind, size_t bit) {
     return INDICES_PER_CHUNK * ccount + 2049 + 
            kind * 32 +
            bit;
 }   //256 init indices
 
-static index_t index_msg_sha256(
+static index_t index_sha256_msg(
     size_t ccount, size_t chunk, size_t word, size_t bit
 ) {
     return INDICES_PER_CHUNK * ccount + 2306 +
-           chunk * 512 +
+           chunk * 512 + 
            word * 32 +
            bit;
 }   //arbitrary msg indices
@@ -401,154 +401,142 @@ static int fwrite_sha256_init_atoms(FILE * stream, Sha256Sat ctx, size_t dsize) 
     return 0;
 }
 
-//carries out a SHA-256 or SHA-224 reduction, depending on 'dsize' parameter
-static int _sha256sat(
-    FILE *stream, size_t msize, const char *digest, size_t dsize
+//carrieso out a sha256 or sha224 reduction, depending on 'dsize' parameter
+static int fwrite_sha256_clauses(
+    FILE *stream, size_t msize, const char * digest, size_t dsize
 ) {
+    if (msize >= 448 || (dsize != 8 && dsize != 7)) {
+        return -1;
+    }
+
     int res = 0;
+    const size_t ccount = 0;
+    Sha256Sat ctx;
 
-    //determine how many chunks there are
-    const uint32_t ccount = (msize + 576) / 512;
-
-    Sha256Sat shs = {
-        stream,
-        digest,
-        dsize,
-        0,
-        0,
-        0,
-        0,
-        { 0 },
-        { 0 },
-        0,
-        0,
-        { 0 },
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        { 0 },
-    };
-
-    //function is a specific implementation for SHA-256 and SHA-224
-    if (dsize != 256 && dsize != 224) {
+    res = fwrite_sha_preprocessing_atoms(
+        stream, index_sha256_msg(ccount, 0, 0), msize, 512
+    );
+    if (res < 0) {
         return -1;
     }
 
-    //initialize message indices
-    shs.message = indexMessageSha256(ccount, 0, 0, 0);
-    
-    //initialize k indices
+    //determine round constant indices
     for (int i = 0; i < 64; i++) {
-        shs.k[i] = indexKSha256(ccount, i, 0);
+        ctx.k[i] = index_sha256_k(ccount, i, 0);
     }
 
-    //initialize hh indices
+    //determine initial hash indices
     for (int i = 0; i < 8; i++) {
-        shs.hh[i] = indexHhSha256(shs.chunk, i, 0);
+        ctx.hh[i] = index_sha256_init(ccount, i, 0);
     }
 
-    //write the dimacs file header
-    res = fprintf(
-        shs.stream, "p cnf %lu %lu",
-        INDICES_PER_CHUNK * ccount + msize + 2048,
-        CLAUSES_PER_CHUNK * ccount + msize + 2048
-    );
-    if (res < 0) {
-        return -1;
-    }
-
-    //preprocess SHA-256/224
-    msize = fwritePreprocClausesSha(
-        stream, shs.message, msize, 512
-    );
-    if (msize == 0) {
-        return -1;
-    }
-
-    //write atoms representing round constant values
-    res = fwriteKAtomsSha256(shs);
-    if (res < 0) {
-        return -1;
-    }
-
-    //write atoms representing initial hash values
-    res = fwriteHhAtomsSha256(shs);
-    if (res < 0) {
-        return -1;
-    }
-
-    //write clauses representing each and every round of SHA-256
-    for (shs.chunk = 0; shs.chunk < ccount; shs.chunk++) {
+    //for each chunk
+    for (ctx.i = 0; ctx.i < ccount; ctx.i++) {
         //a = h0 ... h = h7
         for (int i = 0; i < 8; i++) {
-            shs.cc[i] = shs.hh[i];
+            ctx.cc[i] = ctx.hh[i];
         }
-
-        for (shs.loop = 0; shs.loop < 64; shs.loop++) {
+    
+        for (ctx.j = 0; ctx.j < 64; ctx.j++) {
             //determine all loop based indices
-            shs.sig0 = indexSig0Sha256(shs.chunk, shs.loop, 0);
-            shs.sig1 = indexSig1Sha256(shs.chunk, shs.loop, 0);
-            shs.w[shs.loop] = indexWSha256(shs.chunk, shs.loop, 0);
-            shs.ep0 = indexEp0Sha256(shs.chunk, shs.loop, 0);
-            shs.ch  = indexChSha256(shs.chunk, shs.loop, 0);
-            shs.temp1 = indexTemp1Sha256(shs.chunk, shs.loop, 0);
-            shs.ep1 = indexEp1Sha256(shs.chunk, shs.loop, 0);
-            shs.maj = indexMajSha256(shs.chunk, shs.loop, 0);
-            shs.temp2 = indexTemp2Sha256(shs.chunk, shs.loop, 0);
-
-            shs.generic = indexGenericSha256(
-                shs.chunk, shs.loop, 0
-            );
+            ctx.sig0 = index_sha256_sig0(ctx.i, ctx.j, 0);
+            ctx.sig1 = index_sha256_sig1(ctx.i, ctx.j, 0);
+            ctx.w[ctx.j] = index_sha256_w(ctx.i, ctx.j, 0);
+            ctx.ep0 = index_sha256_ep0(ctx.i, ctx.j, 0);
+            ctx.ep1 = index_sha256_ep1(ctx.i, ctx.j, 0);
+            ctx.ch  = index_sha256_ch(ctx.i, ctx.j, 0);
+            ctx.maj = index_sha256_maj(ctx.i, ctx.j, 0);
+            ctx.temp1 = index_sha256_temp1(ctx.i, ctx.j, 0);
+            ctx.temp2 = index_sha256_temp2(ctx.i, ctx.j, 0);
+            ctx.gen = index_sha256_gen(ctx.i, ctx.j, 0);
 
             //break the chunk into sixteen 32 bit words
-            if (shs.loop < 16) {
+            if (ctx.j < 16) {
                 //determine index of current message word
-                shs.message = indexMessageSha256(
-                    ccount, shs.chunk, shs.loop, 0
-                );
+                ctx.msg = index_sha256_msg(ccount, ctx.i, ctx.j, 0);
 
-                if (fwriteMessageClausesSha256(shs) < 0) {
-                       return -1;   
+                //w[0 .. 16] = msg[n .. n + 16]
+                res = fwrite_sha256_msg_clauses(stream, ctx);
+                if (res < 0) {
+                    return res;
                 }
             }
-                //key extension 
-            else {
-                if (
-                    (fwriteSig0ClausesSha256(&shs) < 0) ||
-                    (fwriteSig1ClausesSha256(&shs) < 0) ||
-                    (fwriteWClausesSha256(&shs) < 0)
-                ) {
+            //key extension
+            if (ctx.j < 48) {
+                res = fwrite_sha256_sig0_clauses(stream, &ctx);
+                if (res < 0) {
+                    return -1;
+                }
+
+                res = fwrite_sha256_sig1_clauses(stream, &ctx);
+                if (res < 0) {
+                    return -1;
+                }
+
+                res = fwrite_sha256_w_clauses(stream, &ctx);
+                if (res < 0) {
                     return -1;
                 }
             }
 
             //compression function
-            if (
-                (fwriteEp0ClausesSha256(shs) < 0) ||
-                (fwriteChClausesSha256(shs) < 0) ||
-                (fwriteTemp1ClausesSha256(&shs) < 0) ||
-                (fwriteEp1ClausesSha256(shs) < 0) ||
-                (fwriteMajClausesSha256(shs) < 0) ||
-                (fwriteTemp2ClausesSha256(&shs) < 0) ||
-                (fwriteCcClausesSha256(&shs) < 0)
-            ) {
+            res = fwrite_sha256_ep0_clauses(stream, ctx);
+            if (res < 0) {
+                return -1;
+            }
+
+            res = fwrite_sha256_ep1_clauses(stream, ctx);
+            if (res < 0) {
+                return -1;
+            }
+
+            res = fwrite_sha256_ch_clauses(stream, ctx);
+            if (res < 0) {
+                return -1;
+            }
+
+            res = fwrite_sha256_maj_clauses(stream, ctx);
+            if (res < 0) {
+                return -1;
+            }
+        
+            res = fwrite_sha256_temp1_clauses(stream, &ctx);
+            if (res < 0) {
+                return -1;
+            }
+        
+            res = fwrite_sha256_temp2_clauses(stream, &ctx);
+            if (res < 0) {
+                return -1;
+            }
+        
+            res = fwrite_sha256_cc_clauses(stream, &ctx);
+            if (res < 0) {
                 return -1;
             }
         }
 
         //update hash values
-        if (fwriteHhClausesSha256(&shs) < 0) {
+        res = fwrite_sha256_hh_clauses(stream, &ctx);
+        if (res < 0) {
             return -1;
         }
     }
 
-    //write atoms representing the final digest value
-    res = fwriteDigestAtomsSha(
-        shs.stream, shs.hh, shs.digest, shs.dsize
-    );
+    //assign round constant atoms
+    res = fwrite_sha256_k_atoms(stream, ctx);
+    if (res < 0) {
+        return -1;
+    }
+
+    //assign initial hash atoms
+    res = fwrite_sha256_init_atoms(stream, ctx, dsize);
+    if (res < 0) {
+        return -1;
+    }
+
+    //assign digest atoms
+    res = fwrite_sha_digest_word32_atoms(stream, ctx.hh, digest, dsize);
     if (res < 0) {
         return -1;
     }
