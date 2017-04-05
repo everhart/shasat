@@ -332,7 +332,7 @@ static int fwrite_sha256_hh_clauses(FILE * stream, Sha256Sat * ctx) {
 	return 0;
 }
 
-static int fwriteKAtomsSha256(FILE * stream, Sha256Sat ctx) {
+static int fwrite_sha256_k_atoms(FILE * stream, Sha256Sat ctx) {
 	int res = 0;
 
 	uint32_t k[64] = { 
@@ -366,25 +366,23 @@ static int fwriteKAtomsSha256(FILE * stream, Sha256Sat ctx) {
 	return 0;
 }
 
-static int fwriteHhAtomsSha256(Sha256Sat shs) {
+static int fwrite_sha256_hh_atoms(FILE * stream, Sha256Sat ctx, size_t dsize) {
 	int res = 0;
 	int hh[8] = { 0 };
 
 	//initial hash values are dependant on digest size
-	if (shs.dsize == 224) {
+	if (dsize == 224) {
 		int tmp[8] = {
 			0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 
 			0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4
 		};
-
 		memcpy(hh, tmp, sizeof(hh));
 	}
-	else if (shs.dsize == 256) {
+	else if (dsize == 256) {
 		int tmp[8] = {
 			0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
 			0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
 		};
-
 		memcpy(hh, tmp, sizeof(hh));
 	}
 	else {
@@ -392,8 +390,8 @@ static int fwriteHhAtomsSha256(Sha256Sat shs) {
 	}
 
 	for (int i = 0; i < 8; i++) {
-		res = fwriteAtoms32(
-			shs.stream, shs.hh[i], hh[i]
+		res = fwrite_word32_atoms(
+			stream, ctx.hh[i], hh[i]
 		);
 
 		if (res < 0) {
