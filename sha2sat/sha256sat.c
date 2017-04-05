@@ -201,25 +201,24 @@ static int fwrite_sha256_ch_clauses(FILE * stream, Sha256Sat ctx) {
 	);
 }
 
-static int fwriteTemp1ClausesSha256(Sha256Sat * shs) {
+static int fwrite_sha256_temp1_clauses(FILE * stream, Sha256Sat * ctx) {
 	int res = fwriteSumClauses(
-		shs->stream,
+		stream,
 		32,
-		shs->temp1,
-		shs->generic,
+		ctx->temp1,
+		ctx->gen,
 		5,
-		shs->cc[7],
-		shs->ep0,
-		shs->ch,
-		shs->k[shs->loop],
-		shs->w[shs->loop]
+		ctx->cc[7],
+		ctx->ep0,
+		ctx->ch,
+		ctx->k[ctx->j],
+		ctx->w[ctx->j]
 	);
 	if (res < 0) {
 		return -1;
 	}
 
-	shs->generic = res;
-
+	ctx->gen = res;
 	return 0;
 }
 
