@@ -190,14 +190,14 @@ static int fwrite_sha256_ep0_clauses(FILE * stream, Sha256Sat ctx) {
 	);
 }
 
-static int fwriteChClausesSha256(Sha256Sat shs) {
-	return fwriteChClausesSha(
-		shs.stream,
+static int fwrite_sha256_ch_clauses(FILE * stream, Sha256Sat ctx) {
+	return fwrite_sha_ch_clauses(
+		stream,
 		32,
-		shs.ch,
-		shs.cc[4],
-		shs.cc[5],
-		shs.cc[6]
+		ctx.ch,
+		ctx.cc[4],
+		ctx.cc[5],
+		ctx.cc[6]
 	);
 }
 
