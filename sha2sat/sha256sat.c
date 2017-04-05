@@ -1,16 +1,13 @@
 #include "sha256sat.h"
 
-static const uint32_t INDICES_PER_CHUNK = 59499;
-static const uint32_t CLAUSES_PER_CHUNK = 0;
+static const size_t INDICES_PER_CHUNK = 59499;
+static const size_t CLAUSES_PER_CHUNK = 0;
 
 typedef struct Sha256Sat {
-	FILE *		stream;
-	const char *	digest;
-	size_t		dsize;
-	uint32_t	chunk;
-	uint32_t	loop;
-	index_t		generic;
-	index_t		message;
+	size_t		i;
+	size_t		j;
+	index_t		gen;
+	index_t		msg;
 	index_t		k[64];
 	index_t		w[64];
 	index_t		sig0;
@@ -25,94 +22,101 @@ typedef struct Sha256Sat {
 	index_t		hh[8];	
 } Sha256Sat;
 
-static index_t indexKSha256(uint32_t ccount, uint32_t idx, uint32_t bit) {
-	return INDICES_PER_CHUNK * ccount +
-	       idx * 32 +
+static index_t index_sha256_k(size_t ccount, size_t word, size_t bit) {
+	return INDICES_PER_CHUNK * ccount + 1 +
+	       word * 32 +
 	       bit;
-}
+}	//2048 k indices
 
-static index_t indexMessageSha256(
-	uint32_t ccount, uint32_t chunk, uint32_t idx, uint32_t bit
+static index_t index_init_sha256(size_t ccount, size_t kind, size_t bit) {
+	return INDICES_PER_CHUNK * ccount + 2049 + 
+	       kind * 32 +
+	       bit;
+}	//256 init indices
+
+static index_t index_msg_sha256(
+	size_t ccount, size_t chunk, size_t word, size_t bit
 ) {
-	return INDICES_PER_CHUNK * ccount + 2049 +
+	return INDICES_PER_CHUNK * ccount + 2306 +
 	       chunk * 512 +
-	       idx * 32 +
+	       word * 32 +
 	       bit;
-}
+}	//arbitrary msg indices
 
-static index_t indexWSha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_w(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 1 +
-	       idx * 32 + 
+	       word * 32 + 
 	       bit;
 }	//2048 w indices
 
-static index_t indexSig0Sha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_sig0(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 2049 + 
-	       idx * 32 + 
+	       word * 32 + 
 	       bit;
 }	//1536 sig0 indices
 
-static index_t indexSig1Sha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_sig1(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 3586 +
-	       idx * 32 +
+	       word * 32 +
 	       bit;
 }	//1536 sig1 indices
 
-static index_t indexCcSha256(
-	uint32_t chunk, uint32_t kind, uint32_t idx, uint32_t bit
+static index_t index_sha256_cc(
+	size_t chunk, size_t kind, size_t word, size_t bit
 ) {
 	return INDICES_PER_CHUNK * chunk + 5123 +
-	       idx * 32 + 
+	       kind * 2048 +
+	       word * 32 + 
 	       bit;
 }	//16384 cc indices
 
-static index_t indexEp0Sha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_ep0(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 21508 +
-	       idx * 32 +
+	       word * 32 +
 	       bit;
 }	//2048 ep0 indices
 
-static index_t indexEp1Sha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_ep1(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 23557 +
-	       idx * 32 + 
+	       word * 32 + 
 	       bit;
 }	//2048 ep1 indices
 
-static index_t indexChSha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_ch(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 25606 +
-	       idx * 32 +
+	       word * 32 +
 	       bit;
 }	//2048 ch indices
 
-static index_t indexMajSha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_maj(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 27655 +
-	       idx * 32 + 
+	       word * 32 + 
 	       bit;
 }	//2048 maj indices
 
-static index_t indexTemp1Sha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_temp1(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 29704 +
-	       idx * 32 +
+	       word * 32 +
 	       bit;
 }	//2048 temp1 indices
 
-static index_t indexTemp2Sha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_temp2(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 31753 +
-	       idx * 32 +
+	       word * 32 +
 	       bit;
 }	//2048 temp2 indices
 
-static index_t indexHhSha256(uint32_t chunk, uint32_t type, uint32_t bit) {
+static index_t index_sha256_hh(size_t chunk, size_t type, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 33802 +
 	       type * 32 +
        	       bit;	       
 }	//256 hh indices
 
-static index_t indexGenericSha256(uint32_t chunk, uint32_t idx, uint32_t bit) {
+static index_t index_sha256_gen(size_t chunk, size_t word, size_t bit) {
 	return INDICES_PER_CHUNK * chunk + 34059 +
-	       idx * 32 + 
+	       word * 32 + 
 	       bit;
-}	//25440 generic indices
+}	//25440 gen indices
 
 static int fwriteMessageClausesSha256(Sha256Sat shs) {
 	return fwriteAssignClauses(
@@ -155,8 +159,6 @@ static int fwriteSig1ClausesSha256(Sha256Sat * shs) {
 	}
 
 	shs->generic = res;
-
-	return 0;
 
 	return 0;
 }
@@ -456,7 +458,7 @@ static int _sha256sat(
 		shs.k[i] = indexKSha256(ccount, i, 0);
 	}
 
-	//initialize hh indicies
+	//initialize hh indices
 	for (int i = 0; i < 8; i++) {
 		shs.hh[i] = indexHhSha256(shs.chunk, i, 0);
 	}
