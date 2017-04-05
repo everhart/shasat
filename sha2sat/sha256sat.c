@@ -232,18 +232,18 @@ static int fwrite_sha256_ep1_clauses(FILE * stream, Sha256Sat ctx) {
 	);
 }
 
-static int fwriteMajClausesSha256(Sha256Sat shs) {
+static int fwrite_sha256_maj_clauses(FILE * stream, Sha256Sat ctx) {
 	return fwriteMajClausesSha(
-		shs.stream,
+		stream,
 		32,
-		shs.maj,
-		shs.cc[0],
-		shs.cc[1],
-		shs.cc[2]
+		ctx.maj,
+		ctx.cc[0],
+		ctx.cc[1],
+		ctx.cc[2]
 	);
 }
 
-static int fwriteTemp2ClausesSha256(Sha256Sat * shs) {
+static int fwrite_sha256_temp2_clauses(FILE * stream, Sha256Sat * ctx) {
 	int res = fwriteSumClauses(
 		shs->stream,
 		32,
