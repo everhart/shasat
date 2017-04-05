@@ -281,10 +281,6 @@ static int fwrite_sha256_cc_clauses(FILE * stream, Sha256Sat * ctx) {
 				ctx->cc[i - 1],
 				ctx->temp1
 			);
-			if (res < 0) {
-				return -1;
-			}
-
 			ctx->gen = res;
 			break;
 		//a = temp1 + temp2
@@ -298,17 +294,14 @@ static int fwrite_sha256_cc_clauses(FILE * stream, Sha256Sat * ctx) {
 				ctx->temp1,
 				ctx->temp2
 			);
-			if (res < 0) {
-				return -1;
-			}
-
 			ctx->gen = res;
 			break;
 		default:
 			res = fwrite_iff_clauses(stream, 32, ctx->cc[i], ctx->cc[i - 1]);
-			if (res < 0) {
-				return res;
-			}
+			break;
+		}
+		if (res < 0) {
+			return -1;
 		}
 
 	return 0;
@@ -339,7 +332,7 @@ static int fwrite_sha256_hh_clauses(FILE * stream, Sha256Sat * ctx) {
 	return 0;
 }
 
-static int fwriteKAtomsSha256(Sha256Sat shs) {
+static int fwriteKAtomsSha256(FILE * stream, Sha256Sat ctx) {
 	int res = 0;
 
 	uint32_t k[64] = { 
@@ -362,8 +355,8 @@ static int fwriteKAtomsSha256(Sha256Sat shs) {
 	};
 
 	for (int i = 0; i < 64; i++) {
-		res = fwriteAtoms32(
-			shs.stream, shs.k[i], k[i]
+		res = fwrite_word32_atoms(
+			stream, ctx.k[i], k[i]
 		);
 		if (res < 0) {
 			return -1;
