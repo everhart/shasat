@@ -261,73 +261,75 @@ static int fwrite_sha256_temp2_clauses(FILE * stream, Sha256Sat * ctx) {
 	return 0;
 }
 
-static int fwriteCcClausesSha256(Sha256Sat * shs) {
+static int fwrite_sha256_cc_clauses(FILE * stream, Sha256Sat * ctx) {
 	int res = 0;
 
 	for (int i = 7; i >= 0; i--) {
-		shs->cc[i] = indexCcSha256(
-			shs->chunk, i, shs->loop + 1, 0
+		ctx->cc[i] = index_sha256_cc(
+			ctx->i, i, ctx->j + 1, 0
 		);
 
+		switch (i) {
 		//e = d + temp1
-		if (i == 4) {
-			res = fwriteSumClauses(
-				shs->stream, 
+		case 4:
+			res = fwrite_sum_clauses(
+				stream,
 				32,
-				shs->cc[i], 
-				shs->generic,
-				2, 
-				shs->cc[i - 1], 
-				shs->temp1
+				ctx->cc[i],	
+				ctx->gen,
+				2,
+				ctx->cc[i - 1],
+				ctx->temp1
 			);
+			if (res < 0) {
+				return -1;
+			}
 
-			shs->generic = res;
-		}
+			ctx->gen = res;
+			break;
 		//a = temp1 + temp2
-		else if (i == 0) {
-			res = fwriteSumClauses(
-				shs->stream, 
+		case 0:
+			res = fwrite_sum_clauses(
+				stream,
 				32,
-				shs->cc[i], 
-				shs->generic,
-				2, 
-				shs->temp1, 
-				shs->temp2
+				ctx->cc[i],
+				ctx->gen,
+				2,
+				ctx->temp1,
+				ctx->temp2
 			);
-		
-			shs->generic = res;
-		}
-		else {
-			res = fwriteAssignClauses(
-				shs->stream, 32, shs->cc[i], shs->cc[i - 1]
-			);
-		}
+			if (res < 0) {
+				return -1;
+			}
 
-		if (res < 0) {
-			return -1;
+			ctx->gen = res;
+			break;
+		default:
+			res = fwrite_iff_clauses(stream, 32, ctx->cc[i], ctx->cc[i - 1]);
+			if (res < 0) {
+				return res;
+			}
 		}
-	}
 
 	return 0;
 }
 
-static int fwriteHhClausesSha256(Sha256Sat * shs) {
+static int fwrite_sha256_hh_clauses(FILE * stream, Sha256Sat * ctx) {
 	int res = 0;
 	index_t hh[8] = { 0 };
-
-	memcpy(hh, shs->hh, sizeof(hh));
+	memcpy(hh, ctx->hh, sizeof(hh));
 
 	for (int i = 0; i < 8; i++) {
-		shs->hh[i] = indexHhSha256(shs->chunk, i, 0);
+		shs->hh[i] = index_sha256_hh(ctx->chunk, i, 0);
 		
-		res = fwriteSumClauses(
-			shs->stream,
+		res = fwrite_sum_clauses(
+			stream,
 			32,
-			shs->hh[i],
-			shs->generic,
+			ctx->hh[i],
+			ctx->gen,
 			2,
 			hh[i],
-			shs->cc[i]
+			ctx->cc[i]
 		);
 		if (res < 0) {
 			return -1;
