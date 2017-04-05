@@ -127,21 +127,20 @@ static int fwrite_sha256_msg_clauses(FILE * stream, Sha256Sat ctx) {
 	);
 }
 
-static int fwriteSig0ClausesSha256(Sha256Sat * shs) {
-	int res = fwriteSigClausesSha(
-		shs->stream,
+static int fwrite_sha256_sig0_clauses(FILE * stream, Sha256Sat * ctx) {
+	int res = fwrite_sha_sig_clauses(
+		stream,
 		32,
-		shs->sig0,
-		shs->generic,
-		shs->w[shs->loop - 15],
+		ctx->sig0,
+		ctx->gen,
+		ctx->w[ctx->j - 15],
 		7, 18, 3
 	);
 	if (res < 0) {
 		return -1;
 	}
 
-	shs->generic = res;
-
+	shs->gen = res;
 	return 0;
 }
 
