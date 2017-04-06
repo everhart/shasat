@@ -6,13 +6,13 @@ Given a hash function, a digest and the size of some unknown message, a Boolean 
 `./shasat [options]`
 ### Options
 ```
-  --help            Display this information
-  --sha1		    Use SHA1 as the hash function  
-  --sha256		    Use SHA2-256 as the hash function  
-  --sha224		    Use SHA2-224 as the has function  
-  -o <file>		    Save the output Boolean expression in dimacs cnf form to <file>  
+  --help            	Display this information
+  --sha1		Use SHA1 as the hash function  
+  --sha256		Use SHA2-256 as the hash function  
+  --sha224		Use SHA2-224 as the has function  
+  -o <file>		Save the output Boolean expression in dimacs cnf form to <file>  
   -d <digest>		Use <digest> as the output digest
-  -m <message_size>	Use <message_size> as the size of the unknown input message
+  -m <message_size>	Use <message_size> as the size, in bytes, of the unknown input message
 ```
 ### Example: 
 `./shasat -o dimacs.cnf --sha256 -d e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -m 14`
