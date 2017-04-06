@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     int kind = 0;
     char * output = NULL;
     char * digest = NULL;
-    size_t msize = 0;
+    ssize_t msize = -1;
 
     const char * short_options = "ho:d:m:";
     const struct option long_options[4] = {
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
             stream = fopen(output, "w+");
             if (stream == NULL) {
                 printf(
-                    "Failed to open or create a file at %s for writing. %s\n",
+                    "Error: Failed to open or create a file at %s for writing. %s\n",
                     output, strerror(errno)
                  );
             }
@@ -80,6 +80,28 @@ int main(int argc, char **argv) {
             "-m <message_size>",
             "Use <message_size> as the size of the unknown input message."
         );
+
+        return 0;
+    }
+
+    if (kind == 0) {
+        printf("Error: No hash function specified.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (output == NULL) {
+        printf("Error: No output file specified.\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (digest == NULL) {
+        printf("Error: No digest specified.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (msize == -1) {
+        printf("Error: No message size specified.\n");
+        exit(EXIT_FAILURE);
     }
 
     switch (msize) {
@@ -93,7 +115,7 @@ int main(int argc, char **argv) {
     
     if (res < 0) {
         printf(
-            "Fatal error occured when attempting to reduce SHA%d to SAT.\n",
+            "Error: Could not reduce SHA%d to SAT using the specified arguments.\n",
             kind
         );
         exit(EXIT_FAILURE);
