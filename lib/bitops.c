@@ -1,11 +1,11 @@
 #include "./bitops.h"
 
 int word32_bit(uint32_t word, size_t n) {
-	return (n < 32) ? (word >> n) & 1 : -1;
+    return (n < 32) ? (word >> n) & 1 : -1;
 }
 
 int word64_bit(uint64_t word, size_t n) {
-	return (n < 64) ? (word >> n) & 1 : -1;
+    return (n < 64) ? (word >> n) & 1 : -1;
 }
 
 int word32_assign_bit(uint32_t * word, size_t n, bool val) {
