@@ -37,11 +37,11 @@ int main(int argc, char **argv) {
             stream = fopen(output, "w+");
             if (stream == NULL) {
                 printf(
-                    "Error: Failed to open or create a file at %s for writing. %s\n",
+                    "Error: Failed to open or create a file at %s for writing"
+                    ". %s\n",
                     output, strerror(errno)
                  );
             }
-
             break;
         case 'd':
             digest = optarg;
@@ -78,7 +78,8 @@ int main(int argc, char **argv) {
             "-d <digest>",
             "Use <digest> as the output digest.",
             "-m <message_size>",
-            "Use <message_size> as the size of the unknown input message."
+            "Use <message_size> as the size, in bytes, of the unknown input " 
+            "message."
         );
 
         return 0;
