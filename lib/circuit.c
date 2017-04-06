@@ -1,113 +1,113 @@
 #include "./circuit.h"
 
 int fwrite_atom(FILE * stream, atom_t atom) {
-	return fprintf(stream, "%d 0\n", atom);
+    return fprintf(stream, "%d 0\n", atom);
 }
 
 int fwrite_word32_atoms(
-	FILE *		stream,
-	index_t		lhs,
-	uint32_t 	word
+    FILE *      stream,
+    index_t     lhs,
+    uint32_t    word
 ) {
-	int res = 0;
+    int res = 0;
 
-	for (int i = 0; i < 32; i++) {
-		res = fwrite_atom(
-			stream, sign_atom(lhs + i, word32_bit(word, i))
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
+    for (int i = 0; i < 32; i++) {
+        res = fwrite_atom(
+            stream, sign_atom(lhs + i, word32_bit(word, i))
+        );
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int fwrite_word64_atoms(
-	FILE *		stream,
-	index_t		lhs,
-	uint64_t 	word
+    FILE *      stream,
+    index_t     lhs,
+    uint64_t    word
 ) {
-	int res = 0;
+    int res = 0;
 
-	for (int i = 0; i < 64; i++) {
-		res = fwrite_atom(
-			stream, sign_atom(lhs + i, word64_bit(word, i))
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
+    for (int i = 0; i < 64; i++) {
+        res = fwrite_atom(
+            stream, sign_atom(lhs + i, word64_bit(word, i))
+        );
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int fwrite_clauses(
-	FILE * 		    stream, 
-	const atom_t *  ante, 
-	size_t 		    asize, 
-	const atom_t *  cons, 
-	size_t 		    csize
+    FILE *          stream, 
+    const atom_t *  ante, 
+    size_t          asize, 
+    const atom_t *  cons, 
+    size_t          csize
 ) {
-	int res = 0; 
+    int res = 0; 
 
-	for (int i = 0; i < csize; i++) {
-		for (int j = 0; j < asize; j++) {
-			res = fprintf(stream, "%d ", -ante[j]);
-			if (res < 0) {
-				return -1;
-			}
-		}
+    for (int i = 0; i < csize; i++) {
+        for (int j = 0; j < asize; j++) {
+            res = fprintf(stream, "%d ", -ante[j]);
+            if (res < 0) {
+                return -1;
+            }
+        }
 
-		res = fprintf(stream, "%d 0\n", cons[i]);
-		if (res < 0) {
-			return -1;
-		}
-	}
+        res = fprintf(stream, "%d 0\n", cons[i]);
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int fwrite_iff_clauses(
-	FILE *		stream,
-	size_t		wsize,
-	index_t		lhs,
-	index_t		rhs
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs
 ) {
-	int res = 0;
-	bool perm = 0;
+    int res = 0;
+    bool perm = 0;
 
-	atom_t ante = 0,
-	       cons = 0;
+    atom_t ante = 0,
+           cons = 0;
 
-	for (int i = 0; i < 2; i++) {
-		perm = !perm;
+    for (int i = 0; i < 2; i++) {
+        perm = !perm;
 
-		for (int j = 0; j < 32; j++) {
-			ante = sign_atom(rhs + j, perm);
-			cons = sign_atom(lhs + j, perm);
+        for (int j = 0; j < 32; j++) {
+            ante = sign_atom(rhs + j, perm);
+            cons = sign_atom(lhs + j, perm);
 
-			res = fwrite_clauses(
-				stream, &ante, 1, &cons, 1
-			);
-			if (res < 0) {
-				return -1;
-			}
-		}
-	}
-	
-	return 0;
+            res = fwrite_clauses(
+                stream, &ante, 1, &cons, 1
+            );
+            if (res < 0) {
+                return -1;
+            }
+        }
+    }
+    
+    return 0;
 }
 
 //lhs = rhs >> shift
 int fwrite_rsh_clauses(
-	FILE *		stream,
-	size_t		wsize,
-	index_t		lhs,
-	index_t		rhs,
-	uint32_t	shift
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs,
+    uint32_t    shift
 ) {
-	int res = 0;
+    int res = 0;
 
     for (int i = shift; i < wsize; i++) {
         res = fwrite_atom(stream, sign_atom(lhs + i, 0));
@@ -126,71 +126,71 @@ int fwrite_rsh_clauses(
 
 //lhs = rhs << shift
 int fwrite_lsh_clauses(
-	FILE *		stream,
-	size_t		wsize,
-	index_t		lhs,
-	index_t		rhs,
-	uint32_t	shift
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs,
+    uint32_t    shift
 ) {
-	int res = 0;
+    int res = 0;
 
-	for (int i = 0; i < wsize - shift; i++) {
-		res = fwrite_atom(stream, sign_atom(lhs + i, 0));
-		if (res < 0) {
-			return -1;
-		}
+    for (int i = 0; i < wsize - shift; i++) {
+        res = fwrite_atom(stream, sign_atom(lhs + i, 0));
+        if (res < 0) {
+            return -1;
+        }
 
-		res = fwrite_iff_clauses(stream, wsize, rhs + i, lhs + i + shift);
-		if (res < 0) {
-			return -1;
-		}
-	}
+        res = fwrite_iff_clauses(stream, wsize, rhs + i, lhs + i + shift);
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 //lhs = rhs rro rot
 int fwrite_rro_clauses(
-	FILE *		stream,
-	size_t		wsize,
-	index_t		lhs,
-	index_t		rhs,
-	uint32_t	rot
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs,
+    uint32_t    rot
 ) {
-	int res = 0;
+    int res = 0;
 
-	for (int i = 0; i < wsize; i++) {
-		res = fwrite_iff_clauses(
-			stream, wsize, rhs + i, lhs + bit_position_rro(wsize, i, rot)
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
+    for (int i = 0; i < wsize; i++) {
+        res = fwrite_iff_clauses(
+            stream, wsize, rhs + i, lhs + bit_position_rro(wsize, i, rot)
+        );
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 //lhs = rhs lro rot
 int fwrite_lro_clauses(
-	FILE *		stream,
-	size_t		wsize,
-	index_t		lhs,
-	index_t		rhs,
-	uint32_t	rot
+    FILE *      stream,
+    size_t      wsize,
+    index_t     lhs,
+    index_t     rhs,
+    uint32_t    rot
 ) {
-	int res = 0;
+    int res = 0;
 
-	for (int i = 0; i < wsize; i++) {
-		res = fwrite_iff_clauses(
-			stream, wsize, rhs + i, lhs + bit_position_lro(wsize, i, rot)
-		);
-		if (res < 0) {
-			return -1;
-		}
-	}
+    for (int i = 0; i < wsize; i++) {
+        res = fwrite_iff_clauses(
+            stream, wsize, rhs + i, lhs + bit_position_lro(wsize, i, rot)
+        );
+        if (res < 0) {
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int fwrite_and_clauses(
