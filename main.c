@@ -1,21 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <errno.h>
 
 #include "./sha1sat/sha1sat.h"
 #include "./sha2sat/sha256sat.h"
 
 int main(int argc, char **argv) {
     int res = 0;
-    
+
     char opt = 0;
+    FILE * stream = NULL;
     int help = 0;
     int kind = 0;
     char * output = NULL;
     char * digest = NULL;
     size_t msize = 0;
 
-    const char * short_options = "o:d:m:";
+    const char * short_options = "ho:d:m:";
     const struct option long_options[4] = {
         { "help", no_argument, &help, 1 },
         { "sha1", no_argument, &kind, 1 },
@@ -27,21 +29,58 @@ int main(int argc, char **argv) {
         (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1
     ) {
         switch (opt) {
+        case 'h':
+            help = 1;
+            break;
         case 'o':
             output = optarg;
+            stream = fopen(output, "w+");
+            if (stream == NULL) {
+                printf(
+                    "Failed to open or create a file at %s for writing. %s\n",
+                    output, strerror(errno)
+                 );
+            }
+
             break;
         case 'd':
             digest = optarg;
             break;
         case 'm':
-            msize = atoi(optarg);
+            msize = (size_t)atoi(optarg);
             break;
         default:
             break;
         }        
     }
  
-    FILE * stream = fopen(output, "w+");
+    if (help) {
+        printf(
+            "Usage: ./shasat [options]\n"
+            "Options:\n"
+            "  %-24s %s\n"
+            "  %-24s %s\n"
+            "  %-24s %s\n"
+            "  %-24s %s\n"
+            "  %-24s %s\n"
+            "  %-24s %s\n"
+            "  %-24s %s\n",
+            "--help",       
+            "Display this information.",
+            "--sha1",       
+            "Use SHA1 as the hash function.",
+            "--sha256",     
+            "Use SHA256 as the hash function.",
+            "--sha224",     
+            "Use SHA224 as the hash function.",
+            "-o <file>",   
+            "Save the output Boolean expression in dimacs cnf form to <file>.",
+            "-d <digest>",
+            "Use <digest> as the output digest.",
+            "-m <message_size>",
+            "Use <message_size> as the size of the unknown input message."
+        );
+    }
 
     switch (msize) {
     case 1:
