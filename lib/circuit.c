@@ -333,9 +333,9 @@ static int fwrite_sum_clauses_non_va(
                   (comb[1] & comb[2]);
 
         for (int j = 0; j < wsize; j++) {
-            ante[0] = sign_atom(rhs1 + j, comb[0]);
-            ante[1] = sign_atom(rhs2 + j, comb[1]);
-            ante[2] = sign_atom(lhs2 + j - 1, comb[2]);
+            ante[0] = sign_atom(rhs1 + j, comb[1]);
+            ante[1] = sign_atom(rhs2 + j, comb[2]);
+            ante[2] = sign_atom(lhs2 + j - 1, comb[0]);
             cons[0] = sign_atom(lhs1 + j, eval[0]);
             cons[1] = sign_atom(lhs2 + j, eval[1]);
 
@@ -371,7 +371,7 @@ int fwrite_sum_clauses(
     va_start(args, count);
     lhs1 = va_arg(args, index_t);
     
-    for (int i = 0; i < (count - 1); i++) {
+    for (int i = 0; i < (count - 2); i++) {
         rhs1 = lhs1;
         rhs2 = va_arg(args, index_t);
         lhs1 = gen;
