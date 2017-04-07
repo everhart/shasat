@@ -75,17 +75,17 @@ int fwrite_iff_clauses(
     index_t     rhs
 ) {
     int res = 0;
-    bool perm = 0;
+    bool comb = 0;
 
     atom_t ante = 0,
            cons = 0;
 
     for (int i = 0; i < 2; i++) {
-        perm = !perm;
+        comb = !comb;
 
-        for (int j = 0; j < 32; j++) {
-            ante = sign_atom(rhs + j, perm);
-            cons = sign_atom(lhs + j, perm);
+        for (int j = 0; j < wsize; j++) {
+            ante = sign_atom(rhs + j, comb);
+            cons = sign_atom(lhs + j, comb);
 
             res = fwrite_clauses(
                 stream, &ante, 1, &cons, 1
