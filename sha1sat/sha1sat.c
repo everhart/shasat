@@ -1,11 +1,11 @@
 #include "./sha1sat.h"
 
 static const uint32_t INDICES_PER_CHUNK = 41286;
-static const uint32_t CLAUSES_PER_CHUNK = 0;
+static const uint32_t CLAUSES_PER_CHUNK = 408446;
 
 typedef struct Sha1Sat {
     size_t      i;          //chunk index
-    size_t      j;          //word index
+    size_t      j;          //round index
     index_t     gen;        //generic
     index_t     msg;        //message
     index_t     k[4];       //round constants
