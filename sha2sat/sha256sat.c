@@ -1,7 +1,7 @@
 #include "sha256sat.h"
 
 static const size_t INDICES_PER_CHUNK = 59499;
-static const size_t CLAUSES_PER_CHUNK = 0;
+static const size_t CLAUSES_PER_CHUNK = 848494;
 
 typedef struct Sha256Sat {
     size_t      i;
@@ -405,7 +405,7 @@ static int fwrite_sha256_init_atoms(FILE * stream, Sha256Sat ctx, size_t dsize) 
 static int fwrite_sha256_clauses(
     FILE *stream, size_t msize, const char * digest, size_t dsize
 ) {
-    if (msize >= 448 || (dsize != 8 && dsize != 7)) {
+    if (msize >= 448 || (dsize != 64 && dsize != 56)) {
         return -1;
     }
 
@@ -414,7 +414,7 @@ static int fwrite_sha256_clauses(
     Sha256Sat ctx;
 
     res = fwrite_sha_preprocessing_atoms(
-        stream, index_sha256_msg(ccount, 0, 0), msize, 512
+        stream, index_sha256_msg(ccount, 0, 0, 0), msize, 512
     );
     if (res < 0) {
         return -1;
@@ -545,9 +545,9 @@ static int fwrite_sha256_clauses(
 }
 
 int sha224sat(FILE * stream, size_t msize, const char * digest) {
-    return _sha256sat(stream, msize, digest, 224);
+    return fwrite_sha256_clauses(stream, msize, digest, 56);
 }
 
 int sha256sat(FILE * stream, size_t msize, const char * digest) {
-    return _sha256sat(stream, msize, digest, 256);
+    return fwrite_sha256_clauses(stream, msize, digest, 64);
 }
