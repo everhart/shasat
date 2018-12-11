@@ -7,10 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../lib/atom.h"
+#include "../lib/types.h"
 #include "../lib/circuit.h"
 #include "../lib/bitops.h"
-#include "../shacircuit.h"
 
 int sha1sat(FILE * stream, size_t msize, const char * digest);
 
